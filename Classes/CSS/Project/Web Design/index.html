@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nav Bar</title>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    nav{
+        background-color: black;
+        color: white;
+        display:flex ;
+        justify-content: space-around;
+        text-align: center;
+        align-items: center;
+        padding: 20px 50px ;
+    }
+    nav div ul {
+        display: flex;
+        /* justify-content: space-around; */
+        gap: 20px;
+        list-style-type: none;
+        cursor: pointer;
+    }
+    nav div button{
+        justify-content: space-around;
+        /* display: grid; */
+       padding: 5px 10px;
+       border-radius: 5px;
+       border: none;
+       cursor: pointer;
+    }
+    nav div button:hover{
+        background-color:red;
+        color: #ffff; 
+    }
+    .hero{
+        display: flex;
+        justify-content: space-between;
+        padding: 50px 80px;
+        background-color: black;
+        color: white;
+
+    }
+    .hros div{
+        width: 50%;
+    }
+    .hero div h2{
+        margin-top: 20px;
+        margin-bottom: 20px;
+        font-size: 2rem;
+    }
+    .hero div p{
+        margin: 20px 20px;
+    }
+
+    .hero div button{
+        /* margin: 30px 20px; */
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        
+    }
+    .hero div img{
+        width: 100%;
+        border-radius: 20px;
+        object-fit: center;
+        box-shadow: 0 0 10px white;
+    }
+    .hero div img:hover{
+        transform: rotate(3deg);
+        transition: all 0.5s ease-in-out;
+    }
+    .logo_text{
+        text-align: center;
+        align-items: center;
+        margin: 40px o;
+        margin-top: 20px;
+       
+
+    }
+    .logo{
+        display: flex;
+        margin: 20px 10%;
+        border: 2px solid black;
+        border-radius: 20px;
+        justify-content: space-evenly;
+        align-items: center;
+        padding: 20px 20px;
+       
+
+
+    }
+    .logo img{
+        width: 50px;
+        object-fit: cover;
+        border-radius: 10px;
+    
+    }
+
+    .three-cards{
+        display: flex;
+        justify-content: space-evenly;
+        margin: 20px 80px;
+        padding:40px 30px;
+        border: 2px solid black;
+        border-radius: 20px;
+        box-shadow: 0 0 10px black;
+        flex-wrap: wrap;
+
+    }
+    .cards{
+        display: flex;
+        /* border: 2px solid black; */
+        padding: 10px 30px;
+        margin: 5px 10px;
+        justify-content: space-evenly;
+    }
+    .cards div{
+        border: 1px solid black;
+        border-radius: 20px;
+        box-shadow: 0 0 10px black;
+        margin: 5px 5px;
+        padding: 10px 15px;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+
+    .cards img{
+        display: flex;
+        justify-content: center;
+        width: 100px;
+        padding-left: 30px;
+        margin-left: 10px;
+    }
+
+    h3{
+        margin: 20px 50px;
+    }
+    p{
+        margin: 30px 0;
+    }
+    #thirdcard{
+        margin-bottom:-1px;
+        /* text-align:center; */
+    }
+    #thirdcard p{
+        margin-top: px;
+    }
+    #thirdcard h3{
+        margin-top: 2px;
+    }
+   
+
+</style>
+<body>
+    <nav>
+        <div>Logo</div>
+        <div>
+            <ul>
+                <li>Home</li>
+                <li>Contact Us</li>
+                <li>About Us</li>
+            </ul>
+        </div>
+        <Div>
+            <button>Log In</button>
+            <button> Sign In</button>
+        </Div>
+    </nav>
+
+    <div class="hero">
+        <div>
+            <h2>Heading About</h2>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad dolore, voluptatem harum amet corrupti ipsam repellat possimus architecto repudiandae! Sequi vitae praesentium quia ratione. Ratione deserunt qui harum laudantium fuga!</p>
+            <button>Click Me</button>
+        </div>
+        <div>
+            <img width="200px" src="./img1.png" alt="">
+        </div>
+    </div>
+
+    <h2 class="logo_text">Clients</h2>
+
+
+<div class="logo">
+    <div>
+        <img src="./apple" alt="">
+    </div>
+    <div>
+        <img src="./macd" alt="">
+    </div>
+    <div>
+        <img src="./apple" alt="">
+    </div>
+    <div>
+        <img src="./macd" alt="">
+    </div>
+    
+    <div>
+        <img src="./apple" alt="">
+    </div>
+   
+    
+</div>
+
+    <div class="three-cards">
+        <div class="cards">
+            <div>
+                <img src="https://images.pexels.com/photos/31234382/pexels-photo-31234382/free-photo-of-relaxed-american-bully-resting-on-grass.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="">
+                <h3>One</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto dolorum quae iste molestiae sequi repellendus itaque voluptatum commodi! Exercitationem, beatae!</p>
+            </div>
+            <div>
+                <img src="https://images.pexels.com/photos/31154965/pexels-photo-31154965/free-photo-of-cute-dog-sitting-on-grass-outdoors-in-peru.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="">
+                <h3>One</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto dolorum quae iste molestiae sequi repellendus itaque voluptatum commodi! Exercitationem, beatae!</p>
+            </div>
+            <div id="thirdcard">
+                <img src="https://images.pexels.com/photos/31242800/pexels-photo-31242800/free-photo-of-charming-bulldog-relaxing-in-lush-garden-setting.jpeg?auto=compress&cs=tinysrgb&w=600" alt="">
+                <h3>One</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto dolorum quae iste molestiae sequi repellendus itaque voluptatum commodi! Exercitationem, beatae!</p>
+            </div>
+        </div>
+    </div>
+        
+
+</body>
+</html>
