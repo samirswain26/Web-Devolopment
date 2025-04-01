@@ -1,0 +1,58 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container{
+    display: flex;
+    gap: 10px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.boards{
+    border: 2px solid black;
+    height: 70vh;
+    width: 200px;
+    /* margin: 10px; */
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.items{
+    margin: 5px;
+    margin-top: 15px;
+    padding: 5px;
+}
+
+.item{
+    margin-top: 5px;
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+
+}
+
+
+.item:hover{
+    background-color: grey ;
+    color: rgb(0, 0, 0);
+}
+
+
+button{
+    margin: 20px;
+    padding: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+button:hover{
+    background-color: black;
+    color: white;
+}
+
+
