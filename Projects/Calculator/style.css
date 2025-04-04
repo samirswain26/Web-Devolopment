@@ -23,6 +23,8 @@ body{
     margin: 2px;
     padding: 20px;
     grid-column-end: span 4;
+    background-color: white;
+    color: black;
 }
 #AC{
     grid-column-start: 0;
