@@ -20,28 +20,27 @@ addboard.addEventListener("click", ()=>{
     const created = document.createElement("div")
     created.id = "added-board"
     created.className = "boards"
-    created.style.border = "2px solid black"
+    created.style.border = "2px solid white"
     created.style.width = "200px"
     created.style.height = "70vh"
     created.style.borderRadius = "10px"
     created.style.display = "flex"
     created.style.fontFamily = " Segoe UI, Tahoma, Geneva, Verdana, sans-serif;"
     created.style.padding = "10px"
-    
+
+    created.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        const flyingElement = document.querySelector(".flying");
+        console.log("Dragging over:", created);
+        if (flyingElement) {
+            created.appendChild(flyingElement);
+        }
+    });
+
+    console.log(created.className)
+    console.log(created.id)
     created.appendChild(heading)
     container.appendChild(created)
-})
-
-// addboard.forEach((add)=>{
-//     add.addEventListener("dragover", ()=>{
-//         console.log(add, "Kuch toh gaya")
-//     })
-// })
-
-
-
-allboards.addEventListener("click", ()=> {
-    console.log("This div was clicked")
 })
 
 function attachDragElemnet(target){
