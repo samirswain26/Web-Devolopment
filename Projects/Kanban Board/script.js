@@ -14,8 +14,12 @@ addboard.addEventListener("click", ()=>{
     const input = prompt("Add Conatiner")
     if(!input) return
 
+    const heading = document.createElement("h4")
+    heading.innerText = input
+
     const created = document.createElement("div")
-    created.innerText = input 
+    created.id = "added-board"
+    created.className = "boards"
     created.style.border = "2px solid black"
     created.style.width = "200px"
     created.style.height = "70vh"
@@ -23,8 +27,19 @@ addboard.addEventListener("click", ()=>{
     created.style.display = "flex"
     created.style.fontFamily = " Segoe UI, Tahoma, Geneva, Verdana, sans-serif;"
     created.style.padding = "10px"
+    
+    created.appendChild(heading)
     container.appendChild(created)
 })
+
+// addboard.forEach((add)=>{
+//     add.addEventListener("dragover", ()=>{
+//         console.log(add, "Kuch toh gaya")
+//     })
+// })
+
+
+
 allboards.addEventListener("click", ()=> {
     console.log("This div was clicked")
 })
@@ -60,8 +75,6 @@ const allboard = document.querySelectorAll(".boards")
 const allitems = document.querySelectorAll(".item")
 
 allitems.forEach(attachDragElemnet)
-
-
 
 
 allboard.forEach((boa)  => {
