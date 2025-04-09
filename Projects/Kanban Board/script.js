@@ -9,18 +9,6 @@ const allboards = document.querySelector("#progress-board")
 const container = document.getElementById("container")
 const addboard = document.getElementById("add-board")
 
-// function attachBoardListeners(board) {
-//     board.addEventListener("dragover", (e) => {
-//         e.preventDefault();
-//         const flyingElement = document.querySelector(".flying");
-//         if (flyingElement) {
-//             board.appendChild(flyingElement);
-//         }
-//     });
-// }
-
-
-
 
 addboard.addEventListener("click", ()=>{
     console.log("hello")
