@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybersecurity Threats Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      color: black;
+    }
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 1rem 0;
+      text-align: center;
+    }
+    main {
+      width: 90%;
+      margin: 2rem auto;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background-color: #007BFF;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    tr:hover {
+      background-color: #e9ecef;
+    }
+    .footer-link {
+      background-color: blue;
+      color: white;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Cybersecurity Threats Dashboard</h1>
+    <h2>Last 24 Hours</h2>
+  </header>
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Threat Name</th>
+          <th>Description</th>
+          <th>Category</th>
+          <th>Mitigation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- JavaScript will populate this -->
+      </tbody>
+    </table>
+    <a class="footer-link" href="24hour.html" target="_blank">Back→</a>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const threats = [
+        { id: 1, name: "Threat 1", description: "This is a description for Threat 1, detailing the nature of the attack and potential risks.", category: "Zero-Day", mitigation: "Use email filtering and spam detection." },
+        { id: 2, name: "Threat 2", description: "This is a description for Threat 2, detailing the nature of the attack and potential risks.", category: "Malware", mitigation: "Install antivirus and firewall solutions." },
+        { id: 3, name: "Threat 3", description: "This is a description for Threat 3, detailing the nature of the attack and potential risks.", category: "Zero-Day", mitigation: "Implement security awareness training." },
+        { id: 4, name: "Threat 4", description: "This is a description for Threat 4, detailing the nature of the attack and potential risks.", category: "DDoS", mitigation: "Implement security awareness training." },
+        { id: 5, name: "Threat 5", description: "This is a description for Threat 5, detailing the nature of the attack and potential risks.", category: "Phishing", mitigation: "Install antivirus and firewall solutions." },
+        { id: 6, name: "Threat 6", description: "This is a description for Threat 6, detailing the nature of the attack and potential risks.", category: "Social Engineering", mitigation: "Segment networks and restrict lateral movement." },
+        { id: 7, name: "Threat 7", description: "This is a description for Threat 7, detailing the nature of the attack and potential risks.", category: "Malware", mitigation: "Keep software updated and patched." },
+        { id: 8, name: "Threat 8", description: "This is a description for Threat 8, detailing the nature of the attack and potential risks.", category: "Insider Threat", mitigation: "Monitor network traffic for anomalies." },
+        { id: 9, name: "Threat 9", description: "This is a description for Threat 9, detailing the nature of the attack and potential risks.", category: "Zero-Day", mitigation: "Keep software updated and patched." },
+        { id: 10, name: "Threat 10", description: "This is a description for Threat 10, detailing the nature of the attack and potential risks.", category: "Phishing", mitigation: "Regularly backup data and test restores." },
+        { id: 11, name: "Threat 11", description: "This is a description for Threat 11, detailing the nature of the attack and potential risks.", category: "Ransomware", mitigation: "Regularly backup data and test restores." },
+        { id: 12, name: "Threat 12", description: "This is a description for Threat 12, detailing the nature of the attack and potential risks.", category: "Data Breach", mitigation: "Encrypt sensitive data and monitor access." },
+        { id: 13, name: "Threat 13", description: "This is a description for Threat 13, detailing the nature of the attack and potential risks.", category: "Network Attack", mitigation: "Implement network segmentation and intrusion detection." },
+        { id: 14, name: "Threat 14", description: "This is a description for Threat 14, detailing the nature of the attack and potential risks.", category: "Application Exploit", mitigation: "Perform regular code audits and patching." },
+        { id: 15, name: "Threat 15", description: "This is a description for Threat 15, detailing the nature of the attack and potential risks.", category: "Credential Stuffing", mitigation: "Enforce multi-factor authentication and password rotation." }
+      ];
+
+      // Auto-generate remaining threats to fill up to 100
+      for (let i = threats.length + 1; i <= 100; i++) {
+        threats.push({
+          id: i,
+          name: `Threat ${i}`,
+          description: `This is a description for Threat ${i}, detailing the nature of the attack and potential risks.`,
+          category: ["Malware", "Phishing", "Social Engineering", "Insider Threat", "Network Attack", "Application Exploit", "Ransomware", "Data Breach", "DDoS", "Zero-Day"][Math.floor(Math.random() * 10)],
+          mitigation: [
+            "Keep software updated and patched.",
+            "Use strong passwords and enable MFA.",
+            "Implement security awareness training.",
+            "Install antivirus and firewall solutions.",
+            "Regularly backup data and test restores.",
+            "Limit user privileges and access.",
+            "Monitor network traffic for anomalies.",
+            "Apply endpoint detection and response tools.",
+            "Use email filtering and spam detection.",
+            "Segment networks and restrict lateral movement."
+          ][Math.floor(Math.random() * 10)]
+        });
+      }
+
+      const tbody = document.querySelector('tbody');
+      tbody.innerHTML = '';
+
+      threats.forEach(threat => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${threat.id}</td>
+          <td>${threat.name}</td>
+          <td>${threat.description}</td>
+          <td>${threat.category}</td>
+          <td>${threat.mitigation}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    });
+  </script>
+</body>
+</html>

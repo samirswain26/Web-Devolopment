@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recent Vulnerability Detections</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111827;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+
+    h2 {
+      color: #d1d5db;
+    }
+
+    .vuln-box {
+      background-color: #1f2937;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .vuln-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #e0e7ff;
+    }
+
+    .vuln-desc {
+      margin-top: 4px;
+      color: #cbd5e1;
+    }
+
+    .vuln-cvss {
+      font-size: 14px;
+      margin-top: 4px;
+      color: #94a3b8;
+    }
+
+    .severity {
+      float: right;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .critical { background-color: #b91c1c; color: #fff; }
+    .high { background-color: #ea580c; color: #fff; }
+    .medium { background-color: #ca8a04; color: #fff; }
+
+    .footer-link {
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    .footer-link a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .footer-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Recent Vulnerability Detections</h2>
+    <h3>Overall Data</h3>
+
+    <div class="vuln-box">
+      <span class="severity critical">Critical</span>
+      <div class="vuln-title">CVE-2023-1234</div>
+      <div class="vuln-desc">OpenSSL Remote Code Execution</div>
+      <div class="vuln-cvss">CVSS: 9.8 — Detected 1 day ago</div>
+    </div>
+
+    <div class="vuln-box">
+      <span class="severity high">High</span>
+      <div class="vuln-title">CVE-2023-5678</div>
+      <div class="vuln-desc">SQL Injection in Web Application</div>
+      <div class="vuln-cvss">CVSS: 8.5 — Detected 2 days ago</div>
+    </div>
+
+    <div class="vuln-box">
+      <span class="severity medium">Medium</span>
+      <div class="vuln-title">CVE-2023-9012</div>
+      <div class="vuln-desc">Cross-Site Scripting (XSS)</div>
+      <div class="vuln-cvss">CVSS: Not listed — Detected recently</div>
+    </div>
+    <div class="vuln-box">
+      <span class="severity high">Medium</span>
+      <div class="vuln-title">CVE-2023-9012</div>
+      <div class="vuln-desc">Cross-Site Scripting (XSS)</div>
+      <div class="vuln-cvss">CVSS: 9.0 — Detected recently</div>
+    </div>
+    <div class="vuln-box">
+      <span class="severity medium">Medium</span>
+      <div class="vuln-title">CVE-2023-9012</div>
+      <div class="vuln-desc">Cross-Site Scripting (XSS)</div>
+      <div class="vuln-cvss">CVSS: Not listed — Detected recently</div>
+    </div>
+    <div class="vuln-box">
+      <span class="severity high">High</span>
+      <div class="vuln-title">CVE-2023-5078</div>
+      <div class="vuln-desc">SQL Injection in Web Application</div>
+      <div class="vuln-cvss">CVSS: 8.5 — Detected 2 days ago</div>
+    </div>
+    <div class="vuln-box">
+      <span class="severity medium">Medium</span>
+      <div class="vuln-title">CVE-2023-9052</div>
+      <div class="vuln-desc">Cross-Site Scripting (XSS)</div>
+      <div class="vuln-cvss">CVSS: 7.9 — Detected recently</div>
+    </div>
+    <div class="vuln-box">
+      <span class="severity medium">Medium</span>
+      <div class="vuln-title">CVE-2023-8012</div>
+      <div class="vuln-desc">SQL Injection in Web Application</div>
+      <div class="vuln-cvss">CVSS: Not listed — Detected recently</div>
+    </div>
+    <div class="vuln-box">
+      <span class="severity high">Medium</span>
+      <div class="vuln-title">CVE-2023-7012</div>
+      <div class="vuln-desc">Phishing Attack</div>
+      <div class="vuln-cvss">CVSS: 9.3 — Detected recently</div>
+    </div>
+    <div class="vuln-box">
+      <span class="severity medium">Medium</span>
+      <div class="vuln-title">CVE-2023-5612</div>
+      <div class="vuln-desc">SQL Injection in Web Application</div>
+      <div class="vuln-cvss">CVSS: Not listed — Detected recently</div>
+    </div>
+
+    <div class="footer-link">
+      <a href="main.html" target="_blank">Back→</a>
+    </div>
+  </div>
+
+  <script>
+    // Example JavaScript (optional)
+    console.log("Recent vulnerabilities loaded.");
+  </script>
+</body>
+</html>

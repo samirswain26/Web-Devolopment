@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Operations Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1 class="logo"><span class="material-icons">security</span> SecOps Dashboard</h1>
+        <button class="menu-toggle" id="menuToggle"><span class="material-icons">menu</span></button>
+      </div>
+      
+      <nav class="sidebar-nav" id="sidebarNav">
+        <a href="#" class="sidebar-link active">
+          <span class="material-icons">dashboard</span> Dashboard
+        </a>
+        <a href="threats30days.html" class="sidebar-link">
+          <span class="material-icons">warning</span> Threats
+        </a>
+        <a href="incident30days.html" class="sidebar-link">
+          <span class="material-icons">error</span> Incidents
+        </a>
+        <a href="vulnerabilities30days.html" class="sidebar-link">
+          <span class="material-icons">bug_report</span> Vulnerabilities
+        </a>
+        <a href="report30days.html" class="sidebar-link">
+          <span class="material-icons">assessment</span> Reports
+        </a>
+        <!-- <a href="#" class="sidebar-link">
+          <span class="material-icons">settings</span> Settings
+        </a> -->
+        
+        <div class="team-status">
+          <div class="status-label">Team Status</div>
+          <div class="status-item">
+            <div class="status-indicator online"></div>
+            <span>SOC Team (5 online)</span>
+          </div>
+          <div class="status-item">
+            <div class="status-indicator standby"></div>
+            <span>Incident Response (On call)</span>
+          </div>
+        </div>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dashboard Header -->
+      <div class="dashboard-header">
+        <div>
+          <h2>Security Dashboard - Last 30 Days</h2>
+          <p class="last-updated">Last updated: <span id="lastUpdated">Mar 22, 2023 02:30 PM</span></p>
+        </div>
+        <div class="dashboard-actions">
+          <div class="time-filter">
+            <select id="timeRange" onchange="redirectToPage()">
+              <option value="">Select Time Range</option>
+              <option value="main.html">Main</option>
+              <option value="24hour.html">Last 24 hours</option>
+              <option value="7days.html">Last 7 days</option>
+              <option value="30days.html">Last 30 days</option>
+              <!-- <option value="custom-range.html">Custom range</option> -->
+            </select>
+            <span class="material-icons select-icon">expand_more</span>
+          </div>
+          
+          <button class="btn-refresh" id="refreshBtn">
+            <span class="material-icons">refresh</span> Refresh
+          </button>
+        </div>
+      </div>
+      
+      <!-- Overview Cards -->
+      <div class="overview-cards">
+        <div class="card">
+          <div class="card-content">
+            <div>
+              <p class="card-label">Active Threats</p>
+              <h3 class="card-value" id="activeThreats">17</h3>
+            </div>
+            <div class="card-icon threat-icon">
+              <span class="material-icons">gpp_bad</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="trend-up">
+              <span class="material-icons">arrow_upward</span>
+              +5
+            </span>
+            <span class="trend-label">since yesterday</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-content">
+            <div>
+              <p class="card-label">Open Incidents</p>
+              <h3 class="card-value" id="openIncidents">8</h3>
+            </div>
+            <div class="card-icon incident-icon">
+              <span class="material-icons">report_problem</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="trend-up">
+              <span class="material-icons">arrow_upward</span>
+              +2
+            </span>
+            <span class="trend-label">since yesterday</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-content">
+            <div> 
+              <p class="card-label">Vulnerabilities</p>
+              <h3 class="card-value" id="vulnerabilityCount">24</h3>
+            </div>
+            <div class="card-icon vulnerability-icon">
+              <span class="material-icons">bug_report</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="trend-down">
+              <span class="material-icons">arrow_downward</span>
+              -3
+            </span>
+            <span class="trend-label">since yesterday</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-content">
+            <div>
+              <p class="card-label">Average CVSS</p>
+              <h3 class="card-value" id="averageCVSS">7.2</h3>
+            </div>
+            <div class="card-icon cvss-icon">
+              <span class="material-icons">assessment</span>
+            </div>
+          </div>
+          <div class="card-tooltip">
+            CVSS score between 7.0-8.9 indicates high severity
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charts Section -->
+      <div class="charts-grid">
+        <div class="chart-card threat-activity">
+          <div class="card-header">
+            <h3>Threat Activity</h3>
+            <!-- <div class="time-buttons">
+              <button class="time-btn">Day</button>
+              <button class="time-btn active">Week</button>
+              <button class="time-btn">Month</button>
+            </div> -->
+          </div>
+          <div class="chart-container">
+            <canvas id="threatActivityChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card threat-types">
+          <div class="card-header">
+            <h3>Threat Types</h3>
+            <!-- <button class="btn-options">
+              <span class="material-icons">more_vert</span>
+            </button> -->
+          </div>
+          <div class="chart-container">
+            <canvas id="threatTypesChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- CVSS and Incidents Section -->
+      <div class="charts-grid">
+        <div class="chart-card cvss-scoreboard">
+          <div class="card-header">
+            <h3>CVSS Scoreboard</h3>
+            <!-- <div class="tooltip-container">
+              <span class="material-icons">help_outline</span>
+              <div class="tooltip">Common Vulnerability Scoring System measures severity of vulnerabilities</div>
+            </div> -->
+          </div>
+          <div class="card-content">
+            <div class="cvss-metrics">
+              <div class="cvss-metric-item">
+                <div class="cvss-metric-header">
+                  <span>Critical (9.0-10.0)</span>
+                  <span class="critical-count">7</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill critical" style="width: 30%"></div>
+                </div>
+              </div>
+              
+              <div class="cvss-metric-item">
+                <div class="cvss-metric-header">
+                  <span>High (7.0-8.9)</span>
+                  <span class="high-count">12</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill high" style="width: 50%"></div>
+                </div>
+              </div>
+              
+              <div class="cvss-metric-item">
+                <div class="cvss-metric-header">
+                  <span>Medium (4.0-6.9)</span>
+                  <span class="medium-count">5</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill medium" style="width: 20%"></div>
+                </div>
+              </div>
+              
+              <div class="cvss-metric-item">
+                <div class="cvss-metric-header">
+                  <span>Low (0.1-3.9)</span>
+                  <span class="low-count">0</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill low" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="cvss-trend">
+              <div class="cvss-trend-label">CVSS Trend</div>
+              <div class="trend-indicator">
+                <span class="material-icons trend-icon">trending_down</span>
+                <span>Average score decreased by 0.3 this week</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <div class="chart-card incidents-table">
+          <div class="card-header">
+            <h3>Recent Incidents</h3>
+            <div class="filter-container">
+              <select id="incidentTypeFilter">
+                <option value="all">All Types</option>
+                <option value="malware">Malware</option>
+                <option value="phishing">Phishing</option>
+                <option value="ddos">DDoS</option> 
+                <option value="breach">Data Breach</option>
+              </select>
+              <!-- <button class="btn-filter">
+                <span class="material-icons">filter_list</span>
+              </button> -->
+            </div>
+          </div>
+          <div class="incident-table-container">
+            <table class="incident-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Incident</th>
+                  <th>Severity</th>
+                  <th>Status</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody id="incidentTableBody">
+                <!-- Incidents will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+          <div class="view-all">
+            <!-- <a href="#" class="link-view-all">
+              View all incidents
+              <span class="material-icons">arrow_forward</span>
+            </a> -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- Vulnerability Management Section -->
+      <div class="vulnerability-section">
+        <div class="section-header">
+          <h3>Vulnerability Management</h3>
+          <!-- <button class="btn-add-scanner">
+            <span class="material-icons">add</span> Add Scanner
+          </button> -->
+        </div>
+        
+        <div class="vulnerability-grid">
+          <div class="chart-card vulnerable-assets">
+            <div class="card-header">
+              <h3>Top Vulnerable Assets</h3>
+              <!-- <button class="btn-options">
+                <span class="material-icons">more_vert</span>
+              </button> -->
+            </div>
+            <div class="card-content" id="vulnerableAssetsList">
+              <!-- Vulnerable assets will be populated by JavaScript -->
+            </div>
+          </div>
+          
+          <div class="chart-card vulnerability-list">
+            <div class="card-header">
+              <h3>Recent Vulnerability Detections</h3>
+              <div class="vulnerability-count"></div>
+            </div>
+            <div class="vulnerability-items" id="vulnerabilityItems">
+              <!-- Vulnerabilities will be populated by JavaScript -->
+            </div>
+            <div class="view-all">
+              <!-- <a href="#" class="link-view-all">
+                View all vulnerabilities
+                <span class="material-icons">arrow_forward</span>
+              </a> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <footer class="dashboard-footer">
+        <p>Security Operations Center Dashboard • Version 1.0.3</p>
+        <p>© 2023 Your Organization • All rights reserved</p>
+      </footer>
+    </main>
+  </div>
+  
+  <script src="30days.js"></script>
+</body>
+<script>
+  function redirectToPage() {
+    const select = document.getElementById("timeRange");
+    const selectedPage = select.value;
+    if (selectedPage) {
+      window.location.href = selectedPage; // Redirect to selected page
+    }
+  }
+</script>
+
+</html>

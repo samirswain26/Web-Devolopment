@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Vulnerabilities Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+       body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            color: black;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        main {
+            width: 90%;
+            margin: 2rem auto;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e9ecef;
+        }
+        .report-section {
+            background: white;
+            padding: 2rem;
+            margin: 2rem auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .report-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .card {
+            flex: 1;
+            min-width: 200px;
+            padding: 1rem;
+            background: #007BFF;
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .footer-link{
+            background-color: blue;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Cybersecurity Vulnerabilities Dashboard</h1>
+    <h2>Last 30 Days</h2>
+</header>
+<main>
+    <!-- New Threat Intelligence Report -->
+    <div class="report-section">
+        <h2>Threat Intelligence Report</h2>
+        <div class="report-cards">
+            <div class="card">Emerging Threats: 14</div>
+            <div class="card">Dark Web Mentions: 238</div>
+            <div class="card">Zero-Day Exploits: 3</div>
+            <div class="card">Exploit Kits Detected: 7</div>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Threat Origin Distribution</h3>
+        <canvas id="threatOriginChart" width="400" height="200"></canvas>
+
+        <h3 style="margin-top: 2rem;">Trending Exploit Techniques</h3>
+        <ul>
+            <li>Fileless Malware (+42%)</li>
+            <li>Living-off-the-Land (+35%)</li>
+            <li>Cloud Credential Harvesting (+28%)</li>
+        </ul>
+    </div>
+
+    <!-- New Vulnerability Exposure Report -->
+    <div class="report-section">
+        <h2>Vulnerability Exposure Report</h2>
+        <div class="report-cards">
+            <div class="card">Internet-Facing: 62</div>
+            <div class="card">Cloud Misconfigs: 28</div>
+            <div class="card">3rd-Party Risks: 17</div>
+            <div class="card">Unpatched Systems: 34</div>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Exposure by Environment</h3>
+        <canvas id="exposureChart" width="400" height="200"></canvas>
+
+        <h3 style="margin-top: 2rem;">High Risk Assets</h3>
+        <ul>
+            <li>Customer Database Cluster</li>
+            <li>Payment Gateway API</li>
+            <li>Legacy ERP System</li>
+        </ul>
+    </div>
+
+    <!-- New Incident Response Metrics Report -->
+    <div class="report-section">
+        <h2>Incident Response Metrics</h2>
+        <div class="report-cards">
+            <div class="card">MTTD: 4.2h</div>
+            <div class="card">MTTR: 8.7h</div>
+            <div class="card">False Positives: 22%</div>
+            <div class="card">Playbook Effectiveness: 78%</div>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Incident Stage Duration</h3>
+        <canvas id="responseMetricsChart" width="400" height="200"></canvas>
+
+        <h3 style="margin-top: 2rem;">Improvement Areas</h3>
+        <ul>
+            <li>Initial Detection (+35% time)</li>
+            <li>Forensic Analysis (+28% time)</li>
+            <li>Stakeholder Communication (+19% time)</li>
+        </ul>
+    </div>
+
+    <!-- Existing Reports Remain Unchanged -->
+    <!-- Weekly Summary Report -->
+    <!-- Threat Analysis Report -->
+    <!-- Incident Response Report -->
+    <!-- Vulnerability Management Report -->
+    <!-- Vulnerability Table -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Existing vulnerability data and chart code remains unchanged
+
+            // New Charts for added reports
+            // Threat Origin Chart
+            new Chart(document.getElementById('threatOriginChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: ['APAC', 'EMEA', 'NAM', 'Unknown'],
+                    datasets: [{
+                        label: 'Threat Origins',
+                        data: [32, 28, 35, 5],
+                        backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0']
+                    }]
+                }
+            });
+
+            // Exposure Chart
+            new Chart(document.getElementById('exposureChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Production', 'Development', 'Staging', 'Cloud'],
+                    datasets: [{
+                        label: 'Exposed Vulnerabilities',
+                        data: [45, 28, 15, 32],
+                        backgroundColor: '#dc3545'
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    scales: {
+                        x: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Response Metrics Chart
+            new Chart(document.getElementById('responseMetricsChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['Detection', 'Containment', 'Eradication', 'Recovery'],
+                    datasets: [{
+                        label: 'Hours Spent',
+                        data: [4.2, 2.1, 1.8, 0.6],
+                        borderColor: '#28a745',
+                        tension: 0.4
+                    }]
+                }
+            });
+        });
+    </script>
+<a class="footer-link" href="30days.html" target="_blank">Back→</a>
+</body>
+</html>

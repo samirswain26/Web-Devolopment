@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cybersecurity Incidents Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      color: black;
+    }
+
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 1rem 0;
+      text-align: center;
+    }
+
+    main {
+      width: 90%;
+      margin: 2rem auto;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: #28a745;
+      color: #fff;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #e9ecef;
+    }
+    .footer-link{
+            background-color: blue;
+            color: white;
+            text-decoration: none;
+            height: 300px;
+        }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Cybersecurity Incidents Dashboard</h1>
+    <h2>Last 30 Days</h2>
+  </header>
+
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Incident Name</th>
+          <th>Impact</th>
+          <th>Detection Method</th>
+          <th>Response Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- JavaScript will populate this -->
+      </tbody>
+    </table>
+    <a class="footer-link" href="30days.html" target="_blank">Back→</a>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const detectionMethods = [
+        "SIEM Alert", "Manual Review", "Endpoint Detection", "Firewall Logs", "Anomaly Detection",
+        "User Report", "Behavior Analytics", "Network Monitor", "Threat Intel", "Audit Logs",
+        // New detection methods
+        "Cloud Monitoring", "DLP Alert", "Honeypot Trigger", "Container Security Scan", "API Gateway Logs"
+      ];
+
+      const responseActions = [
+        "Isolate affected systems", "Initiate incident response plan", "Patch vulnerable systems",
+        "Reset user credentials", "Notify stakeholders", "Conduct forensic analysis",
+        "Block malicious IPs", "Restore from backup", "Update firewall rules", "Report to authorities",
+        // New response actions
+        "Rotate API keys", "Quarantine container", "Update IAM policies", "Purge CDN cache", "Disable compromised endpoints"
+      ];
+
+      const impacts = [
+        "Data Breach", "System Downtime", "Service Disruption", "Financial Loss",
+        "Credential Theft", "Reputation Damage", "Malware Spread", "Unauthorized Access",
+        "Policy Violation", "Data Loss",
+        // New impacts
+        "Cloud Compromise", "API Abuse", "Container Escape", "Supply Chain Attack", "Cryptojacking"
+      ];
+
+      const incidents = [];
+
+      // Increased loop count to 110 to add 5 more incidents
+      for (let i = 1; i <= 110; i++) {
+        incidents.push({
+          id: i,
+          name: `Incident ${i}`,
+          impact: impacts[Math.floor(Math.random() * impacts.length)],
+          detection: detectionMethods[Math.floor(Math.random() * detectionMethods.length)],
+          response: responseActions[Math.floor(Math.random() * responseActions.length)]
+        });
+      }
+
+      const tbody = document.querySelector("tbody");
+      tbody.innerHTML = "";
+
+      incidents.forEach(incident => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${incident.id}</td>
+          <td>${incident.name}</td>
+          <td>${incident.impact}</td>
+          <td>${incident.detection}</td>
+          <td>${incident.response}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    });
+  </script>
+</body>
+</html>

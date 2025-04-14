@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Vulnerabilities Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            color: black;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        main {
+            width: 90%;
+            margin: 2rem auto;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e9ecef;
+        }
+        .report-section {
+            background: white;
+            padding: 2rem;
+            margin: 2rem auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .report-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .card {
+            flex: 1;
+            min-width: 200px;
+            padding: 1rem;
+            background: #007BFF;
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .footer-link{
+            background-color: blue;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Cybersecurity Vulnerabilities Dashboard</h1>
+    <h2>Overall Data</h2>
+</header>
+<main>
+    <div class="report-section">
+        <h2>Weekly Summary Report</h2>
+        <div class="report-cards">
+            <div class="card">Threats Detected: 132</div>
+            <div class="card">New Vulnerabilities: 18</div>
+            <div class="card">Incidents Investigated: 7</div>
+            <div class="card">Resolved Issues: 11</div>
+            <div class="card">Pending Actions: 6</div>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Risk Level Distribution</h3>
+        <canvas id="riskChart" width="400" height="200"></canvas>
+
+        <h3 style="margin-top: 2rem;">Top 5 Vulnerabilities</h3>
+        <ul>
+            <li>Remote Code Execution in Apache</li>
+            <li>SQL Injection in Admin Panel</li>
+            <li>Cross-Site Scripting in User Forms</li>
+            <li>Unauthenticated Access in Backup API</li>
+            <li>Weak TLS Configuration</li>
+        </ul>
+
+        <h3 style="margin-top: 2rem;">Monthly Incident Trends</h3>
+        <canvas id="incidentChart" width="400" height="200"></canvas>
+
+        <h3 style="margin-top: 2rem;">Mitigation Progress</h3>
+        <ul>
+            <li>Patches Applied: 83%</li>
+            <li>Systems Audited: 70%</li>
+            <li>Endpoint Protection Active: 92%</li>
+        </ul>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Vulnerability Name</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Mitigation</th>
+            </tr>
+        </thead>
+        <tbody id="vulnerabilityTableBody"></tbody>
+    </table>
+    
+    <a class="footer-link" href="main.html" target="_blank">Back→</a>
+    
+</main>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const vulnerabilities = [
+            { id: 1, name: "Vulnerability 1: Mobile Risk in Cryptography", description: "API exposes internal data structures or logic.", category: "API Security", mitigation: "Employ strong encryption algorithms and protocols." },
+            { id: 2, name: "Vulnerability 2: Use Risk in Configuration", description: "Improper access control lets unauthorized users escalate privileges.", category: "Access Control", mitigation: "Employ strong encryption algorithms and protocols." },
+            { id: 3, name: "Vulnerability 3: Allows Risk in API Security", description: "Missing input validation permits injection attacks.", category: "Mobile Security", mitigation: "Apply API rate limiting and input validation." },
+            { id: 4, name: "Vulnerability 4: Security Risk in Cryptography", description: "Session IDs are predictable and can be hijacked.", category: "Authentication", mitigation: "Secure mobile storage and enforce encryption policies." },
+            { id: 5, name: "Vulnerability 5: Improper Risk in Access Control", description: "Improper access control lets unauthorized users escalate privileges.", category: "Cryptography", mitigation: "Ensure encryption of all sensitive data in transit." },
+        ];
+
+        const tbody = document.getElementById("vulnerabilityTableBody");
+        vulnerabilities.forEach(vuln => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${vuln.id}</td>
+                <td>${vuln.name}</td>
+                <td>${vuln.description}</td>
+                <td>${vuln.category}</td>
+                <td>${vuln.mitigation}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        // Risk Chart
+        new Chart(document.getElementById('riskChart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: ['Critical', 'High', 'Medium', 'Low'],
+                datasets: [{
+                    label: 'Risk Levels',
+                    data: [9, 21, 45, 57],
+                    backgroundColor: ['#dc3545', '#fd7e14', '#ffc107', '#28a745']
+                }]
+            }
+        });
+
+        // Incident Chart
+        new Chart(document.getElementById('incidentChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['January', 'February', 'March', 'April'],
+                datasets: [{
+                    label: 'Incidents',
+                    data: [5, 8, 12, 6],
+                    backgroundColor: '#007BFF'
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>
