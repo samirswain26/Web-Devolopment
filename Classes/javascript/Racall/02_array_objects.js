@@ -46,13 +46,13 @@ console.log(menu.name)
 console.log(menu.ingredients.Spices[3])
 
 let updatedmenu = {
-    ...menu,
+    ...menu,           // ... is used to use the existing object to use in it.
     Instruction: "MAke it faster"
 }
 
 console.log(updatedmenu);
 
-let {name, ingredients} = menu
+let {name, ingredients} = menu           // Name and ingredients are taken from the menu objects as bith are present in the particular object.
 let [marvelheros,  dcheros] = allheros
 
 console.log(ingredients);
