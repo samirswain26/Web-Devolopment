@@ -30,3 +30,30 @@ console.log(allheros);
 let newtype = [...Heros, "hulk"]
 console.log(newtype);
 
+
+let menu = {
+    name: "biryani",
+    ingredients : {
+        Rice : "Deradun Rice",
+        Chicken : "Large Size Peaces",
+        Oil : "Refined",
+        Spices : ["Daalchini", "ginger", "Onion", "Garlic"]
+    },
+    Instruction : "Make this in a low flame"
+}
+
+console.log(menu.name)
+console.log(menu.ingredients.Spices[3])
+
+let updatedmenu = {
+    ...menu,
+    Instruction: "MAke it faster"
+}
+
+console.log(updatedmenu);
+
+let {name, ingredients} = menu
+let [marvelheros,  dcheros] = allheros
+
+console.log(ingredients);
+console.log(dcheros);
