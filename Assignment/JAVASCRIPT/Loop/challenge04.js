@@ -1,6 +1,5 @@
-// Cretae a function that takes an array of water amount (in liters) for each bottle and add them up.The fumction should return the total amount of water you've filled in all the bottles.
-
-let water = [1,2,3,4]
+// Cretae a function that takes an array of water amount (in liters) for each bottle and add them up.
+// The fumction should return the total amount of water you've filled in all the bottles.
 
 function totalWater(waterAmounts) {
     let total = 0;
