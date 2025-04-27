@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul id="items"></ul>
+</body>
+<script>
+    const item = document.getElementById("items")
+
+    function rendertoscreen(obj){
+            const products = obj.data.data
+            console.log(products)
+            products.forEach(element => {
+                const li = document.createElement("li")
+                li.innerText = element.title
+                items.appendChild(li)
+            });
+    }
+
+    fetch("https://api.freeapi.app/api/v1/public/randomproducts?page=1&limit=10&inc=category%252Cprice%252Cthumbnail%252Cimages%252Ctitle%252Cid&query=mens-watches")
+    .then((response) => (response.json()))
+        .then(rendertoscreen)
+    .catch((err)=>{})
+    .finally(()=>{})
+</script>
+</html>
