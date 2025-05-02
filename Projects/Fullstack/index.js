@@ -13,7 +13,7 @@ const app = express()
 
 app.use(
     cors({
-        origuin: process.env.base_URL,
+        origin: process.env.base_URL,
         methods: ["GET", 'POST', "DELETE", 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization']
     })
@@ -25,15 +25,6 @@ app.use(express.urlencoded({extended: true}))
 
 const port = process.env.PORT || 4000;
 
-app.get('/', (req, res) => {
-  res.send('Cohort!')
-})
-app.get('/samir', (req, res) => {
-  res.send('Hii Samir!')
-})
-app.get('/jitu', (req, res) => {
-  res.send('Hii !')
-})
 
 // Connect to db
 db();
