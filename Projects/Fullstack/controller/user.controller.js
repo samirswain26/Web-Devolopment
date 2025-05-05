@@ -162,8 +162,8 @@ const login = async (req, res) => {
             token,
             user: {
                 id: user._id,
-                name: user._name,
-                role: user._role
+                name: user.name,
+                role: user.role
             }
         })
 
