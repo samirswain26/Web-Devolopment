@@ -65,7 +65,7 @@ const registeruser = async (req,res) => {
                 to: user.email,  
                 subject: "Verify Your Email", // Subject line
                 text: `Please click on the following link:
-                ${process.env.BASE_URL}/api/v1/users${token}`
+                ${process.env.BASE_URL}/api/v1/users/verify/${token}`
           }
 
         await transporter.sendMail(mailOption) 
