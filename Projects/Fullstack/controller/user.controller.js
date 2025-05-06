@@ -145,7 +145,7 @@ const login = async (req, res) => {
         // verify the email as isVerifed fireld....
 
         const token = jwt.sign({id: user._id, reole: user.role},
-            "shhhhh", {
+            process.env.JWT_SECRET, {
                 expiresIn: "24h"
             }
         );
@@ -155,7 +155,7 @@ const login = async (req, res) => {
             secure: true,
             maxAge: 24*60*60*1000
         }
-        res.cookie("test", token, cookieOption)
+        res.cookie("token", token, cookieOption)
 
         res.status(200).json({
             message: "Login Successful",
@@ -172,4 +172,40 @@ const login = async (req, res) => {
     }
 }
 
-export {registeruser, verifyUser, login}
+const getMe = async (req, res) => {
+    try {
+        let data = req.user
+        console.log(`Reached at Profile level.`, data)
+    } catch (error) {
+        
+    }
+}
+
+
+const logoutUser = async (req, res) => {
+    try {
+        
+    } catch (error) {
+        
+    }
+}
+
+const forgotPassword = async (req, res) => {
+    try {
+        
+    } catch (error) {
+        
+    }
+}
+
+
+const resetPassword = async (req, res) => {
+    try {
+        
+    } catch (error) {
+        
+    }
+}
+
+
+export {registeruser, verifyUser, login, getMe, logoutUser, forgotPassword, resetPassword}
