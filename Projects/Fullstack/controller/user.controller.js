@@ -144,7 +144,7 @@ const login = async (req, res) => {
 
         // verify the email as isVerifed fireld....
 
-        const token = jwt.sign({id: user._id, reole: user.role},
+        const token = jwt.sign({id: user._id, role: user.role},
             process.env.JWT_SECRET, {
                 expiresIn: "24h"
             }
@@ -176,6 +176,18 @@ const getMe = async (req, res) => {
     try {
         let data = req.user
         console.log(`Reached at Profile level.`, data)
+        const user = await User.findById(req.user.id).select(-password)
+        if(!user){
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            user
+        })
     } catch (error) {
         
     }
@@ -184,7 +196,12 @@ const getMe = async (req, res) => {
 
 const logoutUser = async (req, res) => {
     try {
-        
+        res.cookie('token', '', {})
+        // expires: new date(0)
+        res.status(200).json({
+            success: true,
+            message: "Logged Out Sucessfully"
+        })
     } catch (error) {
         
     }
