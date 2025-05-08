@@ -209,16 +209,104 @@ const logoutUser = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
     try {
-        
+    //get email
+    // find user based on email
+    // reset token + reset expiry => Date.now() + 10 * 60 * 1000 => user.save()
+    // send mail => design url
+
+    const {email} = req.body
+    console.log(email)
+    if(!email){
+        return res.status(400).json({
+            message: "Please Enter Email"
+        })
+    }
+    const user = await User.findOne({email: email})
+    console.log(user);
+    
+    console.log("Idhar se niche nahi gaya")
+
+    const token = crypto.randomBytes(32).toString("hex")
+    console.log(token)
+    user.resetPasswordToken = token
+
+    const resetExpires = Date.now() + 60 * 60 * 1000
+    user.resetPasswordExpiries = resetExpires
+    console.log(resetExpires)
+
+    await user.save()
+
+
+    // send email
+    const transporter = nodemailer.createTransport({
+        host: process.env.MAILTRAP_HOST,
+        port: process.env.MAILTRAP_PORT,
+        secure: false, 
+        auth: {
+          user: process.env.MAILTRAP_USERNAME,
+          pass: process.env.MAILTRAP_PASSWORD,
+        },
+      });
+
+      const mailOption = {
+            from: process.env.MAILTRAP_SENDEREMAIL,
+            to: user.email,  
+            subject: "Forgot Password", // Subject line
+            text: `Please click on the following link:
+            ${process.env.BASE_URL}/api/v1/users/reset/${token}`
+      }
+
+    await transporter.sendMail(mailOption) 
+
+    res.status(201).json({
+        message: "Message Sent to your email",
+        success: true
+    })
+
     } catch (error) {
-        
+        res.status(404).json({
+            message: "Please Enter A Valid Email"
+        })
     }
 }
 
 
 const resetPassword = async (req, res) => {
     try {
-        
+    //collect token from params
+    // password from req.body
+    const { token } = req.params;
+    const { password, confPassword } = req.body;
+
+    if (password === confPassword) {
+        try {
+            const newpassword = await User.findOne({password: password})
+            user.password = newpassword
+            console.log(newpassword)
+        } catch (error) {
+            res.status(201).json({
+                message: "Password Field Is Incorrect"
+            })
+        }
+    }
+        console.log("Code ab idhar hai")
+    try {
+      const user = await User.findOne({
+        resetPasswordToken: token,
+        resetPasswordExpires: { $gt: Date.now() },
+      });
+      // set password in user
+    const newpassword = await User.findOne({password: password})
+    user.password = newpassword
+    user.password = newpassword
+      // resetToken, resetExpiry => reset
+    
+    user.resetPasswordToken = ""
+    user.resetPasswordExpiries = ""
+
+    await user.save()
+    } catch (error) {}
+
     } catch (error) {
         
     }
