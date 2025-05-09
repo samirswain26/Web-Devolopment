@@ -224,7 +224,6 @@ const forgotPassword = async (req, res) => {
     const user = await User.findOne({email: email})
     console.log(user);
     
-    console.log("Idhar se niche nahi gaya")
 
     const token = crypto.randomBytes(32).toString("hex")
     console.log(token)
@@ -277,38 +276,36 @@ const resetPassword = async (req, res) => {
     // password from req.body
     const { token } = req.params;
     const { password, confPassword } = req.body;
+ 
+    if(password === confPassword){
+        console.log("same hai")
 
-    if (password === confPassword) {
+        const confirmPassword  = (confPassword === password )
+
         try {
-            const newpassword = await User.findOne({password: password})
-            user.password = newpassword
-            console.log(newpassword)
-        } catch (error) {
-            res.status(201).json({
-                message: "Password Field Is Incorrect"
-            })
-        }
-    }
-        console.log("Code ab idhar hai")
-    try {
-      const user = await User.findOne({
-        resetPasswordToken: token,
-        resetPasswordExpires: { $gt: Date.now() },
-      });
-      // set password in user
-    const newpassword = await User.findOne({password: password})
-    user.password = newpassword
-    user.password = newpassword
-      // resetToken, resetExpiry => reset
-    
-    user.resetPasswordToken = ""
-    user.resetPasswordExpiries = ""
+            const user = await User.findOne({
+            resetPasswordToken : token,
+            resetPasswordExpiries :  {$gt: Date.now()}
+           
+        })
+        if(!user){res.status(404).json({message: "Token not found"})}
 
-    await user.save()
-    } catch (error) {}
+        user.password = confirmPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpiries = undefined;
+        await user.save()
 
     } catch (error) {
-        
+        res.status(404).json({
+            message: "Code Faat gaya"
+        })
+    }
+    }else{console.log("Password and confirm password are not equal")}
+
+} catch (error) {
+        res.status(400).json({
+            message: "Something Gone Wrong while Reseting password"
+        })
     }
 }
 
