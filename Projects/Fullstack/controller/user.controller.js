@@ -278,7 +278,7 @@ const resetPassword = async (req, res) => {
     const { password, confPassword } = req.body;
  
     if(password === confPassword){
-        console.log("same hai")
+        console.log("Password Matched")
 
         const confirmPassword  = (confPassword === password )
 
