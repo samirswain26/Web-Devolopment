@@ -275,12 +275,12 @@ const resetPassword = async (req, res) => {
     //collect token from params
     // password from req.body
     const { token } = req.params;
-    const { password, confPassword } = req.body;
+    const { password, confirmPassword } = req.body;
  
-    if(password === confPassword){
+    if(password === confirmPassword){
         console.log("Password Matched")
 
-        const confirmPassword  = (confPassword === password )
+        const confPassword  = password
 
         try {
             const user = await User.findOne({
@@ -290,21 +290,32 @@ const resetPassword = async (req, res) => {
         })
         if(!user){res.status(404).json({message: "Token not found"})}
 
-        user.password = confirmPassword;
+        user.password = confPassword;
         user.resetPasswordToken = undefined;
         user.resetPasswordExpiries = undefined;
         await user.save()
-
+        console.log("Kaam Hogaya")
+        
+        res.status(200).json({
+            message: "Password changed successfully!"
+        })
+       
     } catch (error) {
         res.status(404).json({
             message: "Code Faat gaya"
-        })
+        })   
     }
-    }else{console.log("Password and confirm password are not equal")}
+
+
+    }else{
+        res.status(404).json({
+            message: "Password and confirm password are not equal",
+            success: false,
+        })}
 
 } catch (error) {
         res.status(400).json({
-            message: "Something Gone Wrong while Reseting password"
+            message: "Password and confirm password are not equal"
         })
     }
 }
