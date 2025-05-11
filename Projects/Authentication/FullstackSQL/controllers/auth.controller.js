@@ -88,7 +88,7 @@ export const loginUser = async (req, res) => {
         const cookieOptions = {
             httpOnly: true
         }
-        res.cookie("token",jwtToken, cookieOptions )
+        res.cookie("token",jwtToken, cookieOptions)
 
         return res.status(200).json({
             success: true,
@@ -98,7 +98,7 @@ export const loginUser = async (req, res) => {
                 email: user.email,
                 phone: user.phone
             },
-            message: 
+            message: "User Login Successfully"
 
         })
 
