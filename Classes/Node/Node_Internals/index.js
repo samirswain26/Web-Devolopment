@@ -15,5 +15,37 @@ a.writeFile("./test.txt", "Hello World!", () => {})
 const abc = require("./math")
 // console.log(math.add(2,6))
 
-console.log(abc.add(2,7))
-console.log(abc.multiply(2,7))
+// console.log(abc.add(2,7))
+// console.log(abc.multiply(2,7))
+
+
+// To create a server Nodes gives you a "http" package
+
+const http = require('http')
+const express = require("express")
+
+const handelerfuncv2 = express()
+handelerfuncv2.get("/", (req,res) => res.end("HOMEPAGE"))
+handelerfuncv2.get("/about-us", (req,res) => res.end("About us"))
+handelerfuncv2.get("/contact", (req,res) => res.end("Contact Us"))
+
+function handelerfunc (req, res){
+    console.log('Incoming Req Aagya.....');
+    switch(req.method){
+        case "GET": {
+            if(req.url === '/') return res.end("Homepage")
+            if(req.url === '/about-us') return res.end("About Us")
+            if(req.url === '/contact') return res.end("Contact Us")
+        }
+        break;
+        case "POST":{}
+        break;
+    }
+    console.log(req.url), console.log(req.method)
+}
+const server = http.createServer(handelerfuncv2)
+
+
+server.listen(8000, function(){
+    console.log("Server Started")
+})
