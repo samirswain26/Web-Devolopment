@@ -24,10 +24,10 @@ const abc = require("./math")
 const http = require('http')
 const express = require("express")
 
-const handelerfuncv2 = express()
-handelerfuncv2.get("/", (req,res) => res.end("HOMEPAGE"))
-handelerfuncv2.get("/about-us", (req,res) => res.end("About us"))
-handelerfuncv2.get("/contact", (req,res) => res.end("Contact Us"))
+const app = express()
+app.get("/", (req,res) => res.end("HOMEPAGE"))
+app.get("/about-us", (req,res) => res.end("About us"))
+app.get("/contact", (req,res) => res.end("Contact Us"))
 
 function handelerfunc (req, res){
     console.log('Incoming Req Aagya.....');
@@ -43,7 +43,7 @@ function handelerfunc (req, res){
     }
     console.log(req.url), console.log(req.method)
 }
-const server = http.createServer(handelerfuncv2)
+const server = http.createServer(app)
 
 
 server.listen(8000, function(){
