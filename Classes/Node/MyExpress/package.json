@@ -1,0 +1,19 @@
+{
+  "name": "myexpress",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "module-alias": "^2.2.3"
+  },
+  "_moduleAliases": {
+  "server": "server.js"
+},
+
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
