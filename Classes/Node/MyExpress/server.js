@@ -1,5 +1,4 @@
 const http = require("http");
-// const path = require("path");
 
 function createServer(){
     const routes = {GET:{}, POST:{}}
