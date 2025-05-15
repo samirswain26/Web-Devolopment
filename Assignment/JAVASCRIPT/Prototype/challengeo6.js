@@ -2,25 +2,19 @@
 // Create a BankAccount constructor that initializes:
 
     // A balance property representing the account balance.
-
     // A transactions array to log all deposit and withdrawal activities.
 
 // Implement the following methods on the prototype:
 
     // deposit(amount):
-
     // Increases the balance by the given amount.
-
     // Adds a transaction log in the format: "Deposited X" (where X is the amount).
 
 // withdraw(amount):
 
     // Decreases the balance by the given amount.
-
     // Prevents overdraft (cannot withdraw if balance is insufficient).
-
     // If withdrawal is successful, log: "Withdrew X".
-
     // If balance is insufficient, log: "Insufficient balance".
 
 // getTransactionHistory():
