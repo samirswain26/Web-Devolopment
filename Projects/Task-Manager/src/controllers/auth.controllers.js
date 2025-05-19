@@ -14,14 +14,16 @@ const registerUser = asyncHandler(async (req ,res)=>{
 
     try {
       const existingUser = await User.findOne({email})
+      console.log(existingUser)
       if(existingUser){
         return res.ststus(400).json({
           message: "User already exists."
         })
       }
 
+
       const user = await User.create({
-        name,
+        username,
         email,
         password,
       })
@@ -32,7 +34,6 @@ const registerUser = asyncHandler(async (req ,res)=>{
           message: "User registration failed!"
         })
       }
-
     } catch (error) {
       res.status(400).json({
           message: "User not registered ",
