@@ -1,26 +1,25 @@
 import User from "../../../Authentication/Fullstack/model/User.model.js"
 import {asyncHandler} from "../utils/async-handler.js"
 import {userRegistrationValidator} from "../validators/index.js"
+import crypto from "crypto"
 
 const registerUser = asyncHandler(async (req ,res)=>{
-    const {email,username, password, role} = req.body
+    const {username,email, password, role, fullname} = req.body
 
     // Validation
 
-    if(!email || !username || !password || !role){
-      return res.starus(404).json({
+    if( !username || !email || !password || !role || !fullname){
+      return res.status(404).json({
         message: "All fields are required"
       })
     }
-
-   
     console.log(email)
+    
 
     try {
       const existingUser = await User.findOne({email})
-      console.log(existingUser)
       if(existingUser){
-        return res.ststus(400).json({
+        return res.status(400).json({
           message: "User already exists."
         })
       }
@@ -30,27 +29,40 @@ const registerUser = asyncHandler(async (req ,res)=>{
         username,
         email,
         password,
+        role,
+        fullname
       })
       console.log(user)
 
       if(!user){
-        return res.ststus(400).json({
-          message: "User registration failed!"
-        })
+          return res.status(400).json({
+              message: "User Not Registered"
+          })
       }
 
-      
-      
-    } catch (error) {
-      res.status(400).json({
-          message: "User not registered ",
-          error,
-          success: false,
-      })
-    }
 
-})
+      const token = crypto.randomBytes(12).toString("hex")
+      console.log(token)
+      user.emailVerificationToken = token
 
+      await user.save()
+      
+      // Add a success response
+      return res.status(201).json({
+        message: "User registered successfully",
+        success: true,
+        userId: user._id
+      });
+
+    }catch (error) {
+    console.error("Registration error:", error); // Add error logging
+    return res.status(400).json({ // Added return statement
+      message: "User not registered",
+      error: error.message, // Send error message instead of full error object
+      success: false,
+    });
+  }
+});
 
 
 
