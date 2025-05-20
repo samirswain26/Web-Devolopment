@@ -1,15 +1,19 @@
 import User from "../../../Authentication/Fullstack/model/User.model.js"
 import {asyncHandler} from "../utils/async-handler.js"
+import {userRegistrationValidator} from "../validators/index.js"
 
 const registerUser = asyncHandler(async (req ,res)=>{
     const {email,username, password, role} = req.body
 
     // Validation
+
     if(!email || !username || !password || !role){
       return res.starus(404).json({
         message: "All fields are required"
       })
     }
+
+   
     console.log(email)
 
     try {
@@ -34,6 +38,9 @@ const registerUser = asyncHandler(async (req ,res)=>{
           message: "User registration failed!"
         })
       }
+
+      
+      
     } catch (error) {
       res.status(400).json({
           message: "User not registered ",
