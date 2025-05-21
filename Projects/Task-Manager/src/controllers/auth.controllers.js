@@ -1,4 +1,4 @@
-import User from "../../../Authentication/Fullstack/model/User.model.js"
+import {User} from "../models/user.models.js"
 import {asyncHandler} from "../utils/async-handler.js"
 import {userRegistrationValidator} from "../validators/index.js"
 import crypto from "crypto"
@@ -8,7 +8,7 @@ const registerUser = asyncHandler(async (req ,res)=>{
 
     // Validation
 
-    if( !username || !email || !password || !role || !fullname){
+    if( !username || !email || !password || !role || !fullname ){
       return res.status(404).json({
         message: "All fields are required"
       })

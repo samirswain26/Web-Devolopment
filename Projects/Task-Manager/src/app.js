@@ -1,6 +1,5 @@
 import express from "express"
 import cors from "cors"
-import db from "../src/db/index.js"
 
 const app = express()
 
@@ -20,6 +19,5 @@ import authrouter from "./routes/auth.routes.js"
 app.use("/api/v1", healthcheckrouter)
 app.use("/api/v1", authrouter)
 
-db()
 
 export default app;

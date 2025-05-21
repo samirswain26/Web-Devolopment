@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import crypto from "crypto"
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
     avatar: {
         type: {
            url: String,
@@ -106,4 +106,4 @@ userSchema.methods.generateTemporaryToken = function (){
     return {unHashedToken, hashedToken, TokenExpiry}
 }
 
-export const User = mongoose.model("User", userSchema)
+export const User = new mongoose.model("User", userSchema)
