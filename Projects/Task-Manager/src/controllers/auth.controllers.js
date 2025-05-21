@@ -41,10 +41,17 @@ const registerUser = asyncHandler(async (req ,res)=>{
       }
 
 
-      const token = crypto.randomBytes(12).toString("hex")
-      console.log(token)
-      user.emailVerificationToken = token
 
+
+      const token = user.generateTemporaryToken()
+      console.log(token)
+      const hashedToken = token.hashedToken
+      user.emailVerificationToken = hashedToken
+      console.log(hashedToken)
+      const TokenExpiry = token.TokenExpiry
+      user.emailVerificationExpiry = TokenExpiry
+
+      
       await user.save()
       
       // Add a success response
@@ -55,10 +62,10 @@ const registerUser = asyncHandler(async (req ,res)=>{
       });
 
     }catch (error) {
-    console.error("Registration error:", error); // Add error logging
-    return res.status(400).json({ // Added return statement
+    console.error("Registration error:", error); 
+    return res.status(400).json({ 
       message: "User not registered",
-      error: error.message, // Send error message instead of full error object
+      error: error.message, 
       success: false,
     });
   }
