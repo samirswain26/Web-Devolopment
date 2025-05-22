@@ -59,11 +59,11 @@ const registerUser = asyncHandler(async (req ,res)=>{
 
       // Send Mail 
 
-      // const username = user.username
-      // const email = user.email
+      
       const verificationUrl = `${process.env.BASE_URL}/api/v1/verify/${token.unHashedToken}`
 
       await sendMail({
+        subject:" Verify Your Account",
         email: email,
         username: username,
         mailGenContent: emailVerificationMailContent(username, verificationUrl)

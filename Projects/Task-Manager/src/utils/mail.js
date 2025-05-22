@@ -34,7 +34,7 @@ const sendMail = async (options) => {
     });
 
     const mail = {
-        from:  'mail.taskmanager@example.com',
+        from:  'mail.taskmanager@example.com',   // We can name this anything. The mail will go to your Mailtrap inbox
         to: options.email,
         subject: options.subject,
         text: emailText,
@@ -44,6 +44,11 @@ const sendMail = async (options) => {
     try {
         await transporter.sendMail(mail)
     } catch (error) {
+        // As sending email is not strongly coupled to the business logic it is not worth to raise an error when email sending fails
+        // So it's better to fail silently rather than breaking the app
+        console.error(
+          "Email service failed silently. Make sure you have provided your MAILTRAP credentials in the .env file",
+        );
         console.error("email failed", error)
     }
 
@@ -56,7 +61,7 @@ const emailVerificationMailContent = (username, verificationUrl) => {
             name: username,
             intro: 'Welcome to App! We\'re very excited to have you on board.',
             action: {
-            instructions: 'To get started with our App, please click here:',
+            instructions: 'To verify your email please click on the following button:',
             button: {
                 color: '#22BC66', // Optional action button color
                 text: 'Verify your email',
