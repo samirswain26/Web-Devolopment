@@ -2,6 +2,7 @@ import {User} from "../models/user.models.js"
 import {asyncHandler} from "../utils/async-handler.js"
 import {userRegistrationValidator} from "../validators/index.js"
 import nodemailer from "nodemailer"
+import {sendMail, emailVerificationMailContent, forgotPasswordMailGenContent } from "../utils/mail.js"
 
 const registerUser = asyncHandler(async (req ,res)=>{
     const {username,email, password, role, fullname} = req.body
@@ -57,26 +58,17 @@ const registerUser = asyncHandler(async (req ,res)=>{
 
 
       // Send Mail 
-      const transporter = nodemailer.createTransport({
-            host: process.env.MAILTRAP_SMTP_HOST,
-            port: process.env.MAILTRAP_SMTP_PORT,
-            secure: false, 
-            auth: {
-              user: process.env.MAILTRAP_SMTP_USER,
-              pass: process.env.MAILTRAP_SMTP_PASS,
-            },
-          });
 
-          const mailOption = {
-                from: process.env.MAILTRAP_SENDEREMAIL,
-                to: user.email,  
-                subject: "Verify Your Email", // Subject line
-                text: `Please click on the following link:
-                ${process.env.BASE_URL}/api/v1/verify/${token.unHashedToken}`
-          }
+      // const username = user.username
+      // const email = user.email
+      const verificationUrl = `${process.env.BASE_URL}/api/v1/verify/${token.unHashedToken}`
 
-        await transporter.sendMail(mailOption)
-
+      await sendMail({
+        email: email,
+        username: username,
+        mailGenContent: emailVerificationMailContent(username, verificationUrl)
+      })
+      
 
       
       // Add a success response

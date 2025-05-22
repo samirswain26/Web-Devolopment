@@ -1,13 +1,17 @@
-import { text } from "express";
 import Mailgen from "mailgen"
 import nodemailer from "nodemailer"
+import dotenv from "dotenv"
+
+dotenv.config({
+    path: "../.env"
+})
 
 const sendMail = async (options) => {
       const mailGenerator = new Mailgen({
       theme: 'default',
       product: {
                  name: 'Task Manager',
-                 link: 'https://mailgen.js/'
+                 link: 'https://taskmanager.app'
                  // Optional product logo
                  // logo: 'https://mailgen.js/img/logo.png'
              }
@@ -85,3 +89,6 @@ const forgotPasswordMailGenContent = (username, forgotPasswordUrl) => {
         }
     }
 }
+
+
+export {sendMail, emailVerificationMailContent, forgotPasswordMailGenContent}
