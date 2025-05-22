@@ -1,8 +1,8 @@
 import {User} from "../models/user.models.js"
 import {asyncHandler} from "../utils/async-handler.js"
-import {userRegistrationValidator} from "../validators/index.js"
-import nodemailer from "nodemailer"
 import {sendMail, emailVerificationMailContent, forgotPasswordMailGenContent } from "../utils/mail.js"
+import jwt from "jsonwebtoken"
+import crypto from "crypto"
 
 const registerUser = asyncHandler(async (req ,res)=>{
     const {username,email, password, role, fullname} = req.body
@@ -42,7 +42,7 @@ const registerUser = asyncHandler(async (req ,res)=>{
       }
 
 
-
+      // Verification Token
 
       const token = user.generateTemporaryToken()
       console.log(token)
@@ -53,31 +53,30 @@ const registerUser = asyncHandler(async (req ,res)=>{
       user.emailVerificationExpiry = TokenExpiry
 
       
-      await user.save()
-
-
-
-      // Send Mail 
-
       
+      
+      
+      // Send Mail 
+      
+      const jwttoken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "30m"});
       const verificationUrl = `${process.env.BASE_URL}/api/v1/verify/${token.unHashedToken}`
-
       await sendMail({
         subject:" Verify Your Account",
-        email: email,
+        email: user.email,
         username: username,
         mailGenContent: emailVerificationMailContent(username, verificationUrl)
       })
       
-
+      
       
       // Add a success response
-      return res.status(201).json({
+      res.status(201).json({
         message: "User registered successfully",
         success: true,
         userId: user._id
       });
-
+      await user.save()
+      
     }catch (error) {
     console.error("Registration error:", error); 
     return res.status(400).json({ 
@@ -88,6 +87,38 @@ const registerUser = asyncHandler(async (req ,res)=>{
   }
 });
 
+
+
+const verifyEmail = asyncHandler(async (req, res) => {
+
+  // Route: GET /api/auth/verify/:token
+  const { token } = req.params;
+  // convert the token to hash get by param 
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex")
+  console.log(hashedToken);
+    if(!token){
+        return res.status(400).json({
+            message: "Invalid token"
+        })
+    }
+    const user = await User.findOne({emailVerificationToken: hashedToken})
+    if(!user){
+        return res.status(400).json({
+            message: "Invalid token"
+        })
+    }
+
+    user.isEmailVerified = true
+    user.emailVerificationToken = undefined
+    user.emailVerificationExpiry = undefined
+    await user.save()
+
+    res.status(201).json({
+      message: "User verified successfully...",
+      success: true
+    })
+     
+});
 
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -102,11 +133,6 @@ const logoutUser = asyncHandler(async (req, res) => {
   //validation
 });
 
-const verifyEmail = asyncHandler(async (req, res) => {
-  const { email, username, password, role } = req.body;
-
-  //validation
-});
 
 const resendEmailVerification = asyncHandler(async (req, res) => {
   const { email, username, password, role } = req.body;
