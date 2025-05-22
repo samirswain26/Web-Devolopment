@@ -91,7 +91,6 @@ const registerUser = asyncHandler(async (req ,res)=>{
 
 const verifyEmail = asyncHandler(async (req, res) => {
 
-  // Route: GET /api/auth/verify/:token
   const { token } = req.params;
   // convert the token to hash get by param 
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex")
