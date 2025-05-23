@@ -3,6 +3,9 @@ import {asyncHandler} from "../utils/async-handler.js"
 import {sendMail, emailVerificationMailContent, forgotPasswordMailGenContent } from "../utils/mail.js"
 import jwt from "jsonwebtoken"
 import crypto from "crypto"
+import { error } from "console"
+import { fail } from "assert"
+
 
 const registerUser = asyncHandler(async (req ,res)=>{
     const {username,email, password, role, fullname} = req.body
@@ -111,19 +114,70 @@ const verifyEmail = asyncHandler(async (req, res) => {
     user.emailVerificationToken = undefined
     user.emailVerificationExpiry = undefined
     await user.save()
-
+    
+    console.log("User verified successfully...")
     res.status(201).json({
       message: "User verified successfully...",
       success: true
     })
-     
 });
 
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { email, username, password, role } = req.body;
+  const { email, password } = req.body;
+  
+  if(!email && !password){
+    return res.status(400).json({
+      message: "Please Enter Email and Password"
+    })
+  }
 
-  //validation
+  try {
+    const user = await User.findOne({email})
+    if(!user){
+      return res.status(400).json({
+        message: "User not found"
+      })
+    }
+    const ismatched = await  user.isPasswordCorrect(password)
+    console.log(ismatched)
+
+    if(!ismatched){
+      console.log("Password did not match")
+      return res.status(400).json({
+        message: "Invalid email or password",
+        error : error.message,
+        success: false
+      })
+    }
+
+    const jwtAccessToken =  await user.generateAccessToken(user)
+
+    const cookieOption = {
+      httpOnly: true,
+      secure: true,
+      maxAge : 20*60*60*1000
+    }
+    res.cookie("jwtAccessToken", jwtAccessToken, cookieOption)
+
+    res.status(200).json({
+      message: "Login Successful",
+      jwtAccessToken,
+      user:{
+        id: user._id,
+        username: user.username,
+
+      }
+    })
+
+    console.log("Login Successful")
+  } catch (error) {
+    res.status(400).json({
+      message: "User Login Failed",
+      error: error.message,
+      success: false
+    })
+  }
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
