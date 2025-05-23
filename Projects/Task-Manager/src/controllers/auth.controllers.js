@@ -184,7 +184,7 @@ const getMe = async (req, res) => {
     try {
         let data = req.user
         console.log(`Reached at Profile level.`, data)
-        const user = await User.findById(req.user._id).select(-password)
+        const user = await User.findById(req.user._id).select("-password")
         if(!user){
           console.log("user not found...")
             return res.status(400).json({
