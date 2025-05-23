@@ -180,6 +180,28 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
+const getMe = async (req, res) => {
+    try {
+        let data = req.user
+        console.log(`Reached at Profile level.`, data)
+        const user = await User.findById(req.user._id).select(-password)
+        if(!user){
+          console.log("user not found...")
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+       return res.status(200).json({
+            success: true,
+            user
+        })
+    } catch (error) {
+        
+    }
+}
+
 const logoutUser = asyncHandler(async (req, res) => {
   const { email, username, password, role } = req.body;
 
@@ -233,6 +255,7 @@ export {
   resendEmailVerification,
   resetForgottenPassword,
   verifyEmail,
+  getMe
 };
 
 
