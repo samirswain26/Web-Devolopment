@@ -4,7 +4,7 @@ import {sendMail, emailVerificationMailContent, forgotPasswordMailGenContent } f
 import jwt from "jsonwebtoken"
 import crypto from "crypto"
 import { error } from "console"
-import { fail } from "assert"
+
 
 
 const registerUser = asyncHandler(async (req ,res)=>{
@@ -74,7 +74,7 @@ const registerUser = asyncHandler(async (req ,res)=>{
       
       // Add a success response
       res.status(201).json({
-        message: "User registered successfully",
+        message: "User registered sucessfully",
         success: true,
         userId: user._id
       });
@@ -115,9 +115,9 @@ const verifyEmail = asyncHandler(async (req, res) => {
     user.emailVerificationExpiry = undefined
     await user.save()
     
-    console.log("User verified successfully...")
+    console.log("User verified sucessfully...")
     res.status(201).json({
-      message: "User verified successfully...",
+      message: "User verified sucessfully...",
       success: true
     })
 });
@@ -161,7 +161,7 @@ const loginUser = asyncHandler(async (req, res) => {
     res.cookie("jwtAccessToken", jwtAccessToken, cookieOption)
 
     res.status(200).json({
-      message: "Login Successful",
+      message: "Login Sucessful",
       jwtAccessToken,
       user:{
         id: user._id,
@@ -170,7 +170,7 @@ const loginUser = asyncHandler(async (req, res) => {
       }
     })
 
-    console.log("Login Successful")
+    console.log("Login Sucessful")
   } catch (error) {
     res.status(400).json({
       message: "User Login Failed",
@@ -203,9 +203,24 @@ const getMe = async (req, res) => {
 }
 
 const logoutUser = asyncHandler(async (req, res) => {
-  const { email, username, password, role } = req.body;
-
-  //validation
+  try {
+    const cookieOption = {
+      httpOnly: true,
+      secure: true,
+      maxAge : 20*60*60*1000
+    }
+    res.cookie("jwtAccessToken", "", cookieOption)
+    res.status(200).json({
+      success: true,
+      message: "User sucessfully logged Out"
+    })
+    console.log("User Sucessfully Logged Out")
+  } catch (error) {
+    res.status(400).json({
+      message: "User did not logged In",
+      success: false
+    })
+  }
 });
 
 
