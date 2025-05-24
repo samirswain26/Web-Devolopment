@@ -85,7 +85,7 @@ const forgotPasswordMailGenContent = (username, forgotPasswordUrl) => {
             instructions: 'For change the password, please click here:',
             button: {
                 color: '#22BC66', // Optional action button color
-                text: 'Verify your email',
+                text: 'Reset Your Password',
                 link: forgotPasswordUrl,
             }
         },

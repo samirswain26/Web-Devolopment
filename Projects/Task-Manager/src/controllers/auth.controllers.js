@@ -236,16 +236,20 @@ const resendEmailVerification = asyncHandler(async (req, res) => {
 
 
 const resetForgottenPassword = asyncHandler(async (req, res) => {
-  const { email,username } = req.body;
+  const { email } = req.body;
   console.log(email)
   if(!email){
-    req.status(400).json({
+    res.status(400).json({
       message: "Please Enter Email"
     })
   }
-
+  
   const user = await User.findOne({email})
-  // user = await User.findOne({username: username})
+  if(!user){
+    res.status(400).json({
+      message: "There is no user in the database"
+    })
+  }
   console.log(user)
 
   const token = user.generateTemporaryToken()
@@ -258,13 +262,13 @@ const resetForgottenPassword = asyncHandler(async (req, res) => {
 
 
   // Send Mail 
-      
-  const verificationUrl = `${process.env.BASE_URL}/api/v1/reset/${token.unHashedToken}`
+
+  const forgotPasswordUrl = `${process.env.BASE_URL}/api/v1/reset/${token.unHashedToken}`
   await sendMail({
       subject:" Forgot Password",
       email: user.email,
       username: user.username,
-      mailGenContent: forgotPasswordMailGenContent(username, verificationUrl)
+      mailGenContent: forgotPasswordMailGenContent(user.username, forgotPasswordUrl)
   })
   res.status(201).json({
       message: "Forgot Password token send to your mail",
@@ -273,6 +277,9 @@ const resetForgottenPassword = asyncHandler(async (req, res) => {
   });
 
 });
+
+
+
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   const { email, username, password, role } = req.body;
