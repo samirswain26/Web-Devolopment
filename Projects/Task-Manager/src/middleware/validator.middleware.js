@@ -30,10 +30,10 @@ export const isLoggedIn = async (req, res, next) => {
     let token = req.cookies.jwtAccessToken;
     console.log(token)
 
-    console.log("Token Found: ", token ? "YES" : "NO");
+    console.log("Token Found:", token ? "YES" : "NO");
 
     if (!token) {
-      console.log("NO token");
+      console.log("Authentication failed due to no token");
       return res.status(401).json({
         success: false,
         message: "Authentication failed",

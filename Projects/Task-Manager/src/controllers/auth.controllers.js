@@ -225,14 +225,53 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 
 const resendEmailVerification = asyncHandler(async (req, res) => {
-  const { email, username, password, role } = req.body;
 
-  //validation
+
+
+
 });
-const resetForgottenPassword = asyncHandler(async (req, res) => {
-  const { email, username, password, role } = req.body;
 
-  //validation
+
+
+
+
+const resetForgottenPassword = asyncHandler(async (req, res) => {
+  const { email,username } = req.body;
+  console.log(email)
+  if(!email){
+    req.status(400).json({
+      message: "Please Enter Email"
+    })
+  }
+
+  const user = await User.findOne({email})
+  // user = await User.findOne({username: username})
+  console.log(user)
+
+  const token = user.generateTemporaryToken()
+  console.log(token)
+  const hashedToken = token.hashedToken
+  user.forgotPasswordToken = hashedToken
+  console.log(hashedToken)
+  const TokenExpiry = token.TokenExpiry
+  user.forgotPasswordExpiry = TokenExpiry
+
+
+  // Send Mail 
+      
+  const verificationUrl = `${process.env.BASE_URL}/api/v1/reset/${token.unHashedToken}`
+  await sendMail({
+      subject:" Forgot Password",
+      email: user.email,
+      username: user.username,
+      mailGenContent: forgotPasswordMailGenContent(username, verificationUrl)
+  })
+  res.status(201).json({
+      message: "Forgot Password token send to your mail",
+      success: true,
+      userId: user._id
+  });
+
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {

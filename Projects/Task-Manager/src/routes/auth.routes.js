@@ -1,15 +1,16 @@
 import Router from "express"
 import {userRegistrationValidator,userLoginValidator} from "../validators/index.js"
 import { validator, isLoggedIn } from "../middleware/validator.middleware.js"
-import {loginUser, registerUser,verifyEmail, getMe, logoutUser} from "../controllers/auth.controllers.js"
+import {loginUser, registerUser,verifyEmail, getMe, logoutUser, resetForgottenPassword} from "../controllers/auth.controllers.js"
 
 const router = Router()
 
 router.route("/register").post(userRegistrationValidator(), validator, registerUser)
 router.route("/verify/:token").get(verifyEmail)
 router.route("/login").post(userLoginValidator(),validator , loginUser)
-router.route("/profile").post( isLoggedIn, getMe)
-router.route("/logout").get(isLoggedIn, logoutUser)
+router.route("/profile").post(userLoginValidator(), isLoggedIn, getMe)
+router.route("/logout").get(userLoginValidator(), isLoggedIn, logoutUser)
+router.route("/forgot").post(userLoginValidator(), resetForgottenPassword)
 
 
 export default router

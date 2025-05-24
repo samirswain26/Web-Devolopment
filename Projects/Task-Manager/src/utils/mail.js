@@ -82,7 +82,7 @@ const forgotPasswordMailGenContent = (username, forgotPasswordUrl) => {
             name: username,
             intro: 'Forgot Password.',
             action: {
-            instructions: 'For chaneg the password, please click here:',
+            instructions: 'For change the password, please click here:',
             button: {
                 color: '#22BC66', // Optional action button color
                 text: 'Verify your email',
