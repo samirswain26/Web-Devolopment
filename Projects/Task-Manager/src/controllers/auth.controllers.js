@@ -260,7 +260,9 @@ const resetForgottenPassword = asyncHandler(async (req, res) => {
   const TokenExpiry = token.TokenExpiry
   user.forgotPasswordExpiry = TokenExpiry
 
+  await user.save()
 
+  
   // Send Mail 
 
   const forgotPasswordUrl = `${process.env.BASE_URL}/api/v1/reset/${token.unHashedToken}`
@@ -294,9 +296,40 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
 });
 
 const changeCurrentPassword = asyncHandler(async (req, res) => {
-  const { email, username, password, role } = req.body;
+  try {
+    const {token} = req.params;
+    const {password, confPassword} = req.body;
 
-  //validation
+    if(password === confPassword){
+      console.log("Password Matched")
+
+      const confPassword = password
+    }
+
+    try {
+        const user = await User.findOne({
+        resetPasswordToken : token,
+        resetPasswordExpiries :  {$gt: Date.now()}
+           
+        })
+        if(!user){res.status(404).json({message: "Token not found"})}
+
+        user.password = confPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpiries = undefined;
+        await user.save()
+        console.log("Kaam Hogaya")
+        
+        res.status(200).json({
+            message: "Password changed successfully!"
+        })
+    } catch (error) {
+      
+    }
+
+  } catch (error) {
+    
+  }
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
