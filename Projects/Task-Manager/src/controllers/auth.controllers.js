@@ -278,6 +278,9 @@ const resetForgottenPassword = asyncHandler(async (req, res) => {
       userId: user._id
   });
 
+
+  
+
 });
 
 
@@ -307,16 +310,18 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     }
 
     try {
+      const hashedToken = crypto.createHash("sha256").update(token).digest("hex")
+      console.log(hashedToken);
         const user = await User.findOne({
-        resetPasswordToken : token,
-        resetPasswordExpiries :  {$gt: Date.now()}
+        forgotPasswordToken : hashedToken,
+        forgotPasswordExpiry :  {$gt: Date.now()}
            
         })
         if(!user){res.status(404).json({message: "Token not found"})}
 
         user.password = confPassword;
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpiries = undefined;
+        user.forgotPasswordToken = undefined;
+        user.forgotPasswordExpiry = undefined;
         await user.save()
         console.log("Kaam Hogaya")
         
@@ -324,6 +329,12 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
             message: "Password changed successfully!"
         })
     } catch (error) {
+      console.log("Password didn't change due to some internal error")
+      res.status(400).json({
+        message: "Password didn't change due to some internal error",
+        error: error.message,
+        success: false
+      })
       
     }
 
