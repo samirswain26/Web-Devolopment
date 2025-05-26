@@ -1,6 +1,8 @@
 import {validationResult} from "express-validator"
 import {ApiError} from "../utils/api-error.js"
 import jwt from "jsonwebtoken";
+import { User } from "../models/user.models.js";
+import { asyncHandler } from "../utils/async-handler.js";
 
 export const validator = (req, res, next) => {
     const errors = validationResult(req);
@@ -24,32 +26,34 @@ export const validator = (req, res, next) => {
 
 
 
-export const isLoggedIn = async (req, res, next) => {
+export const isLoggedIn = asyncHandler( async (req, res, next) => {
   try {
     console.log(req.cookies);
-    let token = req.cookies.jwtAccessToken;
-    console.log(token)
+    let token = req.cookies?.accessToken;
+
+    if (!token || typeof token !== "string") {
+      token = req.header("Authorization")?.replace("Bearer ", "");
+      throw new ApiError(401, "Token missing or invalid");
+    }
+
 
     console.log("Token Found:", token ? "YES" : "NO");
 
     if (!token) {
       console.log("Authentication failed due to no token");
-      return res.status(401).json({
-        success: false,
-        message: "Authentication failed",
-      });
+      throw new ApiError(401, "Unauthorized request")
     }
 
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const decoded =  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = await User.findById(decoded?._id).select("-password -refreshToken")
     console.log("decoded data: ", decoded);
+    if (!user) {
+       throw new ApiError(401, "Invalid Access Token")
+    }
     req.user = decoded;
     next();
     
   } catch (error) {
-    console.log("Auth middleware failure");
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    throw new ApiError(401, error?.message || "Invalid access token")
   }
-};
+});
