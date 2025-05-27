@@ -4,6 +4,7 @@ import {sendMail, emailVerificationMailContent, forgotPasswordMailGenContent } f
 import {ApiError} from "../utils/api-error.js"
 import {ApiResponse} from "../utils/api-response.js"
 import crypto from "crypto"
+import jwt from "jsonwebtoken"
 
 
 
@@ -337,8 +338,8 @@ const refreshAccessToken = asyncHandler(async(req, res) => {
 
     return res
     .status(200)
-    .cookies("accessToken",accessToken,option)
-    .cookies("refreshToken",newRefreshToken,option)
+    .cookie("accessToken",accessToken,option)
+    .cookie("refreshToken",newRefreshToken,option)
     .json(
       new ApiResponse(
         200, 
