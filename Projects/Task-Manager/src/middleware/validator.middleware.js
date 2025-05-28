@@ -29,10 +29,9 @@ export const validator = (req, res, next) => {
 export const isLoggedIn = asyncHandler( async (req, res, next) => {
   try {
     console.log(req.cookies);
-    let token = req.cookies?.accessToken;
+    let token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token || typeof token !== "string") {
-      token = req.header("Authorization")?.replace("Bearer ", "");
       throw new ApiError(401, "Token missing or invalid");
     }
 
