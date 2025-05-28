@@ -27,7 +27,6 @@ const generateAccessAndRefreshTokens = async (Id) => {
 };
 
 
-
 const registerUser = asyncHandler(async (req ,res)=>{
     const {username,email, password, role, fullname} = req.body
 
@@ -78,11 +77,8 @@ const registerUser = asyncHandler(async (req ,res)=>{
 
       
       
-      
-      
       // Send Mail 
       
-      // const jwttoken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "30m"});
       const verificationUrl = `${process.env.BASE_URL}/api/v1/verify/${token.unHashedToken}`
       await sendMail({
         subject:" Verify Your Account",
@@ -201,6 +197,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
+
 const getCurrentUser = async (req, res) => {
     try {
         let data = req.user
@@ -222,6 +219,7 @@ const getCurrentUser = async (req, res) => {
         
     }
 }
+
 
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
@@ -257,6 +255,45 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 
 const resendEmailVerification = asyncHandler(async (req, res) => {
+  const {email} = req.body
+  try {
+    const user =  await User.findOne({email})
+    console.log(email)
+  
+      const token = user.generateTemporaryToken()
+      console.log(token)
+      const hashedToken = token.hashedToken
+      user.emailVerificationToken = hashedToken
+      console.log(hashedToken)
+      const TokenExpiry = token.TokenExpiry
+      user.emailVerificationExpiry = TokenExpiry
+
+      await user.save()
+      
+      // Send Mail 
+      
+      const verificationUrl = `${process.env.BASE_URL}/api/v1/verify/${token.unHashedToken}`
+      await sendMail({
+        subject:" Verify Your Account",
+        email: user.email,
+        username: user.username,
+        mailGenContent: emailVerificationMailContent( user.username,verificationUrl)
+      })
+
+
+      res.status(200).json(
+        new ApiResponse(
+          200
+          ,
+          user.token,
+          "verification token was send to your email"
+        )
+      )
+  } catch (error) {
+    throw new ApiError(400,error.message || "Resend verification token failed to send")
+  }
+
+
 
 });
 
@@ -308,7 +345,6 @@ const resetForgottenPassword = asyncHandler(async (req, res) => {
   
 
 });
-
 
 
 const refreshAccessToken = asyncHandler(async(req, res) => {
