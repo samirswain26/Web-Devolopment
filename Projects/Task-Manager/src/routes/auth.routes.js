@@ -6,14 +6,17 @@ import {loginUser, registerUser,verifyEmail,  logoutUser, resetForgottenPassword
 const router = Router()
 
 router.route("/register").post(userRegistrationValidator(), validator, registerUser)
-router.route("/verify/:token").get(verifyEmail)
 router.route("/login").post(userLoginValidator(),validator , loginUser)
-router.route("/profile").post(userLoginValidator(), isLoggedIn, getCurrentUser)
-router.route("/logout").get(userLoginValidator(), isLoggedIn, logoutUser)
+router.route("/verify/:token").get(verifyEmail)
 router.route("/forgot").post(userLoginValidator(), resetForgottenPassword)
 router.route("/reset/:token").get(userLoginValidator(),changeCurrentPassword)
-router.route("/refresh-token").post(refreshAccessToken) 
-
 router.route("/resendtoken").post(resendEmailVerification)
 router.route("/forgot-request").post(forgotPasswordRequest)
+
+// Secure Routes
+
+router.route("/profile").post(userLoginValidator(), isLoggedIn, getCurrentUser)
+router.route("/logout").get(userLoginValidator(), isLoggedIn, logoutUser)
+router.route("/refresh-token").post(refreshAccessToken) 
+
 export default router
