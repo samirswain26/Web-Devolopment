@@ -1,7 +1,7 @@
 import Router from "express"
 import {userRegistrationValidator,userLoginValidator} from "../validators/index.js"
 import { validator, isLoggedIn } from "../middleware/validator.middleware.js"
-import {loginUser, registerUser,verifyEmail,  logoutUser, resetForgottenPassword, changeCurrentPassword, getCurrentUser, refreshAccessToken, resendEmailVerification} from "../controllers/auth.controllers.js"
+import {loginUser, registerUser,verifyEmail,  logoutUser, resetForgottenPassword, changeCurrentPassword, getCurrentUser, refreshAccessToken, resendEmailVerification, forgotPasswordRequest} from "../controllers/auth.controllers.js"
 
 const router = Router()
 
@@ -15,4 +15,5 @@ router.route("/reset/:token").get(userLoginValidator(),changeCurrentPassword)
 router.route("/refresh-token").post(refreshAccessToken) 
 
 router.route("/resendtoken").post(resendEmailVerification)
+router.route("/forgot-request").post(forgotPasswordRequest)
 export default router

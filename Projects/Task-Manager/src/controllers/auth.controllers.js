@@ -392,9 +392,53 @@ const refreshAccessToken = asyncHandler(async(req, res) => {
 
 
 const forgotPasswordRequest = asyncHandler(async (req, res) => {
-  const { email, username, password, role } = req.body;
-
-  //validation
+ try {
+   const { email } = req.body;
+   console.log(email)
+   if(!email){
+     res.status(400).json({
+       message: "Please Enter Email"
+     })
+   }
+   
+   const user = await User.findOne({email})
+   if(!user){
+     res.status(400).json({
+       message: "There is no user in the database"
+     })
+   }
+   console.log(user)
+ 
+   const token = user.generateTemporaryToken()
+   console.log(token)
+   const hashedToken = token.hashedToken
+   user.forgotPasswordToken = hashedToken
+   console.log(hashedToken)
+   const TokenExpiry = token.TokenExpiry
+   user.forgotPasswordExpiry = TokenExpiry
+ 
+   await user.save()
+ 
+   
+   // Send Mail 
+ 
+   const forgotPasswordUrl = `${process.env.BASE_URL}/api/v1/reset/${token.unHashedToken}`
+   await sendMail({
+       subject:" Forgot Password",
+       email: user.email,
+       username: user.username,
+       mailGenContent: forgotPasswordMailGenContent(user.username, forgotPasswordUrl)
+   })
+   res.status(200).json(
+     new ApiResponse(
+       200,
+       user._id,
+       "Forgot Password token send to your mail"
+     ));
+ 
+ } catch (error) {
+  throw new ApiError(400,error.message || "Forgot Password request failed to send")
+ }
 });
 
 
