@@ -75,7 +75,7 @@ const registerUser = asyncHandler(async (req ,res)=>{
       const TokenExpiry = token.TokenExpiry
       user.emailVerificationExpiry = TokenExpiry
 
-      
+      await user.save()
       
       // Send Mail 
       
@@ -95,7 +95,7 @@ const registerUser = asyncHandler(async (req ,res)=>{
         success: true,
         userId: user._id
       });
-      await user.save()
+      
       
     }catch (error) {
     console.error("Registration error:", error); 

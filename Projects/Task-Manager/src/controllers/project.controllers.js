@@ -49,7 +49,7 @@ const createProject = async (req, res) => {
     .json(new ApiResponse(
       500,
       project,
-      "Projected Created"
+      "Project Created"
     ))
   
     } catch (error) {
@@ -61,7 +61,20 @@ const createProject = async (req, res) => {
 
 
 const getProjects = async(req, res) => {
-
+  // get all projects
+try {
+    const project = await Project.find().select("Name")
+    console.log(project)
+    return res
+    .status(200)
+    .json(new ApiResponse(
+      200,
+      project,
+      "Project Lists"
+    ))
+} catch (error) {
+  throw new ApiError(500, error.message || "Can not get the project list")
+}
 }
 
 const getProjectById = async (req, res) => {

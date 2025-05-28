@@ -4,6 +4,7 @@ import { isLoggedIn } from "../middleware/validator.middleware.js"
 
 const router = Router()
 router.route("/create-project").post( isLoggedIn,createProject)
+router.route("/get-project").post( isLoggedIn,getProjects)
 
 
 export default router
