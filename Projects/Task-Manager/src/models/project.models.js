@@ -11,6 +11,17 @@ const ProjectSchema = new Schema({
         type: String,
         required: true,
     },
+    status:{
+        type: String,
+        trim: true,
+        enum: ["pending", "in-progress", "completed", "on-hold"],
+        default: "pending",
+    },
+    username:{
+        type : String,
+        ref : "User",
+        required: true
+    },
     CreatedBy:{
         type : Schema.Types.ObjectId,
         ref: "User",

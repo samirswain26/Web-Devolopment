@@ -12,6 +12,7 @@ const createProject = async (req, res) => {
 
     const {Name, description} = req.body
     const CreatedBy = req.user._id
+    const username = req.user.username
 
     if(!Name || !description ){
       throw new ApiError(400, "All Fields are required")
@@ -21,6 +22,7 @@ const createProject = async (req, res) => {
     const existingProjectName = await Project.findOne({Name})
       
     if(existingProjectName){
+      console.log("Project name Already Exists")
       return res
       .status(400)
       .json(
@@ -34,7 +36,8 @@ const createProject = async (req, res) => {
     const project = await Project.create({
       Name,
       description,
-      CreatedBy
+      CreatedBy,
+      username
     })
     await project.save()
 
@@ -101,6 +104,36 @@ const updateProject = async (req, res) => {
 
 const deleteProject = async (req, res) => {
   // delete project
+  try {
+    const {Name} = req.body
+
+    if(!Name){
+      throw new ApiError(400, "Project name is required")
+    }
+
+    const project = await Project.findOne({Name, CreatedBy: req.user._id})
+    console.log(project)
+    if(!project){
+      return res.status(400).json(
+        new ApiResponse(400, null, "Project not found or not authorized to delete")
+      )
+    }
+    
+    const deletedProject = await Project.deleteOne({_id: project._id})
+    console.log(deletedProject)
+    if(deletedProject.deletedCount === 0){
+      return res.status(400).json(
+        new ApiResponse(400, null, "This project is not belong to the login user")
+      )
+    }
+  
+    return res.status(200).json(
+      new ApiResponse(200, null, "Project deleted Successfully")
+    )
+
+  } catch (error) {
+    throw new ApiError(500, error.message || "Failed to delete project")
+  }
 };
 
 const getProjectMembers = async (req, res) => {
