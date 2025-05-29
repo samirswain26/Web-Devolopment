@@ -2,7 +2,6 @@ import {Project} from "../models/project.models.js"
 import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
-import mongoose from "mongoose";
 
 
 const createProject = async (req, res) => {
@@ -110,7 +109,6 @@ const deleteProject = async (req, res) => {
     if(!Name){
       throw new ApiError(400, "Project name is required")
     }
-
     const project = await Project.findOne({Name, CreatedBy: req.user._id})
     console.log(project)
     if(!project){
