@@ -79,6 +79,19 @@ try {
 
 const getProjectById = async (req, res) => {
   // get project by id
+  try {
+    const project = await Project.find({CreatedBy: req.user._id})
+    console.log(project)
+    return res 
+    .status(200)
+    .json(new ApiResponse(
+      200,
+      project,
+      "Project are listed by id's"
+    ))
+  } catch (error) {
+    throw new ApiError(500, error.message || "can not get the projects by Id.")
+  }
 };
 
 
