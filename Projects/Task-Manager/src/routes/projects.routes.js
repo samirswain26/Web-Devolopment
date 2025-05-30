@@ -1,5 +1,5 @@
 import Router from "express"
-import {getProjects, createProject, getProjectById, deleteProject, updateProject} from "../controllers/project.controllers.js"
+import {getProjects, createProject, getProjectById, deleteProject, updateProject, requestToJoinProject} from "../controllers/project.controllers.js"
 import { isLoggedIn } from "../middleware/validator.middleware.js"
 
 const router = Router()
@@ -8,6 +8,7 @@ router.route("/get-project").post( isLoggedIn,getProjects)
 router.route("/get-project-By-Id").post(isLoggedIn ,getProjectById)
 router.route("/delete-project").post(isLoggedIn ,deleteProject)
 router.route("/update-project").post(isLoggedIn ,updateProject)
+router.route("/request-project").post(isLoggedIn ,requestToJoinProject)
 
 
 export default router

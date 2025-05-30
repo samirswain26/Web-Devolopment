@@ -16,7 +16,7 @@ const ProjectSchema = new Schema({
         trim: true,
         default: "pending",
     },
-    username:{
+    admin:{
         type : String,
         ref : "User",
         required: true
@@ -25,7 +25,25 @@ const ProjectSchema = new Schema({
         type : Schema.Types.ObjectId,
         ref: "User",
         required: true
+    },
+    members: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            username: String
+        }
+    ],
+    joinrequest: [
+    {
+        userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+        },
+        username: {
+        type: String
+        }
     }
+]
 },{timestamps: true})
 
 export const Project = mongoose.model("Project", ProjectSchema)
