@@ -1,3 +1,4 @@
+import { Stats } from "fs";
 import {Project} from "../models/project.models.js"
 import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/api-error.js";
@@ -99,6 +100,39 @@ const getProjectById = async (req, res) => {
 
 const updateProject = async (req, res) => {
   // update project
+  try {
+    const {Name, status} = req.body
+    console.log(Name)
+  
+    if(!Name || !status){
+      throw new ApiError(400, "Project Name  and status is necessary to update that Project")
+    }
+   
+  
+    const project = await Project.findOne({Name,CreatedBy: req.user._id})
+  
+    console.log(project)
+  
+    if(!project){
+      throw new ApiResponse(400, "Project not found")
+    }
+  
+    project.status = status
+    console.log(status)
+  
+    await project.save()
+  
+    return res
+    .status(200)
+    .json(new ApiResponse(
+      200,
+      project,
+      "Project Status updated successfully"
+    )) 
+  } catch (error) {
+   throw new ApiError(500, error.message || "Failed to update project status")
+  }
+  
 };
 
 const deleteProject = async (req, res) => {
