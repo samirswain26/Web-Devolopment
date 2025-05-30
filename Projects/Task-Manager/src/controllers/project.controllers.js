@@ -178,46 +178,54 @@ const requestToJoinProject = async (req, res) => {
   // Request to join a project
 
 try {
-    const {Name} = req.body
+  const {Name} = req.body
+
+  if(!Name){
+    throw new ApiError(400, "Project name is required")
+  }
   
-    if(!Name){
-      throw new ApiError(400, "Project name is required")
-    }
+  const project = await Project.findOne({Name})
   
-    const project = await Project.findOne({Name})
+  if(!project){
+    throw new ApiError(400, "Project name is invalid")
+  }
   
-    if(!project){
-      throw new ApiError(400, "Project name is invalid")
-    }
+  //It check that the user is trying to be in the group is the admin of the groupp or not...
+  if (project.CreatedBy.toString() === req.user._id.toString()) {
+      return res.status(400).json(
+        new ApiResponse(400, null, "You are the admin of this project")
+      );
+  }
   
-    //It check that the user is trying to be in the group is the admin of the groupp or not...
-    if (project.CreatedBy.toString() === req.user._id.toString()) {
-        return res.status(400).json(
-          new ApiResponse(400, null, "You are the admin of this project")
-        );
-    }
+  // Check if already requested
+  const alreadyRequested = project.joinrequest.some(
+    (entry) => entry.userId.toString() === req.user._id.toString()
+  );
   
-    // Check if already requested
-    const alreadyRequested = project.joinrequest.some(
-      (entry) => entry.userId.toString() === req.user._id.toString()
-    );
+  // Check if already a member
+  const alreadyMember = project.members.some(
+    (member) => member.toString() === req.user._id.toString()
+  );
   
-    // Check if already a member
-    const alreadyMember = project.members.some(
-      (member) => member.toString() === req.user._id.toString()
-    );
+  if(alreadyRequested || alreadyMember){
+    return res.status(400).json(new ApiResponse(400, null, "Already requested or a member"))
+  }
   
-    if(alreadyRequested || alreadyMember){
-      return res.status(400).json(new ApiResponse(400, null, "Already requested or a member"))
-    }
-  
-    const joinlist = project.joinrequest.push({
-      userId: req.user._id,
-      username: req.user.username
-    })
-    console.log(joinlist)
-    await project.save()
-    return res.status(200).json(new ApiResponse(200, null, "Request to join sent"));
+  const joinlist = project.joinrequest.push({
+    userId: req.user._id,
+    username: req.user.username
+  })
+
+  console.log(joinlist)
+
+  await project.save()
+
+  return res
+  .status(200)
+  .json(
+    new ApiResponse(200, null, "Request to join sent")
+  );
+
 } catch (error) {
   throw new ApiError(500, error.message || "Failed to send the request")
 }
