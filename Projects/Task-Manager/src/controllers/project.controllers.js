@@ -233,6 +233,94 @@ try {
 
 const addMemberToProject = async (req, res) => {
   // add member to project
+  try {
+    const {Name, username} = req.body
+    if(!Name || !username){
+      throw new ApiError(400, "Project Name and username is required")
+    }
+    console.log(Name)
+  
+    const project = await Project.findOne({Name})
+    console.log(project)
+    if(!project){
+      throw new ApiError(404, "Project not found");
+    }
+
+    // Only Admin can accept members into the team
+    if(project.CreatedBy.toString() !== req.user._id.toString()){
+      throw new ApiError(400, "Only admin can accepts members into the team")
+    }
+
+    // The User is required for determining was it in the joinrequest list or not.
+    const user = await User.findOne({username})
+
+    if(!user){
+      throw new ApiError(404, "User not found in the requested list")
+    }
+
+    const hasRequested = project.joinrequest.some(
+      (id) => id.userId.toString() === user._id.toString()
+    );
+
+    
+
+    if(!hasRequested){
+      return res
+      .status(400)
+      .json(
+        new ApiResponse(
+          400,
+          null,
+          "User did not requested to join the team"
+        )
+      )
+    }
+
+    const alreadyMember = project.members.some(
+      (member) => member.userId.toString() === user._id.toString()
+    );
+
+    if(alreadyMember){
+      return res
+      .status(400)
+      .json(
+        new ApiResponse(
+          400, 
+          null,
+          "User already a member"
+        )
+      )
+    }
+
+    // Moves users to joinrequest list to members list
+    project.members.push(
+      {
+        userId: user._id,
+        username : user.username
+      }
+    )
+
+    project.joinrequest = project.joinrequest.filter(
+      (id) => id.userId.toString() !== user._id.toString()
+    )
+
+    await project.save()
+
+    return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        project.members,
+        "User added to the project successfully"
+      )
+    )
+
+  } catch (error) {
+    throw new ApiError(500, error.message || "Can not add the member")
+  }
+
+
 };
 
 const deleteMember = async (req, res) => {

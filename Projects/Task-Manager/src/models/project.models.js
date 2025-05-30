@@ -28,10 +28,14 @@ const ProjectSchema = new Schema({
     },
     members: [
         {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            username: String
+        userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+        },
+        username: {
+        type: String
         }
+    }
     ],
     joinrequest: [
     {
