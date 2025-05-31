@@ -37,7 +37,13 @@ const createProject = async (req, res) => {
       Name,
       description,
       CreatedBy,
-      admin
+      admin,
+       members: [
+        {
+          userId: CreatedBy,
+          username: admin
+        }
+      ] // Add admin as the first member
     })
     await project.save()
 
@@ -394,8 +400,6 @@ const addMemberToProject = async (req, res) => {
   } catch (error) {
     throw new ApiError(500, error.message || "Can not add the member")
   }
-
-
 };
 
 const deleteMember = async (req, res) => {
