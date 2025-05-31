@@ -170,9 +170,84 @@ const deleteProject = async (req, res) => {
 
 const getProjectMembers = async (req, res) => {
   // get project members
-
+try {
+    const {Name} = req.body
+    if(!Name){
+      throw new ApiError(
+        400,
+        "Project name Field is required"
+      )
+    }
   
-};
+
+    const project = await Project.findOne({Name})
+
+    console.log("Full project object:", project)
+    console.log("CreatedBy field:", project?.CreatedBy)
+    console.log("CreatedBy type:", typeof project?.CreatedBy)
+    console.log("Current user ID:", req.user._id)
+    console.log("Current user ID type:", typeof req.user._id)
+  
+    if(!project){
+      throw new ApiError(400, "Project name is invalid")
+    }
+
+    
+    const currentUserId = req.user._id.toString()
+    const projectCreatorId = project.CreatedBy.toString()
+    
+    console.log("Current user ID (string):", currentUserId)
+    console.log("Project creator ID (string):", projectCreatorId)
+    
+    // Check if the requesting user is the admin (project creator)
+    const isAdmin = currentUserId === projectCreatorId
+    
+    console.log("Is admin:", isAdmin)
+    
+    // Check if the requesting user is a member of the project
+    const isMember = project.members && project.members.length > 0 && 
+    project.members.some(member => member.userId.toString() === currentUserId)
+    
+    console.log("Is member:", isMember)
+    
+    // Allow access only if user is admin or a member
+    if (!isAdmin && !isMember) {
+      return res
+      .status(403)
+      .json(
+        new ApiResponse(
+          403,
+          null,
+          "Access denied. Only project admin or members can view the member list"
+        )
+      )
+    }
+    
+    // Prepare the response data
+    const responseData = {
+      projectInfo: {
+        name: project.Name,
+        description: project.description,
+        status: project.status,
+        admin: project.admin
+      },
+      members: project.members || [],
+      totalMembers: project.members ? project.members.length : 0,
+      userRole: isAdmin ? 'admin' : 'member'
+    }
+
+    return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        responseData,
+        "Project member list retrive successfully"
+      )
+    )
+} catch (error) {
+  throw new ApiError(500, error.message || "Something went wromh while fetching the member list")
+}};
 
 const requestToJoinProject = async (req, res) => {
   // Request to join a project
@@ -251,7 +326,7 @@ const addMemberToProject = async (req, res) => {
       throw new ApiError(400, "Only admin can accepts members into the team")
     }
 
-    // The User is required for determining was it in the joinrequest list or not.
+    // The User is required for determining was in the joinrequest list or not.
     const user = await User.findOne({username})
 
     if(!user){
