@@ -404,6 +404,58 @@ const addMemberToProject = async (req, res) => {
 
 const deleteMember = async (req, res) => {
   // delete member from project
+
+try {
+    const {Name, username} = req.body
+  
+    if(!Name || !username){
+      throw new ApiError(400, "project name and username are required")
+    }
+  
+    const project = await Project.findOne({Name})
+    if(!project){
+      throw new ApiError(404, "Project not found")
+    }
+  
+    const adminid = req.user._id.toString()
+    const projectCreatorId = project.CreatedBy.toString()
+  
+    const isadmin = adminid === projectCreatorId
+  
+    if(!isadmin){
+      return res
+      .status(403)
+      .json(
+        new ApiResponse(
+          403,
+          null,
+          "Only project admin can delete members"
+        )
+      )
+    }
+  
+    const memberIndex = project.members.findIndex(
+      (member) => member.username === username
+    )
+  
+    if(memberIndex === -1){
+      throw new ApiError(404, "Member not found in the project")
+    }
+    project.members.splice(memberIndex, 1)
+  
+    await project.save()
+  
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        project.members,
+        `Member '${username}' deleted successfully` 
+      )
+    )
+} catch (error) {
+  throw new ApiError(500, error.message || "something went wrong while deleting the member")
+}
+
 };
 
 const updateMemberRole = async (req, res) => {
