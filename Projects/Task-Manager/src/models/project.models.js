@@ -1,4 +1,5 @@
 import mongoose, {Schema} from "mongoose";
+import { stringify } from "querystring";
 
 const ProjectSchema = new Schema({
     Name: {
@@ -34,6 +35,11 @@ const ProjectSchema = new Schema({
         },
         username: {
         type: String
+        },
+        role: {
+            type: String,
+            trim: true,
+            default: "user"
         }
     }
     ],

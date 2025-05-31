@@ -460,6 +460,67 @@ try {
 
 const updateMemberRole = async (req, res) => {
   // update member role
+
+  try {
+    const {Name, username, role} = req.body
+    const currentUserId = req.user._id
+
+    const project = await Project.findOne({Name})
+
+    if(!project){
+      return res
+      .status(404)
+      .json(
+        new ApiResponse(
+          404,
+          null,
+          "Project not found"
+        )
+      )
+    }
+
+    // only admin can change the role of members
+    if(project.CreatedBy.toString() !== currentUserId.toString()){
+      return res
+      .status(403)
+      .json(
+        new ApiResponse(
+        403,
+        null,
+        "Only admin can update the member role"
+      ))
+    }
+
+    const member = project.members.find(find => find.username.toString() === username.toString())
+    if(!member){
+      return res
+      .status(404)
+      .json(
+        new ApiResponse(
+          404,
+          null,
+          "Member not found."
+        )
+      )
+    }
+
+    // update role
+    member.role = role
+
+    await project.save()
+
+    return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200, 
+        member,
+        "Member role upldated successfully"
+      )
+    )
+  } catch (error) {
+    throw new ApiError(500, error.message || "Somethig went wrong while updating members role.")
+  }
 };
 
 export {
