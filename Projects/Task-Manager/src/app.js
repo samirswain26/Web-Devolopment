@@ -17,11 +17,13 @@ app.use(cookieParser())
 import healthcheckrouter from "./routes/healthcheck.routes.js" 
 import authrouter from "./routes/auth.routes.js"
 import projectrouter from "./routes/projects.routes.js"
+import taskrouter from "./routes/task.routes.js"
 
 
 app.use("/api/v1", healthcheckrouter)
 app.use("/api/v1", authrouter)
 app.use("/api/v1", projectrouter)
+app.use("/api/v1", taskrouter)
 
 
 
