@@ -21,7 +21,7 @@ const createTask = async (req, res) => {
         }
         
         if(project.CreatedBy.toString() !== currentUserId.toString()){
-            throw new ApiError(403, "Omly admin can create the task")
+            throw new ApiError(403, "Only admin can create the task")
         }
 
         // const assignedTo = req.user._id
@@ -30,6 +30,10 @@ const createTask = async (req, res) => {
             throw new ApiError(404, "user not found")
         }
 
+        const validatetask = await Task.findOne({title, project: project._id})
+        if(validatetask){
+            throw new ApiError(400, "Task already exists")
+        }
         
         const task = await Task.create({
             title, 
@@ -45,6 +49,7 @@ const createTask = async (req, res) => {
 
         console.log(task)
 
+
         return res
         .status(200)
         .json(
@@ -57,9 +62,11 @@ const createTask = async (req, res) => {
 
 
     } catch (error) {
-        throw new ApiError(500, error.message ?? "Something went wrong while creatin tas")
+        throw new ApiError(500, error.message ?? "Something went wrong while creatin task")
     }
 }
+
+
 
 export {
     createTask,
