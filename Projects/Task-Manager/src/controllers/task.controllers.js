@@ -3,6 +3,7 @@ import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { Project } from "../models/project.models.js";
+import { AvailableTaskStatus } from "../utils/constants.js";
 
 const createTask = async (req, res) => {
     // Create task
@@ -66,8 +67,71 @@ const createTask = async (req, res) => {
     }
 }
 
+const updateTask = async (req, res) => {
+    // Update the task
 
+    try {
+        const{title, status} = req.body
+        console.log(title)
+        
+        if(!title || !status){
+            throw new ApiError(400, "Both title and status are required to update the task")
+        }
+        
+        if(!Object.values(AvailableTaskStatus).includes(status)){
+            return res.status(400).json(
+                new ApiResponse(
+                    400,
+                    Object.values(AvailableTaskStatus),
+                    "Invalid status. Here are the valid options.",
+                    false
+                )
+            );
+        }
+        
+        
+        const task = await Task.findOne({title})
+        console.log(task)
+
+        if(!task){
+            throw new ApiError(404, "Task not found")
+        }
+
+        if(task.status === status){
+            return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    task,
+                    `Task is already in ${status} state`,
+                    true
+                )
+            )
+        }
+
+        task.status = status
+
+        await task.save()
+
+        return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200, 
+                task,
+                "Status updated successfully"
+            )
+        )
+
+
+
+    } catch (error) {
+        throw new ApiError(500, error.message ??  "Could not update status")
+    }
+}
 
 export {
     createTask,
+    updateTask,
 }
