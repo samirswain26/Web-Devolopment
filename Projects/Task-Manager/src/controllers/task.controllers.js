@@ -131,7 +131,46 @@ const updateTask = async (req, res) => {
     }
 }
 
+const attachFile = async (req, res) => {
+    // attach files and documents
+
+try {
+        const {File , title} = req.body
+    
+        if(!File ?? !title){
+            throw new ApiError(400, "All fields are required to attach file")
+        }
+    
+        console.log(File)
+    
+        const task = await Task.findOne({title})
+    
+        console.log(task)
+    
+        if(!task){
+            throw new ApiError(404, "Task not found")
+        }
+    
+        task.attachments.push(...File)
+    
+        await task.save()
+    
+        return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                2000,
+                File,
+                "Attached file succcessfully"
+            )
+        )
+} catch (error) {
+    throw new ApiError(500, error.message ?? "Something went wrong while attaching the file")
+}
+}
+
 export {
     createTask,
     updateTask,
+    attachFile
 }
