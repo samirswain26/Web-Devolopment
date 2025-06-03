@@ -49,7 +49,7 @@ const createProject = async (req, res) => {
     console.log(project)
 
     if(!project){
-        return new ApiError(401, errorMonitor.message || "Project not registered")
+        return new ApiError(401, "Project not registered")
     }
 
     return res
