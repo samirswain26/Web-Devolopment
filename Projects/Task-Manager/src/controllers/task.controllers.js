@@ -131,43 +131,44 @@ const updateTask = async (req, res) => {
     }
 }
 
-const attachFile = async (req, res) => {
-    // attach files and documents
 
-try {
-        const {File , title} = req.body
-    
-        if(!File ?? !title){
-            throw new ApiError(400, "All fields are required to attach file")
-        }
-    
-        console.log(File)
-    
-        const task = await Task.findOne({title})
-    
-        console.log(task)
-    
-        if(!task){
-            throw new ApiError(404, "Task not found")
-        }
-    
-        task.attachments.push(...File)
-    
-        await task.save()
-    
-        return res
-        .status(200)
-        .json(
-            new ApiResponse(
-                2000,
-                File,
-                "Attached file succcessfully"
-            )
-        )
-} catch (error) {
-    throw new ApiError(500, error.message ?? "Something went wrong while attaching the file")
+const attachFile = async (req, res) => {
+  try {
+    const { title } = req.body
+
+    if (!req.file || !title) {
+      throw new ApiError(400, "File and title are required")
+    }
+
+    const task = await Task.findOne({ title })
+
+    if (!task) {
+      throw new ApiError(404, "Task not found")
+    }
+
+    // this fileUrl is the file uploaded in the server that contain filename (basically from multer)
+    const fileUrl = `/images/${req.file.filename}`
+
+    // Shows the multer file that has been stored in the server....
+    console.log(req.file)
+
+    const fileMeta = {
+      url: fileUrl,
+      mimetype: req.file.mimetype,
+      size: req.file.size,
+    }
+
+    task.attachments.push(fileMeta)
+    await task.save()
+
+    return res.status(200).json(
+      new ApiResponse(200, fileMeta, "File attached successfully")
+    )
+  } catch (error) {
+    throw new ApiError(500, error.message || "Something went wrong")
+  }
 }
-}
+
 
 export {
     createTask,
