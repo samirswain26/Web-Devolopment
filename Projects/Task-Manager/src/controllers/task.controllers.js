@@ -9,7 +9,7 @@ const createTask = async (req, res) => {
     // Create task
     try {
         const {Name, title, description, username} = req.body
-        if(!Name || !title || !description){
+        if(!Name || !title || !description || !username){
             throw new ApiError(403, "All fields are required.")
         }
 
@@ -21,19 +21,31 @@ const createTask = async (req, res) => {
             throw new ApiError(404, "project not found.")
         }
         
+        // Check the user is admin or not
         if(project.CreatedBy.toString() !== currentUserId.toString()){
             throw new ApiError(403, "Only admin can create the task")
         }
 
-        // const assignedTo = req.user._id
         const user = await User.findOne({username})
         if(!user){
             throw new ApiError(404, "user not found")
         }
 
+        console.log(user)
+        
+        // check the user is in the project members list
+        const isMember = project.members.some(
+            (member) => member.userId.toString() === user._id.toString()
+        );
+        console.log(isMember)
+
+        if(!isMember){
+            throw new ApiError(403, "This user is not a member of the project")
+        }
+
         const validatetask = await Task.findOne({title, project: project._id})
         if(validatetask){
-            throw new ApiError(400, "Task already exists")
+            throw new ApiError(400, "Task already exists in this project")
         }
         
         const task = await Task.create({
@@ -139,6 +151,15 @@ const attachFile = async (req, res) => {
 
     if (!req.file || !title) {
       throw new ApiError(400, "File and title are required")
+    }
+
+    // Validate file mimetype
+    const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+    if (!allowedTypes.includes(req.file.mimetype)) {
+      throw new ApiError(
+        400,
+        "Only JPG, PNG, and PDF files are allowed"
+      );
     }
 
     const task = await Task.findOne({ title })
