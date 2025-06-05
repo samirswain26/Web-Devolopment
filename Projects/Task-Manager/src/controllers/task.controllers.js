@@ -226,9 +226,55 @@ const deleteTask = async (req, res) => {
 }
 
 
+const getTaskList = async (req, res) => {
+    // Get the task list
+   try {
+        const{Name} = req.body
+ 
+        if(!Name) {
+             throw new ApiError(400, "Task title is required")
+        }
+
+        const project = await Project.findOne({Name})
+        
+        if(!project){
+            throw new ApiError(404, "project not found.")
+        }
+        
+        // console.log(project)
+        const task = await Task.find({project: project._id})
+        console.log(task)
+
+        
+        if(!task){
+            throw new ApiError(404, "tasks not found")
+        }
+        
+        const Tasktitle = task.map(
+            task => task.title 
+        )
+        console.log(Tasktitle)
+
+        return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                Tasktitle,
+                "Successfully fetched the task list of the project"
+            )
+        ) 
+   } catch (error) {
+        throw new ApiError(500, error.message || "Something went wrong while retriving task list")
+   }
+    
+}
+
+
 export {
     createTask,
     updateTask,
     attachFile,
-    deleteTask
+    deleteTask,
+    getTaskList
 }
