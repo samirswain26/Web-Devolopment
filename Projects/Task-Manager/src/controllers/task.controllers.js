@@ -67,6 +67,7 @@ const createTask = async (req, res) => {
     }
 }
 
+
 const updateTask = async (req, res) => {
     // Update the task
 
@@ -170,8 +171,43 @@ const attachFile = async (req, res) => {
 }
 
 
+const deleteTask = async (req, res) => {
+    // Detele the task
+    try {
+        const {title} = req.body
+    
+        if(!title){
+            throw new ApiError(400, "Task title is required")
+        }
+    
+        const task = await Task.findOne({title ,assignedBy: req.user._id})
+    
+        if(!task){
+            throw new ApiError(404, "Task not found")
+        }
+    
+        const deletedTask = await Task.deleteOne({_id: task._id})
+        console.log(deletedTask)
+    
+    
+        if(deletedTask.deletedCount === 0){
+            return res.status(400).json(
+                new ApiResponse(400, null, "This task is not belong to the login user/admin")
+            )
+        }
+          
+        return res.status(200).json(
+            new ApiResponse(200, null, "Task deleted Successfully")
+        )
+    } catch (error) {
+        throw new ApiError(500, error.message || "Something went wrong while deleting the task")
+    }
+}
+
+
 export {
     createTask,
     updateTask,
-    attachFile
+    attachFile,
+    deleteTask
 }
