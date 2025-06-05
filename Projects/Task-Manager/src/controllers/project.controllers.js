@@ -2,7 +2,7 @@ import {Project} from "../models/project.models.js"
 import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
-
+import { Task } from "../models/task.models.js";
 
 const createProject = async (req, res) => {
   // create project
@@ -158,6 +158,11 @@ const deleteProject = async (req, res) => {
     
     const deletedProject = await Project.deleteOne({_id: project._id})
     console.log(deletedProject)
+
+    // Delete the tasks when the project will be deletd
+    const deleteTask = await Task.deleteMany({project: project._id});
+    console.log(`Deleted task is ${deleteTask}`)
+
     if(deletedProject.deletedCount === 0){
       return res.status(400).json(
         new ApiResponse(400, null, "This project is not belong to the login user")
@@ -165,7 +170,7 @@ const deleteProject = async (req, res) => {
     }
   
     return res.status(200).json(
-      new ApiResponse(200, null, "Project deleted Successfully")
+      new ApiResponse(200, deletedProject, "Project deleted Successfully")
     )
 
   } catch (error) {
