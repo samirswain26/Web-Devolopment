@@ -4,6 +4,9 @@ import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { Project } from "../models/project.models.js";
 import { AvailableTaskStatus } from "../utils/constants.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import path from "path"
+import fs from "fs"
 
 const createTask = async (req, res) => {
     // Create task
@@ -174,8 +177,29 @@ const attachFile = async (req, res) => {
     // Shows the multer file that has been stored in the server....
     console.log(req.file)
 
+
+    
+    const localFilePath = path.join(process.cwd(), req.file.destination, req.file.filename);
+
+    // Confirm that file exists
+    if (!fs.existsSync(localFilePath)) {
+        throw new ApiError(500, "Uploaded file not found on server");
+    }
+
+    const cloudinaryResponse = await uploadOnCloudinary(localFilePath, {
+        folder: "Task",
+        type: "private",
+    });
+
+    console.log(cloudinaryResponse);
+
+    if (!cloudinaryResponse) {
+        throw new ApiError(500, "cloudinary upload failed");
+    }
+
+
     const fileMeta = {
-      url: fileUrl,
+      url: cloudinaryResponse.secure_url,
       mimetype: req.file.mimetype,
       size: req.file.size,
     }
@@ -271,10 +295,16 @@ const getTaskList = async (req, res) => {
 }
 
 
+const getAttachedfile = async (req, res) => {
+    // Get the attached files 
+}
+
+
 export {
     createTask,
     updateTask,
     attachFile,
     deleteTask,
-    getTaskList
+    getTaskList,
+    getAttachedfile
 }
