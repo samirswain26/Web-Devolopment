@@ -163,6 +163,7 @@ const deleteProject = async (req, res) => {
     const deleteTask = await Task.deleteMany({project: project._id});
     console.log(`Deleted task is ${deleteTask}`)
 
+
     if(deletedProject.deletedCount === 0){
       return res.status(400).json(
         new ApiResponse(400, null, "This project is not belong to the login user")
@@ -177,6 +178,7 @@ const deleteProject = async (req, res) => {
     throw new ApiError(500, error.message || "Failed to delete project")
   }
 };
+
 
 const getProjectMembers = async (req, res) => {
   // get project members

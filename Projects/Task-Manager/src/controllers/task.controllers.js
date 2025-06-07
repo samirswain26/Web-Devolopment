@@ -8,7 +8,7 @@ import { AvailableTaskStatus, TaskStatusEnum } from "../utils/constants.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import path from "path"
 import fs from "fs"
-import { title } from "process";
+
 
 
 const createTask = async (req, res) => {
@@ -238,6 +238,11 @@ const deleteTask = async (req, res) => {
         if(!task){
             throw new ApiError(404, "Task not found")
         }
+
+        // Delete the Sub-tasks when the task will be deletd
+        const deletesubTask = await SubTask.deleteMany({task: task._id});
+        console.log(`Deleted task is ${deletesubTask}`)
+
     
         const deletedTask = await Task.deleteOne({_id: task._id})
         console.log(deletedTask)
@@ -366,7 +371,10 @@ const createSubtask = async (req, res) => {
         if (existingSubtask) {
             throw new ApiError(400, "This Sub-task already exists in this Task");
         }
-
+        const validatSubetask = await SubTask.findOne({title, task: task._id})
+        if(validatSubetask){
+            throw new ApiError(400, "Sub-Task already exists in this Task")
+        }
         
         const subtask = await SubTask.create({
             title, 
