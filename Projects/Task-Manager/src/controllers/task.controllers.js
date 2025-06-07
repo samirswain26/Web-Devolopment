@@ -1,5 +1,6 @@
 import { Task } from "../models/task.models.js";
 import { User } from "../models/user.models.js";
+import { SubTask } from "../models/subtask.models.js";
 import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { Project } from "../models/project.models.js";
@@ -332,11 +333,73 @@ const getAttachedfile = async (req, res) => {
 }
 
 
+const createSubtask = async (req, res) => {
+    // Create sun task for specific task
+    try {
+        const {title, tasktitle} = req.body
+        console.log(title)
+    
+        if(!title || !tasktitle){
+            throw new ApiError(403, "All fields are required for creating sub-task")
+        }
+    
+
+        const currentUserId = req.user._id
+        console.log(currentUserId)
+    
+        const task = await Task.findOne({title: tasktitle}).select("-attachments");
+        console.log(task)
+
+        if(!task){
+            throw new ApiError(404, "Task not found")
+        }
+    
+        const isTaskCreator = task.assignedBy.toString() === currentUserId.toString();
+        const isAssignedUser = task.assignedTo?.toString() === currentUserId.toString();
+
+        if (!isTaskCreator && !isAssignedUser) {
+            throw new ApiError(403, "Only task creator or assigned user can create the subtask");
+        }
+    
+        const existingSubtask = await SubTask.findOne({ title, task: task._id });
+        if (existingSubtask) {
+            throw new ApiError(400, "This Sub-task already exists in this Task");
+        }
+
+        
+        const subtask = await SubTask.create({
+            title, 
+            task: task._id,
+            createdBy: currentUserId
+        })
+    
+        console.log(subtask)
+    
+        return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                subtask,
+                "task created successfully"
+            )
+        )
+    } catch (error) {
+        throw new ApiError(500, error.message || "Something went wrong while creating sub-task")
+    }
+
+}
+
+
+
+
+
 export {
     createTask,
     updateTask,
     attachFile,
     deleteTask,
     getTaskList,
-    getAttachedfile
-}
+    getAttachedfile,
+    createSubtask
+} 
