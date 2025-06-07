@@ -8,6 +8,7 @@ import { AvailableTaskStatus, TaskStatusEnum } from "../utils/constants.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import path from "path"
 import fs from "fs"
+import { title } from "process";
 
 
 const createTask = async (req, res) => {
@@ -397,7 +398,7 @@ const updateSubtask = async (req, res) => {
     try {
         const {title, isCompleted} = req.body
         if(!title || typeof isCompleted === "undefined"){
-            throw new ApiError(403, "All fields are required")
+            throw new ApiError(403, "Both title and isCompleted fields are required")
         }
 
         // Validate if isCompleted is strictly boolean
@@ -431,6 +432,40 @@ const updateSubtask = async (req, res) => {
 }
 
 
+const getSubTasks = async (req, res) => {
+    //  Get all the subtasks
+    try {
+        const {title} = req.body
+    
+        if(!title){
+            throw new ApiError(403, "Task title is required to get all the sub-task of it.")
+        }
+        
+        const task = await Task.findOne({title})
+        
+        
+        if(!task){
+            throw new ApiError(404, "Task not found.")
+        }
+    
+        const subtasks = await SubTask.find({task})
+        console.log(subtasks)
+    
+        return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                subtasks,
+                'Sub-tasks fetched successfully'
+            )
+        )
+    } catch (error) {
+        throw new ApiError(500, error.message || "Something went wrong while updating sub-task")
+    }   
+
+}
+
 
 
 export {
@@ -441,5 +476,6 @@ export {
     getTaskList,
     getAttachedfile,
     createSubtask,
-    updateSubtask
+    updateSubtask,
+    getSubTasks
 } 
