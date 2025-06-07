@@ -1,5 +1,5 @@
 import Router from "express"
-import { attachFile, createSubtask, createTask, deleteTask, getAttachedfile, getSubTasks, getTaskList, updateSubtask, updateTask } from "../controllers/task.controllers.js"
+import { attachFile, createSubtask, createTask, deleteSubTask, deleteTask, getAttachedfile, getSubTasks, getTaskList, updateSubtask, updateTask } from "../controllers/task.controllers.js"
 import { isLoggedIn } from "../middleware/validator.middleware.js"
 import { upload } from "../middleware/multer.middleware.js"
 
@@ -18,6 +18,7 @@ router.route("/get-attach-files").post(isLoggedIn, getAttachedfile)
 router.route("/create-subtask").post(isLoggedIn,createSubtask)
 router.route("/update-subtask").post(isLoggedIn,updateSubtask)
 router.route("/get-subtask").post(isLoggedIn,getSubTasks)
+router.route("/delete-subtask").post(isLoggedIn,deleteSubTask)
 
 
 

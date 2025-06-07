@@ -466,6 +466,50 @@ const getSubTasks = async (req, res) => {
 
 }
 
+const deleteSubTask = async (req, res) => {
+  try {
+    const { title, isCompleted } = req.body;
+
+    if (!title || typeof isCompleted !== "boolean") {
+      throw new ApiError(403, "Title and isCompleted (as boolean) are required");
+    }
+
+    const task = await SubTask.findOne({ title });
+
+    if (!task) {
+      throw new ApiError(404, "Sub-task not found");
+    }
+
+    if (isCompleted === true) {
+      const message = task.isCompleted
+        ? "Sub-task was already completed. Deleting now."
+        : "Sub-task marked as completed and deleted.";
+
+      const deletedTask = await SubTask.findOneAndDelete({ _id: task._id });
+
+      return res.status(200).json(
+        new ApiResponse(200, deletedTask, message)
+      );
+    } else {
+      if (task.isCompleted === false) {
+        return res.status(200).json(
+          new ApiResponse(200, task, "Sub-task is already marked as not completed")
+        );
+      }
+
+      task.isCompleted = false;
+      await task.save();
+
+      return res.status(200).json(
+        new ApiResponse(200, task, "Sub-task marked as not completed")
+      );
+    }
+
+  } catch (error) {
+    throw new ApiError(500, error.message || "Something went wrong while deleting sub-task");
+  }
+};
+
 
 
 export {
@@ -477,5 +521,6 @@ export {
     getAttachedfile,
     createSubtask,
     updateSubtask,
-    getSubTasks
+    getSubTasks,
+    deleteSubTask
 } 
