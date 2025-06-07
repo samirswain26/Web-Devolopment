@@ -3,10 +3,11 @@ import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { Project } from "../models/project.models.js";
-import { AvailableTaskStatus } from "../utils/constants.js";
+import { AvailableTaskStatus, TaskStatusEnum } from "../utils/constants.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import path from "path"
 import fs from "fs"
+
 
 const createTask = async (req, res) => {
     // Create task
@@ -89,6 +90,7 @@ const updateTask = async (req, res) => {
     try {
         const{title, status} = req.body
         console.log(title)
+        console.log(status)
         
         if(!title || !status){
             throw new ApiError(400, "Both title and status are required to update the task")
@@ -151,6 +153,7 @@ const updateTask = async (req, res) => {
 const attachFile = async (req, res) => {
   try {
     const { title } = req.body
+    console.log(title)
 
     if (!req.file || !title) {
       throw new ApiError(400, "File and title are required")
@@ -252,20 +255,23 @@ const deleteTask = async (req, res) => {
 
 const getTaskList = async (req, res) => {
     // Get the task list
+    const{Name} = req.body
+    console.log(Name)
    try {
-        const{Name} = req.body
+
  
         if(!Name) {
              throw new ApiError(400, "Task title is required")
         }
 
         const project = await Project.findOne({Name})
+
         
         if(!project){
             throw new ApiError(404, "project not found.")
         }
         
-        // console.log(project)
+        console.log(project)
         const task = await Task.find({project: project._id})
         console.log(task)
 
@@ -297,6 +303,29 @@ const getTaskList = async (req, res) => {
 
 const getAttachedfile = async (req, res) => {
     // Get the attached files 
+    try {
+        const{ title } = req.body
+
+
+        if(!title){
+            throw new ApiError(403 ,"Task title is required")
+        }
+
+
+        const task = await Task.findOne({title})
+        console.log(task)
+
+        const files = task.attachments
+        console.log(files)
+
+        res.status(200).json({
+            success: true,
+            files,
+        });
+    } catch (error) {
+        throw new ApiError(500, error.message || "Something went wrong while fetching the files from the server.")
+    }
+
 }
 
 

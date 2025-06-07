@@ -19,3 +19,4 @@ connectDB()
         // For seek this catch will never run because in db file "connectdb" already get exit in catch.
     })
 
+console.log("asdasdf")
