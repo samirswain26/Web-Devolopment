@@ -391,6 +391,45 @@ const createSubtask = async (req, res) => {
 }
 
 
+const updateSubtask = async (req, res) => {
+    // Upadate the sub-task status
+
+    try {
+        const {title, isCompleted} = req.body
+        if(!title || typeof isCompleted === "undefined"){
+            throw new ApiError(403, "All fields are required")
+        }
+
+        // Validate if isCompleted is strictly boolean
+       if (typeof isCompleted !== "boolean") {
+           throw new ApiError(400, "The isCompleted field must be either true or false (Boolean only)");
+       }
+    
+        const task = await SubTask.findOne({title})
+        if(!task) {
+            throw new ApiError(404, "Sub task not found")
+        }
+    
+
+        task.isCompleted = isCompleted
+        
+        await task.save()
+        console.log(task)
+    
+        return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                isCompleted,
+                "Sub-task updated successfully"
+            )
+        )
+    } catch (error) {
+        throw new ApiError(500, error.message || "Something went wrong while updating sub-task")
+    }
+}
+
 
 
 
@@ -401,5 +440,6 @@ export {
     deleteTask,
     getTaskList,
     getAttachedfile,
-    createSubtask
+    createSubtask,
+    updateSubtask
 } 
