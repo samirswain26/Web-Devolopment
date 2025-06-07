@@ -200,6 +200,9 @@ const attachFile = async (req, res) => {
         throw new ApiError(500, "cloudinary upload failed");
     }
 
+    // const result = await cloudinary.uploader.upload(filePath);
+    // console.log(result.secure_url); // ✅ use this!
+
 
     const fileMeta = {
       url: cloudinaryResponse.secure_url,
