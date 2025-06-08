@@ -19,12 +19,14 @@ import healthcheckrouter from "./routes/healthcheck.routes.js"
 import authrouter from "./routes/auth.routes.js"
 import projectrouter from "./routes/projects.routes.js"
 import taskrouter from "./routes/task.routes.js"
+import notesroueter from "./routes/notes.routes.js"
 
 
 app.use("/api/v1", healthcheckrouter)
 app.use("/api/v1", authrouter)
 app.use("/api/v1", projectrouter)
 app.use("/api/v1", taskrouter)
+app.use("/api/v1", notesroueter)
 
 
 // Checking the file is actually visinle in the client side or not
