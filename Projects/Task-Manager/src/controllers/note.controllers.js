@@ -1,7 +1,6 @@
 import { ProjectNotes } from "../models/note.models.js";
 import { Project } from "../models/project.models.js";
 import { ApiError } from "../utils/api-error.js";
-import { User } from "../models/user.models.js";
 import { ApiResponse } from "../utils/api-response.js";
 
 const createnotes = async (req, res) => {
@@ -51,10 +50,6 @@ const createnotes = async (req, res) => {
 
 }
 
-const deletenote = async(req, res) => {
-    // Delete notes
-
-}
 
 export {
     createnotes,
