@@ -6,12 +6,13 @@ import Login from './components/Login.jsx';
 import {BrowserRouter, Routes, Route} from "react-router"
 import Signup from './components/Signup.jsx';
 import Signout from './components/Signout.jsx';
+import Homepage from './components/Homepage.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<App/>} />
+        <Route path='/' element={<Homepage/>} />
         <Route path='/Login' element={<Login/>} />
         <Route path='/Signup' element={<Signup/>} />
       </Routes>
