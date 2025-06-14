@@ -135,40 +135,48 @@ const login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password)
         console.log(isMatch)
 
+        // const isverified = user.isVerified()
+        
         if(!isMatch){
             return res.status(400).json({
                 message: "invalid email and password", 
             });
         }
-
-
-        // verify the email as isVerifed fireld....
-
-        const token = jwt.sign({id: user._id, role: user.role},
-            process.env.JWT_SECRET, {
-                expiresIn: "24h"
+        
+        if(user.isVerified === true){
+            // verify the email as isVerifed fireld....
+    
+            const token = jwt.sign({id: user._id, role: user.role},
+                process.env.JWT_SECRET, {
+                    expiresIn: "24h"
+                }
+            );
+    
+            const cookieOption = {
+                httpOnly: true,
+                secure: true,
+                maxAge: 24*60*60*1000
             }
-        );
-
-        const cookieOption = {
-            httpOnly: true,
-            secure: true,
-            maxAge: 24*60*60*1000
+            res.cookie("token", token, cookieOption)
+    
+            res.status(200).json({
+                message: "Login Successful",
+                token,
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    role: user.role
+                }
+            })
+        }else{
+            return res.status(500).json({
+                mesasage : "Email is not verified"
+            })
         }
-        res.cookie("token", token, cookieOption)
 
-        res.status(200).json({
-            message: "Login Successful",
-            token,
-            user: {
-                id: user._id,
-                name: user.name,
-                role: user.role
-            }
-        })
 
     } catch (error) {
-        
+        return error
     }
 }
 

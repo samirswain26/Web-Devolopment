@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router"
 import apiClient from "../../service/apiClient"
 
 
@@ -8,6 +9,8 @@ function Signup () {
     const [ password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
+
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -71,6 +74,16 @@ function Signup () {
                 type="Submit"
                 disabled = {loading}
                 >{loading ? 'Signup.....' : 'Signup'}</button>
+
+                <p style={{ marginTop: '1rem' }}>
+                    Already have an accont?{" "}
+                    <button
+                        onClick = {()=> navigate("/Login")}
+                        style={{ color: "blue", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}
+                    >
+                    Login here
+                    </button>
+                </p>
             </form>
         </div>
     )
