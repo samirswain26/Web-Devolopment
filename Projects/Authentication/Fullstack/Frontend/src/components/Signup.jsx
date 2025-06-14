@@ -9,6 +9,7 @@ function Signup () {
     const [ password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
+    const [message, setMessage] = useState("")
 
     const navigate = useNavigate()
 
@@ -22,8 +23,11 @@ function Signup () {
             const data = await apiClient.signup(name, email, password)
             console.log(`Signup data: `, data)
 
+            setMessage("Verification token was sent to your email.")
+
         } catch (error) {
-            
+            setError("Signup failed. Try again.");
+            console.log(error);
         }
 
         // Make an API call to backend with data
@@ -84,6 +88,8 @@ function Signup () {
                     Login here
                     </button>
                 </p>
+                {message && <p style={{ color: "green", marginTop: "1rem" }}>{message}</p>}
+                {error && <p style={{ color: "red", marginTop: "1rem" }}>{error}</p>}
             </form>
         </div>
     )
