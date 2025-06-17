@@ -334,6 +334,50 @@ const me = async(req, res) => {
         })
     }
 }
+// const Someme = async(req, res) => {
+//     try {
+//         console.log(`Error, ${Error}`)
+//         return res.status(200).json({
+//             message: ["Hello Coders"],
+//             message: ["Chai code"],
+//             message: ["Chai code"],
+//             message: ["Coding Heros"],
+//             message: ["Masterji"]
+//         })
+//     } catch (error) {
+//         console.log(`Error: ${error}`)
+//         return res.status(500).json({
+//             error
+//         })
+//     }
+// }
+
+const Someme = async (req, res) => {
+    try {
+        const messages = [
+            { name: "Hello Coders",
+                id: 1
+            },
+            { name: "Chai code",
+                id: 2
+            },
+            { name: "Chai code",
+                id: 3
+            },
+            { name: "Coding Heros",
+                id: 4
+            },
+            { name: "Masterji",
+                id: 5
+             }
+        ];
+
+        return res.status(200).json(messages);
+    } catch (error) {
+        console.log(`Error: ${error}`);
+        return res.status(500).json({ error });
+    }
+};
 
 
-export {registeruser, verifyUser, login, getMe, logoutUser, forgotPassword, resetPassword, me}
+export {registeruser, verifyUser, login, getMe, logoutUser, forgotPassword, resetPassword, me, Someme}
