@@ -334,23 +334,23 @@ const me = async(req, res) => {
         })
     }
 }
-// const Someme = async(req, res) => {
-//     try {
-//         console.log(`Error, ${Error}`)
-//         return res.status(200).json({
-//             message: ["Hello Coders"],
-//             message: ["Chai code"],
-//             message: ["Chai code"],
-//             message: ["Coding Heros"],
-//             message: ["Masterji"]
-//         })
-//     } catch (error) {
-//         console.log(`Error: ${error}`)
-//         return res.status(500).json({
-//             error
-//         })
-//     }
-// }
+const Somedata = async(req, res) => {
+    try {
+        const messages = [{
+            name: "smair",
+            age : 12,
+            number: 1234341123,
+            interesteIn : "Coding"
+        }]
+        console.log(`Error, ${Error}`)
+        return res.status(200).json(messages)
+    } catch (error) {
+        console.log(`Error: ${error}`)
+        return res.status(500).json({
+            error
+        })
+    }
+}
 
 const Someme = async (req, res) => {
     try {
@@ -380,4 +380,4 @@ const Someme = async (req, res) => {
 };
 
 
-export {registeruser, verifyUser, login, getMe, logoutUser, forgotPassword, resetPassword, me, Someme}
+export {registeruser, verifyUser, login, getMe, logoutUser, forgotPassword, resetPassword, me, Someme, Somedata}

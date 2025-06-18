@@ -1,5 +1,5 @@
 import express from "express";
-import { login, registeruser, verifyUser, getMe, logoutUser, forgotPassword, resetPassword, me, Someme } from "../controller/user.controller.js";
+import { login, registeruser, verifyUser, getMe, logoutUser, forgotPassword, resetPassword, me, Someme, Somedata } from "../controller/user.controller.js";
 import {isLoggedIn} from "../middleware/auth.middleware.js"
 
 const router = express.Router()
@@ -14,5 +14,6 @@ router.get("/reset/:token", resetPassword)
 
 router.get("/coders", me)
 router.get("/Someme", Someme)
+router.get("/Somedata", Somedata)
 
 export default router

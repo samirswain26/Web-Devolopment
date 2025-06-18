@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import { Platform } from './message'
+import {  useSpecialTask } from './hooks/useSpecialTask.js'
 
 function App() {
   const [message, setmessage] = useState("Loading...")
+  const {task, loading, Error} = useSpecialTask()
 
   useEffect(()=>{
       fetch("/users/coders")
@@ -19,6 +21,7 @@ function App() {
     <p>My Frontend (Vite) server is running on PORT: 5173 <br /> And the URL is br http://localhost:5173 </p>
     <h1>{message}</h1>
     <Platform/>
+    <task.name/>
    </div>
 
   )
