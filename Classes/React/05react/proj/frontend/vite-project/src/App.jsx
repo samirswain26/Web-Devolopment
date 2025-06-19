@@ -6,6 +6,7 @@ import {  useSpecialTask } from './hooks/useSpecialTask.js'
 function App() {
   const [message, setmessage] = useState("Loading...")
   const {task, loading, Error} = useSpecialTask()
+  console.log("task", task)
 
   useEffect(()=>{
       fetch("/users/coders")
@@ -14,6 +15,9 @@ function App() {
       .catch(() => setmessage("Failed to load"))
   }, [])
 
+  if(loading) return <h2>loading...</h2>
+  if(Error) return <h2>Error: {Error} </h2>
+
   return (
    <div>
     <h1>Welcome To Code Tech</h1>
@@ -21,7 +25,7 @@ function App() {
     <p>My Frontend (Vite) server is running on PORT: 5173 <br /> And the URL is br http://localhost:5173 </p>
     <h1>{message}</h1>
     <Platform/>
-    <task.name/>
+    <h3>{task.name}</h3>
    </div>
 
   )
