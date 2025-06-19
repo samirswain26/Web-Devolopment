@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import { Platform } from './message'
 import {  useSpecialTask } from './hooks/useSpecialTask.js'
+import ContactForm from './contactform.jsx'
 
 function App() {
   const [message, setmessage] = useState("Loading...")
@@ -26,6 +27,9 @@ function App() {
     <h1>{message}</h1>
     <Platform/>
     <h3>{task.name}</h3>
+    {/* <h3>{conatactForm}</h3> */}
+    <ContactForm/>
+    {console.log(ContactForm)}
    </div>
 
   )
