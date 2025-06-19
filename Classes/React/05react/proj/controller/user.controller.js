@@ -336,12 +336,12 @@ const me = async(req, res) => {
 }
 const Somedata = async(req, res) => {
     try {
-        const messages = [{
-            name: "smair",
+        const messages = {
+            name: "samir",
             age : 12,
             number: 1234341123,
             interesteIn : "Coding"
-        }]
+        }
         console.log(`Error, ${Error}`)
         return res.status(200).json(messages)
     } catch (error) {
