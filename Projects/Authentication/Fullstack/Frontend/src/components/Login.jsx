@@ -1,5 +1,6 @@
 import { useState } from "react"
 import apiClient from "../../service/apiClient"
+import Homepage from "./Homepage"
 
 
 function Login () {
@@ -8,7 +9,7 @@ function Login () {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const [loginSuccess, setLoginSuccess] = useState(false)
-    const [message, setMesssage] = useState(false)
+    const [message, setMessage] = useState(false)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -22,7 +23,13 @@ function Login () {
 
             if(data.message === "Login Successful"){
                 setLoginSuccess(true)
-                setMesssage("Login Successfully completed ")
+                setMessage("Login Successfully completed ")
+
+              // Remove the message after 3 seconds
+              setTimeout(() => {
+                setMessage("");
+              }, 3000);
+
             }else {
                 setError("Login failed");
             }
@@ -38,8 +45,27 @@ function Login () {
 
     return (
         <div>
+          
+          { message && (
+            <div style={{
+              position: "fixed",
+              top: "10px",
+              center: "10px",
+              backgroundColor: "green",
+              color: "white",
+              padding: "10px 20px",
+              borderRadius: "5px",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+              zIndex: 1000
+            }}>
+              {message}
+            </div>
+          )}
           {loginSuccess ? (
-            <p style={{ color: "White", fontWeight: "bold" }}>{message}</p>
+            <>
+            {/* <p style={{ color: "White", fontWeight: "bold" }}>{message}</p> */}
+            <Homepage/>
+            </>
           ) : (
             <>
               <h1>Welcome to login page</h1>
