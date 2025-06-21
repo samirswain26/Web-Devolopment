@@ -52,6 +52,5 @@ const createnotes = async (req, res) => {
 
 
 export {
-    createnotes,
-    deletenote
+    createnotes
 }
