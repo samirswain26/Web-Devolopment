@@ -29,7 +29,7 @@ function Login() {
         // Remove the message after 3 seconds
         setTimeout(() => {
           setMessage("");
-          // navigate("/Mainpage")
+          navigate("/Mainpage");
         }, 3000);
       } else {
         setError("Login failed");
@@ -93,11 +93,7 @@ function Login() {
               />
             </div>
             <button type="submit" disabled={loading}>
-              {
-                <Link to={"/Mainpage"}>
-                  {loading ? "Logging in..." : "Login"}
-                </Link>
-              }
+              {loading ? "Logging in..." : "Login"}
             </button>
             {error && <p style={{ color: "red" }}>{error}</p>}
           </form>
