@@ -1,109 +1,117 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs"
-import jwt from "jsonwebtoken"
-import crypto from "crypto"
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     avatar: {
-        type: {
-           url: String,
-           localpath: String,
-        },
-        default: {
-            url: `https://placehold.co/600x400`,
-            localpath: ""
-        }
+      type: {
+        url: String,
+        localpath: String,
+      },
+      default: {
+        url: `https://placehold.co/600x400`,
+        localpath: "",
+      },
     },
     username: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-        trim: true,
-        index: true
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      index: true,
     },
     email: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-        trim: true,
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
     },
     fullname: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     password: {
-        type: String,
-        required: [true, "Password is required "],
+      type: String,
+      required: [true, "Password is required "],
     },
     isEmailVerified: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     forgotPasswordToken: {
-        type: String,
-        
+      type: String,
     },
     forgotPasswordExpiry: {
-        type: Date,   
+      type: Date,
     },
     refreshToken: {
-        type: String,
+      type: String,
     },
     emailVerificationToken: {
-        type: String,
+      type: String,
     },
     emailVerificationExpiry: {
-        type: Date,
-    }
-},{timestamps: true})
+      type: Date,
+    },
+  },
+  { timestamps: true },
+);
 
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+  next();
+});
 
-userSchema.pre("save", async function (next){
-    if(this.isModified("password")){
-        this.password = await bcrypt.hash(this.password, 10)
-    }
-    next()
-})
+userSchema.methods.isPasswordCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
 
-userSchema.methods.isPasswordCorrect = async function (password){
-    return await bcrypt.compare(password, this.password)
-}
+userSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      username: this.username,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY },
+  );
+};
 
-userSchema.methods.generateAccessToken =  function(){
-    return jwt.sign(
-        {
-            _id: this._id,
-            email: this.email,
-            username: this.username
-        },
-        process.env.ACCESS_TOKEN_SECRET,
-        {expiresIn: process.env.ACCESS_TOKEN_EXPIRY}
-    )
-}
+userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      // email: this.email,
+      // username: this.username
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY },
+  );
+};
 
-userSchema.methods.generateRefreshToken =  function(){
-    return jwt.sign(
-        {
-            _id: this._id,
-            // email: this.email,
-            // username: this.username
-        },
-        process.env.REFRESH_TOKEN_SECRET,
-        {expiresIn: process.env.REFRESH_TOKEN_EXPIRY}
-    )
-}
+userSchema.methods.generateTemporaryToken = function () {
+  const unHashedToken = crypto.randomBytes(20).toString("hex");
 
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(unHashedToken)
+    .digest("hex");
 
-userSchema.methods.generateTemporaryToken = function (){
-    const unHashedToken = crypto.randomBytes(20).toString("hex")
+  const TokenExpiry = Date.now() + 20 * 60 * 1000;
 
-    const hashedToken = crypto.createHash("sha256").update(unHashedToken).digest("hex")
+  return { unHashedToken, hashedToken, TokenExpiry };
+};
 
-    const TokenExpiry = Date.now() + (20*60*1000)
-
-    return {unHashedToken, hashedToken, TokenExpiry}
-}
-
-export const User = new mongoose.model("User", userSchema)
+export const User = new mongoose.model("User", userSchema);

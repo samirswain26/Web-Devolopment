@@ -33,10 +33,10 @@ class ApiClient {
 
   // Auth endpoints
 
-  async signup(name, email, password) {
+  async signup(username, email, password, fullname) {
     return this.customFetch("/register", {
       method: "POST",
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ username, email, password, fullname }),
     });
   }
 

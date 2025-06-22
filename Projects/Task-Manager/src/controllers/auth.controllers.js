@@ -33,7 +33,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // Validation
 
-  if (!username || !email || !password || !role || !fullname) {
+  if (!username || !email || !password || !fullname) {
     return res.status(404).json({
       message: "All fields are required",
     });
@@ -52,7 +52,6 @@ const registerUser = asyncHandler(async (req, res) => {
       username,
       email,
       password,
-      role,
       fullname,
     });
     console.log(user);
@@ -134,7 +133,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   console.log(email);
 
-  if (!email && !password) {
+  if (!email || !password) {
     throw new ApiError(400, "Email and Password is required");
   }
 
@@ -150,45 +149,43 @@ const loginUser = asyncHandler(async (req, res) => {
       throw new ApiError(401, "Invalid user credentials");
     }
 
-    if (user.isEmailVerified === true) {
-      // Only Verified email can login...
-
-      const { refreshToken, accessToken } =
-        await generateAccessAndRefreshTokens(user._id);
-
-      const loggedInUser = await User.findById(user._id).select("-password ");
-      console.log(loggedInUser);
-      console.log(accessToken);
-      console.log(refreshToken);
-
-      const cookieOption = {
-        httpOnly: true,
-        secure: true,
-        maxAge: 20 * 60 * 60 * 1000,
-      };
-
-      console.log("Login Sucessful");
-      return res
-        .cookie("accessToken", accessToken, cookieOption)
-        .cookie("refreshToken", refreshToken, cookieOption)
-        .json(
-          new ApiResponse(
-            200,
-            {
-              user: loggedInUser,
-              accessToken,
-              refreshToken,
-            },
-            "user Logged In Successfully",
-          ),
-        );
-    } else {
-      return res.status(500).json({
-        mesasage: "Email is not verified",
-      });
+    if (!user.isEmailVerified) {
+      throw new ApiError(401, "Email is not verified till now");
     }
+    // Only Verified email can login...
+
+    const { refreshToken, accessToken } = await generateAccessAndRefreshTokens(
+      user._id,
+    );
+
+    const loggedInUser = await User.findById(user._id).select("-password ");
+    console.log(loggedInUser);
+    console.log(accessToken);
+    console.log(refreshToken);
+
+    const cookieOption = {
+      httpOnly: true,
+      secure: true,
+      maxAge: 20 * 60 * 60 * 1000,
+    };
+
+    console.log("Login Sucessful");
+    return res
+      .cookie("accessToken", accessToken, cookieOption)
+      .cookie("refreshToken", refreshToken, cookieOption)
+      .json(
+        new ApiResponse(
+          200,
+          {
+            user: loggedInUser,
+            accessToken,
+            refreshToken,
+          },
+          "user Logged In Successfully",
+        ),
+      );
   } catch (error) {
-    throw new ApiError(401, "User Login failed");
+    throw error;
   }
 });
 
