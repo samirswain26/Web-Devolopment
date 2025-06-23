@@ -15,7 +15,7 @@ class ApiClient {
       const config = {
         ...options,
         headers,
-        Credential: "include",
+        credentials: "include",
       };
 
       console.log(`Fetching ${url}`);

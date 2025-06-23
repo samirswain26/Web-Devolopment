@@ -10,6 +10,7 @@ app.use(
     origin: process.env.BASE_URI,
     methods: ["GET", "POST", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   }),
 );
 app.use(express.json());
