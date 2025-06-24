@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import apiClient from "../../service/apiclient.js";
 import { Link, useNavigate } from "react-router";
 import Mainpage from "./Mainpage";
+import Profile from "./Profile.jsx";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -63,7 +64,7 @@ function Login() {
       )}
       {loginSuccess ? (
         <>
-          {/* <p style={{ color: "White", fontWeight: "bold" }}>{message}</p> */}
+          <p style={{ color: "White", fontWeight: "bold" }}>{message}</p>
           <Mainpage />
         </>
       ) : (

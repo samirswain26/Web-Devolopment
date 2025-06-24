@@ -166,7 +166,8 @@ const loginUser = asyncHandler(async (req, res) => {
     const cookieOption = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
+      // secure: false,
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       maxAge: 20 * 60 * 60 * 1000,
     };
 
@@ -205,7 +206,7 @@ const getCurrentUser = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      user,
+      user: req.user,
     });
   } catch (error) {}
 };

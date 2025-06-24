@@ -8,6 +8,7 @@ import Login from "./components/Login.jsx";
 import Mainpage from "./components/Mainpage.jsx";
 import Signup from "./components/Signup.jsx";
 import PrivateRoute from "./components/privateroute.jsx";
+import Profile from "./components/Profile.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -15,11 +16,13 @@ createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/" element={<Signup />} />
         <Route path="/Login" element={<Login />} />
+        <Route path="/Profile" element={<Profile />} />
         <Route
           path="/Mainpage"
           element={
             <PrivateRoute>
               <Mainpage />
+              {/* <Profile /> */}
             </PrivateRoute>
           }
         />
