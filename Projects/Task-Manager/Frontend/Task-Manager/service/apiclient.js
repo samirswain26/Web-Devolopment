@@ -47,6 +47,12 @@ class ApiClient {
       body: JSON.stringify({ email, password }),
     });
   }
+
+  async profile() {
+    return this.customFetch("/profile", {
+      method: "GET",
+    });
+  }
 }
 
 const apiClient = new ApiClient();

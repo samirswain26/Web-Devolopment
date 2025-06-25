@@ -6,6 +6,10 @@ function Mainpage() {
     navigate("/Login");
     window.location.reload();
   };
+  const handleBackToProfile = () => {
+    navigate("/Profile");
+    window.location.reload();
+  };
   return (
     <div>
       <h1>This is the main page</h1>
@@ -21,6 +25,20 @@ function Mainpage() {
           }}
         >
           Login
+        </button>
+      </p>
+      <p>
+        Profile Page{" "}
+        <button
+          onClick={handleBackToProfile}
+          style={{
+            color: "blue",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          Profile
         </button>
       </p>
     </div>

@@ -16,13 +16,20 @@ createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/" element={<Signup />} />
         <Route path="/Login" element={<Login />} />
-        <Route path="/Profile" element={<Profile />} />
+        {/* <Route path="/Profile" element={<Profile />} /> */}
         <Route
           path="/Mainpage"
           element={
             <PrivateRoute>
               <Mainpage />
-              {/* <Profile /> */}
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
             </PrivateRoute>
           }
         />
