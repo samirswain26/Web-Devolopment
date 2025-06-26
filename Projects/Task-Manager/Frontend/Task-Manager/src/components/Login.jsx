@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import apiClient from "../../service/apiclient.js";
-import { Link, useNavigate } from "react-router";
+import { data, Link, useNavigate } from "react-router";
 import Mainpage from "./Mainpage";
 import Profile from "./Profile.jsx";
 
@@ -37,7 +37,11 @@ function Login() {
       }
     } catch (error) {
       console.log(error);
-      setError("something went wrong");
+      if (error.response && error.response.data & error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Invalid credentials");
+      }
     } finally {
       setLoading(false);
     }

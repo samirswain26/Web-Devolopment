@@ -1,3 +1,5 @@
+import { body } from "express-validator";
+
 class ApiClient {
   constructor() {
     // this.baseURL = "http://127.0.0.1:8000/api/v1";
@@ -51,6 +53,13 @@ class ApiClient {
   async profile() {
     return this.customFetch("/profile", {
       method: "GET",
+    });
+  }
+
+  async forgot() {
+    return this.customFetch("/forgot", {
+      method: "POST",
+      body: JSON.stringify(email),
     });
   }
 }

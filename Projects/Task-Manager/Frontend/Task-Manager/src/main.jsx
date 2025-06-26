@@ -9,6 +9,7 @@ import Mainpage from "./components/Mainpage.jsx";
 import Signup from "./components/Signup.jsx";
 import PrivateRoute from "./components/privateroute.jsx";
 import Profile from "./components/Profile.jsx";
+import ForgotPassword from "./components/ForgotPassword.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -30,6 +31,14 @@ createRoot(document.getElementById("root")).render(
           element={
             <PrivateRoute>
               <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/ForgotPassword"
+          element={
+            <PrivateRoute>
+              <ForgotPassword />
             </PrivateRoute>
           }
         />

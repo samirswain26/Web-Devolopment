@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import apiClient from "../../service/apiclient";
+import { Link } from "react-router-dom";
 
 function Profile() {
   const [profile, setProfile] = useState(null);
@@ -21,6 +22,12 @@ function Profile() {
       <p>
         <strong>Username:</strong> {profile.username} <br />
         <strong>Email:</strong> {profile.email}
+      </p>
+      <p>
+        <Link to={"/Mainpage"}> Back </Link>
+      </p>
+      <p>
+        <Link to={"/ForgotPassword"}> Forgot Password </Link>
       </p>
     </div>
   );
