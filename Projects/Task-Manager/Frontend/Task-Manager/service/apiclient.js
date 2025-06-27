@@ -56,10 +56,10 @@ class ApiClient {
     });
   }
 
-  async forgot() {
+  async forgot(email) {
     return this.customFetch("/forgot", {
       method: "POST",
-      body: JSON.stringify(email),
+      body: JSON.stringify({ email }),
     });
   }
 }

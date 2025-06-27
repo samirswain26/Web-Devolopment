@@ -13,6 +13,7 @@ function ForgotPassword() {
 
     try {
       console.log("Trying to forgot password");
+      console.log(typeof email);
       const data = await apiClient.forgot(email);
       console.log("Forgot data: ", data);
     } catch (error) {
@@ -28,9 +29,9 @@ function ForgotPassword() {
       <h1>Forgot Password</h1>
       <form onSubmit={handleSubmit}>
         <div className="Forgotemail">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">email</label>
           <input
-            type="text"
+            type="email"
             name="email"
             id="email"
             value={email}
