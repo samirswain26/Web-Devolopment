@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import apiClient from "../../service/apiclient.js";
 import { data, Link, useNavigate } from "react-router";
 import Mainpage from "./Mainpage";
-import Profile from "./Profile.jsx";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -104,6 +103,9 @@ function Login() {
           </form>
           <p>
             Don't have an account!? <Link to={"/Signup"}>Signup Up</Link>
+          </p>
+          <p>
+            <Link to={"/ForgotPassword"}> Forgot Password </Link>
           </p>
         </>
       )}

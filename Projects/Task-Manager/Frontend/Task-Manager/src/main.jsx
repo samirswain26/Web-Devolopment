@@ -10,6 +10,7 @@ import Signup from "./components/Signup.jsx";
 import PrivateRoute from "./components/privateroute.jsx";
 import Profile from "./components/Profile.jsx";
 import ForgotPassword from "./components/ForgotPassword.jsx";
+import ResetPassword from "./components/ResetPassword.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -34,14 +35,8 @@ createRoot(document.getElementById("root")).render(
             </PrivateRoute>
           }
         />
-        <Route
-          path="/ForgotPassword"
-          element={
-            <PrivateRoute>
-              <ForgotPassword />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/ForgotPassword" element={<ForgotPassword />} />
+        <Route path="/reset/:token" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

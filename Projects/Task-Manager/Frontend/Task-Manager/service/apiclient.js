@@ -62,6 +62,16 @@ class ApiClient {
       body: JSON.stringify({ email }),
     });
   }
+
+  async resetPassword(token, password, confPassword) {
+    const endpoint = `/reset/${token}`;
+    console.log("Reset password endpoint:", endpoint);
+    console.log("Full URL will be:", `${this.baseURL}${endpoint}`);
+    return this.customFetch(endpoint, {
+      method: "POST",
+      body: JSON.stringify({ password, confPassword }),
+    });
+  }
 }
 
 const apiClient = new ApiClient();

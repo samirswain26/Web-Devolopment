@@ -26,9 +26,6 @@ function Profile() {
       <p>
         <Link to={"/Mainpage"}> Back </Link>
       </p>
-      <p>
-        <Link to={"/ForgotPassword"}> Forgot Password </Link>
-      </p>
     </div>
   );
 }

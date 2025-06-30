@@ -25,7 +25,7 @@ router
 router.route("/login").post(userLoginValidator(), validator, loginUser);
 router.route("/verify/:token").get(verifyEmail);
 router.route("/forgot").post(resetForgottenPassword);
-router.route("/reset/:token").get(userLoginValidator(), changeCurrentPassword);
+router.route("/reset/:token").post(changeCurrentPassword);
 router.route("/resendtoken").post(resendEmailVerification);
 router.route("/forgot-request").post(forgotPasswordRequest);
 

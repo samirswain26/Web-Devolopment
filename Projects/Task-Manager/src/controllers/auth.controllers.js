@@ -317,7 +317,7 @@ const resetForgottenPassword = asyncHandler(async (req, res) => {
 
   // Send Mail
 
-  const forgotPasswordUrl = `${process.env.BASE_URL}/api/v1/reset/${token.unHashedToken}`;
+  const forgotPasswordUrl = `${process.env.BASE_URI}/reset/${token.unHashedToken}`;
   await sendMail({
     subject: " Forgot Password",
     email: user.email,
@@ -468,18 +468,24 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
       await user.save();
       console.log("Kaam Hogaya");
 
-      res.status(200).json({
-        message: "Password changed successfully!",
-      });
+      res
+        .status(200)
+        .json(
+          new ApiResponse(200, confPassword, "Password changed successfully!"),
+        );
     } catch (error) {
       console.log("Password didn't change due to some internal error");
-      res.status(400).json({
-        message: "Password didn't change due to some internal error",
-        error: error.message,
-        success: false,
-      });
+      throw new ApiError(
+        500,
+        error.message || "Password didn't change due to some internal error",
+      );
     }
-  } catch (error) {}
+  } catch (error) {
+    throw new ApiError(
+      500,
+      error.message || "change pasword function did not work",
+    );
+  }
 });
 
 export {

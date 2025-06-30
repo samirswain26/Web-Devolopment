@@ -1,5 +1,6 @@
 import { useState } from "react";
 import apiClient from "../../service/apiclient";
+import { Link } from "react-router";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -44,6 +45,9 @@ function ForgotPassword() {
         </button>
         {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
+      <p>
+        <Link to={"/Login"}> Back to Login </Link>
+      </p>
     </div>
   );
 }
