@@ -11,6 +11,7 @@ import PrivateRoute from "./components/privateroute.jsx";
 import Profile from "./components/Profile.jsx";
 import ForgotPassword from "./components/ForgotPassword.jsx";
 import ResetPassword from "./components/ResetPassword.jsx";
+import VerificationResult from "./components/VerifyEmail.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -18,7 +19,7 @@ createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/" element={<Signup />} />
         <Route path="/Login" element={<Login />} />
-        {/* <Route path="/Profile" element={<Profile />} /> */}
+        <Route path="/email-verified" element={<VerificationResult />} />
         <Route
           path="/Mainpage"
           element={

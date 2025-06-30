@@ -75,7 +75,7 @@ const registerUser = asyncHandler(async (req, res) => {
     await user.save();
 
     // Send Mail
-
+    // (l => I)/api/v1
     const verificationUrl = `${process.env.BASE_URL}/api/v1/verify/${token.unHashedToken}`;
     await sendMail({
       subject: " Verify Your Account",
@@ -123,6 +123,8 @@ const verifyEmail = asyncHandler(async (req, res) => {
   await user.save();
 
   console.log("User verified sucessfully...");
+  res.redirect(`${process.env.BASE_URI}/email-verified`);
+
   res.status(201).json({
     message: "User verified sucessfully...",
     success: true,

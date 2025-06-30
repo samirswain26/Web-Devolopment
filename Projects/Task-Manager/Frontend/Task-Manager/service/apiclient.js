@@ -43,6 +43,12 @@ class ApiClient {
     });
   }
 
+  async verifyEmail() {
+    return this.customFetch("/verify", {
+      method: "POST",
+    });
+  }
+
   async login(email, password) {
     return this.customFetch("/login", {
       method: "POST",

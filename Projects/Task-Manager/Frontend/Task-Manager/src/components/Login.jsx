@@ -102,7 +102,7 @@ function Login() {
             {error && <p style={{ color: "red" }}>{error}</p>}
           </form>
           <p>
-            Don't have an account!? <Link to={"/Signup"}>Signup Up</Link>
+            Don't have an account!? <Link to={"/"}>Signup Up</Link>
           </p>
           <p>
             <Link to={"/ForgotPassword"}> Forgot Password </Link>
