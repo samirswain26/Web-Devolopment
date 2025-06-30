@@ -72,6 +72,12 @@ class ApiClient {
       body: JSON.stringify({ password, confPassword }),
     });
   }
+
+  async logout() {
+    return this.customFetch("/logout", {
+      method: "POST",
+    });
+  }
 }
 
 const apiClient = new ApiClient();

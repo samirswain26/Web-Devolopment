@@ -32,7 +32,7 @@ router.route("/forgot-request").post(forgotPasswordRequest);
 // Secure Routes
 
 router.route("/profile").get(isLoggedIn, getCurrentUser);
-router.route("/logout").get(userLoginValidator(), isLoggedIn, logoutUser);
+router.route("/logout").post(isLoggedIn, logoutUser);
 router.route("/refresh-token").post(refreshAccessToken);
 
 export default router;
