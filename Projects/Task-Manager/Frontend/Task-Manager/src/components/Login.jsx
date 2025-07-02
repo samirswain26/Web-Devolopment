@@ -24,12 +24,12 @@ function Login() {
 
       if (data.message === "user Logged In Successfully") {
         setLoginSuccess(true);
-        setMessage("Login Successfully completed ");
+        setMessage("Login Successfully");
 
         // Remove the message after 3 seconds
         setTimeout(() => {
-          setMessage("");
           navigate("/Mainpage");
+          setMessage("");
         }, 3000);
       } else {
         setError("Login failed");
@@ -67,7 +67,7 @@ function Login() {
       )}
       {loginSuccess ? (
         <>
-          <p style={{ color: "White", fontWeight: "bold" }}>{message}</p>
+          {/* <p style={{ color: "White", fontWeight: "bold" }}>{message}</p> */}
           <Mainpage />
         </>
       ) : (

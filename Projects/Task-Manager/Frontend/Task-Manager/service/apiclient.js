@@ -84,6 +84,15 @@ class ApiClient {
       method: "POST",
     });
   }
+
+  // Project endpoints
+
+  async createProject(Name, description) {
+    return this.customFetch("/create-project", {
+      method: "POST",
+      body: JSON.stringify({ Name, description }),
+    });
+  }
 }
 
 const apiClient = new ApiClient();
