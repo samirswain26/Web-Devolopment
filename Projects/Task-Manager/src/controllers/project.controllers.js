@@ -23,7 +23,7 @@ const createProject = async (req, res) => {
       console.log("Project name Already Exists");
       return res
         .status(400)
-        .json(new ApiResponse(400, null, "Project name Already Exists"));
+        .json(new ApiResponse(400, null, "Project Name Already Exists"));
     }
 
     const project = await Project.create({
@@ -52,9 +52,7 @@ const createProject = async (req, res) => {
       .status(201)
       .json(new ApiResponse(201, project, "Project Created"));
   } catch (error) {
-    return res
-      .status(500)
-      .json(new ApiResponse(500, null, "Server Error" + error.message));
+    return res.status(500).json(new ApiResponse(500, null, "Server Error"));
   }
 };
 
