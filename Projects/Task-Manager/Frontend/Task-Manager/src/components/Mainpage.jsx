@@ -9,6 +9,8 @@ function Mainpage() {
   const [showForm, setShowForm] = useState(false);
   const [Name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [showList, setShowList] = useState(false);
+  const [projectList, setProjectList] = useState([]);
 
   const navigate = useNavigate();
 
@@ -29,6 +31,9 @@ function Mainpage() {
     setLoading(false);
     setName("");
     setDescription("");
+    if (showForm && showList) {
+      setShowList(false);
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -69,6 +74,32 @@ function Mainpage() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleProjects = async (e) => {
+    e.preventDefault();
+    setShowList(!showList);
+    setError("");
+    setLoading(false);
+
+    if (!showList) {
+      try {
+        const res = await apiClient.myProjects();
+        console.log("Projects:", res);
+
+        // Check if the data exists...
+        if (res && res.data && res.data.length > 0) {
+          setProjectList(res.data);
+        } else {
+          setProjectList([]);
+        }
+      } catch (error) {
+        console.error("Error in fetching projects: ", error);
+        const msg = error.response?.data?.message || "Could not load projects";
+        console.log(msg);
+        setError(msg);
+      }
     }
   };
 
@@ -141,6 +172,27 @@ function Mainpage() {
             {/* Error Message */}
             {error && <div style={styles.errorMsg}>{error}</div>}
           </div>
+        </div>
+      )}
+
+      <button onClick={handleToggleProjects}>
+        {showList ? "Close Projects" : "Show Project"}
+      </button>
+
+      {showList && (
+        <div style={{ marginTop: "20px" }}>
+          <h3>My Projects</h3>
+          {projectList.length > 0 ? (
+            <ul>
+              {projectList.map((project, index) => (
+                <li key={project._id || index}>
+                  <strong>{project.Name}</strong> - {project.description}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No projects found.</p>
+          )}
         </div>
       )}
     </div>

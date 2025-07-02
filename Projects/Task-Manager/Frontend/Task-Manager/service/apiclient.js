@@ -93,6 +93,12 @@ class ApiClient {
       body: JSON.stringify({ Name, description }),
     });
   }
+
+  async myProjects() {
+    return this.customFetch("/get-project-By-Id", {
+      method: "POST",
+    });
+  }
 }
 
 const apiClient = new ApiClient();
