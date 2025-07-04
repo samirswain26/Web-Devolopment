@@ -59,7 +59,7 @@ const createProject = async (req, res) => {
 const getProjects = async (req, res) => {
   // get all projects
   try {
-    const project = await Project.find().select("Name");
+    const project = await Project.find().select("Name").select("description");
     console.log(project);
     return res.status(200).json(new ApiResponse(200, project, "Project Lists"));
   } catch (error) {

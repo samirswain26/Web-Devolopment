@@ -11,6 +11,8 @@ function Mainpage() {
   const [description, setDescription] = useState("");
   const [showList, setShowList] = useState(false);
   const [projectList, setProjectList] = useState([]);
+  const [showallprojectList, setShowAllProjectList] = useState(false);
+  const [allprojectList, setallProjectList] = useState([]);
 
   const navigate = useNavigate();
 
@@ -95,7 +97,33 @@ function Mainpage() {
           setProjectList([]);
         }
       } catch (error) {
-        console.error("Error in fetching projects: ", error);
+        console.error("Error in fetching my projects: ", error);
+        const msg = error.response?.data?.message || "Could not load projects";
+        console.log(msg);
+        setError(msg);
+      }
+    }
+  };
+
+  const handleAllProjects = async (e) => {
+    e.preventDefault();
+    setShowAllProjectList(!showallprojectList);
+    setError("");
+    setLoading(false);
+
+    if (!showallprojectList) {
+      try {
+        const res = await apiClient.allProjects();
+        console.log("Response data on show all list: ", res);
+
+        // Check if the data exists...
+        if (res && res.data && res.data.length > 0) {
+          setallProjectList(res.data);
+        } else {
+          setallProjectList([]);
+        }
+      } catch (error) {
+        console.error("Error in fetching all projects: ", error);
         const msg = error.response?.data?.message || "Could not load projects";
         console.log(msg);
         setError(msg);
@@ -185,6 +213,27 @@ function Mainpage() {
           {projectList.length > 0 ? (
             <ul>
               {projectList.map((project, index) => (
+                <li key={project._id || index}>
+                  <strong>{project.Name}</strong> - {project.description} {"+"}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No projects found.</p>
+          )}
+        </div>
+      )}
+
+      <button onClick={handleAllProjects}>
+        {showallprojectList ? "Close " : "Show All Project"}
+      </button>
+
+      {showallprojectList && (
+        <div style={{ marginTop: "20px" }}>
+          <h3>Projects</h3>
+          {allprojectList.length > 0 ? (
+            <ul>
+              {allprojectList.map((project, index) => (
                 <li key={project._id || index}>
                   <strong>{project.Name}</strong> - {project.description}
                 </li>

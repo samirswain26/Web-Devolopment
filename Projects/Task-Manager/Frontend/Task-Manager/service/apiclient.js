@@ -99,6 +99,12 @@ class ApiClient {
       method: "POST",
     });
   }
+
+  async allProjects() {
+    return this.customFetch("/get-project", {
+      method: "POST",
+    });
+  }
 }
 
 const apiClient = new ApiClient();
