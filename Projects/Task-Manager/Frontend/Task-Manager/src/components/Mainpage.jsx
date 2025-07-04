@@ -81,6 +81,8 @@ function Mainpage() {
 
   const handleToggleProjects = async (e) => {
     e.preventDefault();
+    setShowForm(false); // close other modals
+    setShowAllProjectList(false); // close other modals
     setShowList(!showList);
     setError("");
     setLoading(false);
@@ -107,6 +109,8 @@ function Mainpage() {
 
   const handleAllProjects = async (e) => {
     e.preventDefault();
+    setShowForm(false); // close other modals
+    setShowList(false); // close other modals
     setShowAllProjectList(!showallprojectList);
     setError("");
     setLoading(false);
@@ -128,6 +132,22 @@ function Mainpage() {
         console.log(msg);
         setError(msg);
       }
+    }
+  };
+
+  const handleToRequest = async (e) => {
+    e.preventDefaulkt();
+    setLoading(false);
+    setError("");
+
+    try {
+      const res = await apiClient.requestToJoinProject({ Name });
+      console.log("respose send by the requestToJoinProject:", res);
+      setMessage(res.message || "Request sent successfully!");
+      alert(res.message || "Request sent successfully!");
+    } catch (error) {
+      const msg = error.response?.data?.message || "Failed to send request";
+      alert(msg);
     }
   };
 
@@ -156,7 +176,15 @@ function Mainpage() {
       {showForm && (
         <div style={styles.modalOverlay}>
           <div style={styles.modalContent}>
-            <h2 style={styles.header}>
+            <h2
+              style={{
+                margin: 0,
+                flex: 1,
+                textAlign: "center",
+                marginBottom: "20px",
+                marginTop: "5px",
+              }}
+            >
               Create Project
               <button onClick={handleToggleForm} style={styles.closeBtn}>
                 ×
@@ -208,19 +236,41 @@ function Mainpage() {
       </button>
 
       {showList && (
-        <div style={{ marginTop: "20px" }}>
-          <h3>My Projects</h3>
-          {projectList.length > 0 ? (
-            <ul>
-              {projectList.map((project, index) => (
-                <li key={project._id || index}>
-                  <strong>{project.Name}</strong> - {project.description} {"+"}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No projects found.</p>
-          )}
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
+            <h2
+              style={{
+                margin: 0,
+                flex: 1,
+                textAlign: "center",
+                marginBottom: "25px",
+                marginTop: "5px",
+              }}
+            >
+              My Projects
+              <button
+                onClick={() => setShowList(false)}
+                style={styles.closeBtn}
+              >
+                ×
+              </button>
+            </h2>
+            <div>
+              {projectList.length > 0 ? (
+                projectList.map((project, index) => (
+                  <div key={project._id || index} style={styles.projectCard}>
+                    <h4>{project.Name}</h4>
+                    <p>{project.description}</p>
+                    <p>
+                      <strong>Admin:</strong> {project.admin}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p>No projects found.</p>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -229,19 +279,38 @@ function Mainpage() {
       </button>
 
       {showallprojectList && (
-        <div style={{ marginTop: "20px" }}>
-          <h3>Projects</h3>
-          {allprojectList.length > 0 ? (
-            <ul>
-              {allprojectList.map((project, index) => (
-                <li key={project._id || index}>
-                  <strong>{project.Name}</strong> - {project.description}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No projects found.</p>
-          )}
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContentTall}>
+            <div style={styles.modalHeader}>
+              <h2 style={{ margin: 0, flex: 1, textAlign: "center" }}>
+                All Projects
+              </h2>
+              <button
+                onClick={() => setShowAllProjectList(false)}
+                style={styles.closeBtn}
+              >
+                ×
+              </button>
+            </div>
+            <div style={styles.modalBody}>
+              {allprojectList.length > 0 ? (
+                allprojectList.map((project, index) => (
+                  <div key={project._id || index} style={styles.projectCard}>
+                    <h4>{project.Name}</h4>
+                    <p>{project.description}</p>
+                    <p>
+                      <strong>Admin:</strong> {project.admin}
+                    </p>
+                    <button style={styles.requestBtn} onClick={handleToRequest}>
+                      Request to Join Team
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p>No projects found.</p>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -279,6 +348,8 @@ const styles = {
     color: "#fff",
     fontSize: "24px",
     cursor: "pointer",
+    outline: "none",
+    padding: "5px 15px",
   },
   linkBtn: {
     color: "blue",
@@ -330,6 +401,52 @@ const styles = {
     color: "#721c24",
     border: "1px solid #f5c6cb",
     borderRadius: "4px",
+  },
+  modalContentTall: {
+    background: "#111",
+    color: "#fff",
+    padding: "0",
+    borderRadius: "10px",
+    width: "600px",
+    maxHeight: "80vh",
+    display: "flex",
+    flexDirection: "column",
+    boxShadow: "0 0 10px #000",
+    position: "relative",
+  },
+
+  projectCard: {
+    backgroundColor: "#222",
+    padding: "15px",
+    marginBottom: "15px",
+    borderRadius: "8px",
+    boxShadow: "0 0 5px rgba(255, 255, 255, 0.1)",
+  },
+
+  requestBtn: {
+    padding: "8px 16px",
+    backgroundColor: "#28a745",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    marginTop: "10px",
+  },
+  modalHeader: {
+    position: "sticky",
+    top: 0,
+    background: "#111",
+    padding: "20px 20px 10px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottom: "1px solid #444",
+    zIndex: 1,
+  },
+
+  modalBody: {
+    padding: "20px",
+    overflowY: "auto",
   },
 };
 

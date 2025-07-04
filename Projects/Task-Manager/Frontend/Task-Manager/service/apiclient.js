@@ -1,3 +1,4 @@
+import { BADFAMILY } from "dns";
 import { body } from "express-validator";
 
 class ApiClient {
@@ -103,6 +104,13 @@ class ApiClient {
   async allProjects() {
     return this.customFetch("/get-project", {
       method: "POST",
+    });
+  }
+
+  async requestToJoinProject(Name) {
+    return this.customFetch("/request-project", {
+      method: "POst",
+      body: JSON.stringify({ Name }),
     });
   }
 }
