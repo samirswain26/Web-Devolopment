@@ -135,19 +135,21 @@ function Mainpage() {
     }
   };
 
-  const handleToRequest = async (e) => {
-    e.preventDefaulkt();
+  const handleToRequest = async (Name) => {
+    // e.preventDefaulkt();
     setLoading(false);
     setError("");
+    setMessage("");
 
     try {
-      const res = await apiClient.requestToJoinProject({ Name });
+      const res = await apiClient.requestToJoinProject(Name);
       console.log("respose send by the requestToJoinProject:", res);
       setMessage(res.message || "Request sent successfully!");
-      alert(res.message || "Request sent successfully!");
+      // alert(res.message || "Request sent successfully!");
     } catch (error) {
       const msg = error.response?.data?.message || "Failed to send request";
-      alert(msg);
+      // alert(msg);
+      setError(msg);
     }
   };
 
@@ -232,7 +234,7 @@ function Mainpage() {
       )}
 
       <button onClick={handleToggleProjects}>
-        {showList ? "Close Projects" : "Show Project"}
+        {showList ? "Close Projects" : "My Projects"}
       </button>
 
       {showList && (
@@ -301,7 +303,10 @@ function Mainpage() {
                     <p>
                       <strong>Admin:</strong> {project.admin}
                     </p>
-                    <button style={styles.requestBtn} onClick={handleToRequest}>
+                    <button
+                      style={styles.requestBtn}
+                      onClick={() => handleToRequest(project.Name)}
+                    >
                       Request to Join Team
                     </button>
                   </div>
@@ -313,11 +318,83 @@ function Mainpage() {
           </div>
         </div>
       )}
+
+      {(error || message) && <div style={styles.overlayBlocker}></div>}
+
+      {message && (
+        <div style={styles.customBoxSuccess}>
+          <p>{message}</p>
+          <button onClick={() => setMessage("")} style={styles.closeBtnSmall}>
+            ×
+          </button>
+        </div>
+      )}
+
+      {error && (
+        <div style={styles.customBoxError}>
+          <p>{error}</p>
+          <button onClick={() => setError("")} style={styles.closeBtnSmall}>
+            ×
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
 const styles = {
+  overlayBlocker: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100vw",
+    height: "100vh",
+    backgroundColor: "rgba(0, 0, 0, 0.3)", // semi-transparent overlay
+    zIndex: 1500, // must be less than message box but more than rest of UI
+  },
+
+  customBoxSuccess: {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    backgroundColor: "#d4edda",
+    color: "#155724",
+    padding: "15px 20px",
+    borderRadius: "8px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+    zIndex: 2000,
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+  },
+
+  customBoxError: {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    backgroundColor: "#f8d7da",
+    color: "#721c24",
+    padding: "15px 20px",
+    borderRadius: "8px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+    zIndex: 2000,
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+  },
+
+  closeBtnSmall: {
+    background: "none",
+    border: "none",
+    color: "#000",
+    fontSize: "18px",
+    fontWeight: "bold",
+    marginLeft: "10px",
+    cursor: "pointer",
+  },
+
   modalOverlay: {
     position: "fixed",
     top: 0,

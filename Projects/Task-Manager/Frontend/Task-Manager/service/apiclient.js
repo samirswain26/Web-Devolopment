@@ -1,6 +1,3 @@
-import { BADFAMILY } from "dns";
-import { body } from "express-validator";
-
 class ApiClient {
   constructor() {
     // this.baseURL = "http://127.0.0.1:8000/api/v1";
@@ -109,7 +106,7 @@ class ApiClient {
 
   async requestToJoinProject(Name) {
     return this.customFetch("/request-project", {
-      method: "POst",
+      method: "POST",
       body: JSON.stringify({ Name }),
     });
   }
