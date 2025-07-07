@@ -110,6 +110,14 @@ class ApiClient {
       body: JSON.stringify({ Name }),
     });
   }
+
+  async deleteProject(Name) {
+    console.log("Data delete mein hai ab:", Name);
+    return this.customFetch("/delete-project", {
+      method: "POST",
+      body: JSON.stringify({ Name }),
+    });
+  }
 }
 
 const apiClient = new ApiClient();

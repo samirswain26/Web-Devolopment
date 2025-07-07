@@ -153,6 +153,25 @@ function Mainpage() {
     }
   };
 
+  const handleDeleteProject = async (Name) => {
+    setLoading(false);
+    setError("");
+    setMessage("");
+
+    try {
+      console.log("A");
+      const res = await apiClient.deleteProject(Name);
+      console.log("Delete Response is:", res);
+      setMessage(res.message || "Project Deleted !");
+
+      //Remove the project from the present state...
+      setProjectList((prevList) => prevList.filter((p) => p.Name !== Name));
+    } catch (error) {
+      const msg = error.response?.data?.message || "Failed to delete project";
+      setError(msg);
+    }
+  };
+
   return (
     <div>
       <h1>This is the main page</h1>
@@ -262,6 +281,9 @@ function Mainpage() {
                 projectList.map((project, index) => (
                   <div key={project._id || index} style={styles.projectCard}>
                     <h4>{project.Name}</h4>
+                    <button onClick={() => handleDeleteProject(project.Name)}>
+                      Delete Project
+                    </button>
                     <p>{project.description}</p>
                     <p>
                       <strong>Admin:</strong> {project.admin}
