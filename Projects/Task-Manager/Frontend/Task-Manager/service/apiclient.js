@@ -128,6 +128,14 @@ class ApiClient {
       body: JSON.stringify({ Name }),
     });
   }
+
+  async addMemeber(Name, username) {
+    console.log("reached Add Member :", Name, username);
+    return this.customFetch("/member-project", {
+      method: "POST",
+      body: JSON.stringify({ Name, username }),
+    });
+  }
 }
 
 const apiClient = new ApiClient();

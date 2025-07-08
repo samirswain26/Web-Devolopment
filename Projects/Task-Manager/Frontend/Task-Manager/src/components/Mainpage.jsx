@@ -204,6 +204,11 @@ function Mainpage() {
       console.log("respose send by the requestToJoinProject:", res);
       setMessage(res.message || "Request sent successfully!");
       // alert(res.message || "Request sent successfully!");
+
+      setTimeout(() => {
+        setMessage(false);
+        setError(false);
+      }, 3000);
     } catch (error) {
       const msg = error.response?.data?.message || "Failed to send request";
       // alert(msg);
@@ -252,6 +257,26 @@ function Mainpage() {
         error.response?.data?.message || "Failed to get request List.";
       setError(msg);
       setLoading(false);
+    }
+  };
+
+  const handleAddMemeber = async (Name, username) => {
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const res = await apiClient.addMemeber(Name, username);
+      console.log("Add Member :", res);
+      setMessage(`${username} added to ${Name}` || res.message);
+
+      setTimeout(() => {
+        setError(false);
+        setMessage(false);
+      }, 3000);
+    } catch (error) {
+      const msg = error.response?.data?.message || `Failed to add ${username}`;
+      setError(msg);
     }
   };
 
@@ -408,7 +433,17 @@ function Mainpage() {
             ) : (
               <ol>
                 {requestList.map((user, idx) => (
-                  <li key={idx}>{user.username}</li>
+                  <li key={idx}>
+                    {user.username}
+                    <button
+                      style={styles.acceptBtn}
+                      onClick={() =>
+                        handleAddMemeber(selectProject, user.username)
+                      }
+                    >
+                      ✓
+                    </button>
+                  </li>
                 ))}
               </ol>
             )}
@@ -595,20 +630,22 @@ const styles = {
     outline: "none",
     padding: "5px 15px",
   },
-  // deleteBtn: {
-  //   position: "absolute",
-  //   top: "90px",
-  //   right: "10px",
-  //   background: "red",
-  //   border: "none",
-  //   color: "white",
-  //   cursor: "pointer",
-  //   fontSize: "15px",
-  //   padding: "8px 12px",
-  //   borderRadius: "4px",
-  //   zIndex: 2,
-  //   // marginLeft: "20px",
-  // },
+  acceptBtn: {
+    backgroundColor: "#28a745", // LinkedIn-style green
+    color: "white",
+    border: "none",
+    borderRadius: "50%", // circular shape
+    width: "32px",
+    height: "32px",
+    fontSize: "18px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: "10px",
+  },
   deleteBtn: {
     position: "absolute",
     top: "10px",
