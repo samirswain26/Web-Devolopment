@@ -254,6 +254,43 @@ const getProjectMembers = async (req, res) => {
   }
 };
 
+const getRequestList = async (req, res) => {
+  try {
+    const { Name } = req.body;
+    if (!Name) {
+      throw new ApiError(400, "Project name Field is required");
+    }
+
+    const project = await Project.findOne({ Name });
+    console.log("Full project object:", project);
+
+    if (!project) {
+      throw new ApiError(400, "Project name is invalid");
+    }
+
+    const requestList = project.joinrequest;
+
+    if (!requestList || requestList.length === 0) {
+      return res
+        .status(200)
+        .json(new ApiResponse(200, [], "Join request list is empty"));
+    }
+
+    const b = requestList.map((a) => a.username);
+    console.log(requestList);
+    console.log(b);
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, requestList, "Request List"));
+  } catch (error) {
+    throw new ApiError(
+      500,
+      error.message || "Something went wromh while fetching the request list",
+    );
+  }
+};
+
 const requestToJoinProject = async (req, res) => {
   // Request to join a project
 
@@ -501,4 +538,5 @@ export {
   updateMemberRole,
   updateProject,
   requestToJoinProject,
+  getRequestList,
 };

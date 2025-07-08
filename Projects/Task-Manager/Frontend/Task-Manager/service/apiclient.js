@@ -1,3 +1,5 @@
+import { body } from "express-validator";
+
 class ApiClient {
   constructor() {
     // this.baseURL = "http://127.0.0.1:8000/api/v1";
@@ -114,6 +116,14 @@ class ApiClient {
   async deleteProject(Name) {
     console.log("Data delete mein hai ab:", Name);
     return this.customFetch("/delete-project", {
+      method: "POST",
+      body: JSON.stringify({ Name }),
+    });
+  }
+
+  async getRequestList(Name) {
+    console.log("Reached GET REQUEST LIST :", Name);
+    return this.customFetch("/get-request-list", {
       method: "POST",
       body: JSON.stringify({ Name }),
     });

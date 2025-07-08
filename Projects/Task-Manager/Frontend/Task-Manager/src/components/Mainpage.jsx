@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import apiClient from "../../service/apiclient";
 
@@ -13,8 +13,64 @@ function Mainpage() {
   const [projectList, setProjectList] = useState([]);
   const [showallprojectList, setShowAllProjectList] = useState(false);
   const [allprojectList, setallProjectList] = useState([]);
+  const [requestList, setRequestList] = useState([]);
+  const [selectProject, setSelectProject] = useState(null);
+  const [showRequesModal, setShowRequestModal] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && showallprojectList) {
+        setShowAllProjectList(false);
+      }
+    };
+
+    const handleUpDown = (event) => {
+      if (event.key === "Up" && "Down" && showallprojectList) {
+        setShowAllProjectList();
+      }
+    };
+    if (showallprojectList) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [showallprojectList]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && showList) {
+        setShowList(false);
+      }
+    };
+
+    if (showList) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [showList]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && showForm) {
+        setShowForm(false);
+      }
+    };
+
+    if (showForm) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [showForm]);
 
   const handleBackToLogin = () => {
     navigate("/Login");
@@ -57,6 +113,8 @@ function Mainpage() {
 
         setTimeout(() => {
           setShowForm(false);
+          setMessage(false);
+          setError(false);
         }, 2000);
       } else {
         setError(res.message || "Project creation failed");
@@ -154,21 +212,46 @@ function Mainpage() {
   };
 
   const handleDeleteProject = async (Name) => {
-    setLoading(false);
+    setLoading(true);
     setError("");
     setMessage("");
 
     try {
-      console.log("A");
       const res = await apiClient.deleteProject(Name);
       console.log("Delete Response is:", res);
       setMessage(res.message || "Project Deleted !");
 
       //Remove the project from the present state...
       setProjectList((prevList) => prevList.filter((p) => p.Name !== Name));
+
+      setTimeout(() => {
+        setError(false);
+        setMessage(false);
+      }, 3000);
     } catch (error) {
       const msg = error.response?.data?.message || "Failed to delete project";
       setError(msg);
+    }
+  };
+
+  const handleGetRequestList = async (Name) => {
+    setError("");
+    setMessage("");
+    setLoading(true);
+    setSelectProject(Name);
+
+    try {
+      const res = await apiClient.getRequestList(Name);
+      console.log("Request List :", res);
+
+      setRequestList(res.data || []);
+      setShowRequestModal(res); //Opens the modal
+      setLoading(false);
+    } catch (error) {
+      const msg =
+        error.response?.data?.message || "Failed to get request List.";
+      setError(msg);
+      setLoading(false);
     }
   };
 
@@ -280,20 +363,55 @@ function Mainpage() {
               {projectList.length > 0 ? (
                 projectList.map((project, index) => (
                   <div key={project._id || index} style={styles.projectCard}>
-                    <h4>{project.Name}</h4>
-                    <button onClick={() => handleDeleteProject(project.Name)}>
+                    <button
+                      onClick={() => handleDeleteProject(project.Name)}
+                      style={styles.deleteBtn}
+                    >
                       Delete Project
                     </button>
+                    <h4 style={{ marginTop: "0px", marginBottom: "10px" }}>
+                      {project.Name}
+                    </h4>
                     <p>{project.description}</p>
                     <p>
                       <strong>Admin:</strong> {project.admin}
                     </p>
+                    <button onClick={() => handleGetRequestList(project.Name)}>
+                      Request List
+                    </button>
                   </div>
                 ))
               ) : (
                 <p>No projects found.</p>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {showRequesModal && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
+            <h3>
+              Join Request For:{" "}
+              <span style={{ color: "orange" }}>{selectProject}</span>
+              <button
+                onClick={() => setShowRequestModal(false)}
+                style={styles.closeBtn}
+              >
+                ×
+              </button>
+            </h3>
+
+            {requestList.length === 0 ? (
+              <p>No Join requests.</p>
+            ) : (
+              <ol>
+                {requestList.map((user, idx) => (
+                  <li key={idx}>{user.username}</li>
+                ))}
+              </ol>
+            )}
           </div>
         </div>
       )}
@@ -365,6 +483,33 @@ function Mainpage() {
 }
 
 const styles = {
+  modalOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  modalContent: {
+    background: "#1e1e1e",
+    padding: "20px",
+    borderRadius: "10px",
+    width: "300px",
+    color: "white",
+  },
+  closeBtn: {
+    float: "right",
+    background: "transparent",
+    border: "none",
+    color: "white",
+    fontSize: "20px",
+    cursor: "pointer",
+  },
   overlayBlocker: {
     position: "fixed",
     top: 0,
@@ -450,6 +595,33 @@ const styles = {
     outline: "none",
     padding: "5px 15px",
   },
+  // deleteBtn: {
+  //   position: "absolute",
+  //   top: "90px",
+  //   right: "10px",
+  //   background: "red",
+  //   border: "none",
+  //   color: "white",
+  //   cursor: "pointer",
+  //   fontSize: "15px",
+  //   padding: "8px 12px",
+  //   borderRadius: "4px",
+  //   zIndex: 2,
+  //   // marginLeft: "20px",
+  // },
+  deleteBtn: {
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    padding: "4px 4px",
+    background: "red",
+    color: "white",
+    cursor: "pointer",
+    fontSize: "15px",
+    borderRadius: "4px",
+    zIndex: 2,
+    border: "none",
+  },
   linkBtn: {
     color: "blue",
     background: "none",
@@ -520,6 +692,8 @@ const styles = {
     marginBottom: "15px",
     borderRadius: "8px",
     boxShadow: "0 0 5px rgba(255, 255, 255, 0.1)",
+    position: "relative",
+    paddingTop: "40px",
   },
 
   requestBtn: {
