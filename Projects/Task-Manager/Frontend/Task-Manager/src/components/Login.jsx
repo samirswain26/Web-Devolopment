@@ -30,7 +30,7 @@ function Login() {
         setTimeout(() => {
           navigate("/Mainpage");
           setMessage("");
-        }, 3000);
+        }, 2000);
       } else {
         setError("Login failed");
       }

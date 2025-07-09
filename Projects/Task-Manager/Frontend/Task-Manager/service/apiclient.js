@@ -136,6 +136,13 @@ class ApiClient {
       body: JSON.stringify({ Name, username }),
     });
   }
+
+  async getProjectMembers(Name) {
+    return this.customFetch("/get-project-member", {
+      method: "POST",
+      body: JSON.stringify({ Name }),
+    });
+  }
 }
 
 const apiClient = new ApiClient();

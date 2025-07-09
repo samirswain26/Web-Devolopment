@@ -16,6 +16,8 @@ function Mainpage() {
   const [requestList, setRequestList] = useState([]);
   const [selectProject, setSelectProject] = useState(null);
   const [showRequesModal, setShowRequestModal] = useState(false);
+  const [showMembersModal, setShowMembersModal] = useState(false);
+  const [MemberList, setMemberList] = useState([]);
 
   const navigate = useNavigate();
 
@@ -280,6 +282,34 @@ function Mainpage() {
     }
   };
 
+  const handleProjectMemebersList = async (Name) => {
+    setLoading(true);
+    setError("");
+    setMessage("");
+    setSelectProject(Name);
+
+    try {
+      const res = await apiClient.getProjectMembers(Name);
+      console.log("Get project Members :", res);
+
+      // setMessage(res.message)
+      const members = res.data?.members || [];
+      setMemberList(members);
+      setShowMembersModal(true);
+
+      // setTimeout(() => {
+      //   setError(false)
+      //   setMessage(false)
+      // }, 2000)
+    } catch (error) {
+      const msg =
+        error.response?.data?.message || `Failed to get Project members`;
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       <h1>This is the main page</h1>
@@ -404,12 +434,47 @@ function Mainpage() {
                     <button onClick={() => handleGetRequestList(project.Name)}>
                       Request List
                     </button>
+                    <button
+                      onClick={() => handleProjectMemebersList(project.Name)}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      View Members
+                    </button>
                   </div>
                 ))
               ) : (
                 <p>No projects found.</p>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {showMembersModal && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
+            <h3>
+              Members in project
+              <span style={{ color: "lightgreen" }}>{selectProject} </span>
+              <button
+                onClick={() => setShowMembersModal(false)}
+                style={styles.closeBtn}
+              >
+                ×
+              </button>
+            </h3>
+
+            {MemberList.length === 0 ? (
+              <p>No Members found.</p>
+            ) : (
+              <ol>
+                {MemberList.map((member, index) => (
+                  <li key={index}>
+                    {member.username} - {member.role}
+                  </li>
+                ))}
+              </ol>
+            )}
           </div>
         </div>
       )}
