@@ -310,6 +310,34 @@ function Mainpage() {
     }
   };
 
+  const hendleDeleteMembers = async (Name, username) => {
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const res = await apiClient.deleteMember(Name, username);
+      console.log("Delete Member response : ", res);
+      setMessage(`${username} removed from ${Name}`);
+
+      //REfresh the member List after deleting that member
+      const refreshedList = await apiClient.getProjectMembers(Name);
+      const members = refreshedList.data?.message || [];
+
+      setMemberList(members);
+
+      setTimeout(() => {
+        setMessage("");
+        setError("");
+      }, 2000);
+    } catch (error) {
+      const msg = error.response?.data?.message || "Failed to delete member";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       <h1>This is the main page</h1>
@@ -454,7 +482,7 @@ function Mainpage() {
         <div style={styles.modalOverlay}>
           <div style={styles.modalContent}>
             <h3>
-              Members in project
+              Members in project {""}
               <span style={{ color: "lightgreen" }}>{selectProject} </span>
               <button
                 onClick={() => setShowMembersModal(false)}
@@ -470,7 +498,24 @@ function Mainpage() {
               <ol>
                 {MemberList.map((member, index) => (
                   <li key={index}>
-                    {member.username} - {member.role}
+                    <span>
+                      {member.username} - {member.role}
+                    </span>
+                    <button
+                      onClick={() =>
+                        hendleDeleteMembers(selectProject, member.username)
+                      }
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        color: "red",
+                        fontSize: "20px",
+                        cursor: "pointer",
+                      }}
+                      title="Remove Member"
+                    >
+                      ✖
+                    </button>
                   </li>
                 ))}
               </ol>

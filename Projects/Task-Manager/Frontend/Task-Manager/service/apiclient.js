@@ -143,6 +143,13 @@ class ApiClient {
       body: JSON.stringify({ Name }),
     });
   }
+
+  async deleteMember(Name, username) {
+    return this.customFetch("/delete-project-member", {
+      method: "POST",
+      body: JSON.stringify({ Name, username }),
+    });
+  }
 }
 
 const apiClient = new ApiClient();
