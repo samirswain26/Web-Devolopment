@@ -30,6 +30,10 @@ function Project() {
     navigate("/Mainpage");
   };
 
+  const handleProjectDashBoard = async () => {
+    navigate("/Project-Dash");
+  };
+
   useEffect(() => {
     GetProjectsIamin();
   }, []);
@@ -58,6 +62,16 @@ function Project() {
               </p>
               <p>
                 <strong>Your Role:</strong> {proj.userRole}
+              </p>
+              {console.log("Navigating with project:", project)}
+              <p>
+                <button
+                  onClick={() =>
+                    navigate("/Project-Dash", { state: { project: proj } })
+                  }
+                >
+                  Details
+                </button>
               </p>
               <hr />
             </li>

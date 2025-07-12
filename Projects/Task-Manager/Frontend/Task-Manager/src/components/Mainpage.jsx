@@ -357,11 +357,36 @@ function Mainpage() {
         ),
       );
 
-      setMessage(`Role of ${username} updated to ${role}`);
+      setTimeout(() => {
+        setMessage(`Role of ${username} updated to ${role}`);
+      }, 2000);
     } catch (error) {
       const msg =
         error.response?.data?.message || "Failed to change the member role";
       setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleProjectStatus = async (Name, status) => {
+    setLoading(true);
+    setError(false);
+    setMessage("");
+
+    try {
+      const res = await apiClient.UpdateProjectStatus(Name, status);
+      console.log("Update Role: ", res);
+
+      setTimeout(() => {
+        setMessage(`Your Project ${Name} status is updated to ${status}`);
+      }, 3000);
+    } catch (error) {
+      const msg =
+        error.response?.data?.message || "Failed to update the project status";
+      setTimeout(() => {
+        setError(msg);
+      }, 3000);
     } finally {
       setLoading(false);
     }
@@ -499,6 +524,25 @@ function Mainpage() {
                     >
                       View Members
                     </button>
+
+                    {/* Change Project Status */}
+                    <select
+                      defaultValue={selectProject.status}
+                      onChange={(e) =>
+                        handleProjectStatus(selectProject, e.target.value)
+                      }
+                      style={{
+                        marginRight: "10px",
+                        padding: "2px 6px",
+                        borderRadius: "4px",
+                      }}
+                      name=""
+                      id=""
+                    >
+                      <option value="In-Progress">In-Progress</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Pending">Pending</option>
+                    </select>
                   </div>
                 ))
               ) : (
@@ -558,6 +602,7 @@ function Mainpage() {
                         border: "1px solid gray",
                       }}
                     />
+
                     <button
                       onClick={() =>
                         hendleDeleteMembers(selectProject, member.username)

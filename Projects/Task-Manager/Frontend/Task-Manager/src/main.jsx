@@ -13,6 +13,7 @@ import ForgotPassword from "./components/ForgotPassword.jsx";
 import ResetPassword from "./components/ResetPassword.jsx";
 import VerificationResult from "./components/VerifyEmail.jsx";
 import Project from "./components/JoinedProjects.jsx";
+import DashBoard from "./components/ProjectDashBoard.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -42,6 +43,14 @@ createRoot(document.getElementById("root")).render(
           element={
             <PrivateRoute>
               <Project />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/Project-Dash"
+          element={
+            <PrivateRoute>
+              <DashBoard />
             </PrivateRoute>
           }
         />

@@ -163,6 +163,13 @@ class ApiClient {
       body: JSON.stringify({ Name, username, role }),
     });
   }
+
+  async UpdateProjectStatus(Name, status) {
+    return this.customFetch("/update-project", {
+      method: "POST",
+      body: JSON.stringify({ Name, status }),
+    });
+  }
 }
 
 const apiClient = new ApiClient();
