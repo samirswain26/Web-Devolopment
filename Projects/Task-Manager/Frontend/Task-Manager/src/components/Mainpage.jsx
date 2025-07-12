@@ -79,6 +79,10 @@ function Mainpage() {
     window.location.reload();
   };
 
+  const handleToProjectPage = async () => {
+    navigate("/Project");
+  };
+
   const handleToProfile = () => {
     navigate("/Profile");
     window.location.reload();
@@ -338,9 +342,34 @@ function Mainpage() {
     }
   };
 
+  const handleMemberRole = async (Name, username, role) => {
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const res = await apiClient.MemeberRole(Name, username, role);
+      console.log("Member role :", res);
+
+      setMemberList((prev) =>
+        prev.map((member) =>
+          member.username === username ? { ...member, role } : member,
+        ),
+      );
+
+      setMessage(`Role of ${username} updated to ${role}`);
+    } catch (error) {
+      const msg =
+        error.response?.data?.message || "Failed to change the member role";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
-      <h1>This is the main page</h1>
+      <h1>MAIN PAGE</h1>
       <p>
         Back to login Page{" "}
         <button onClick={handleBackToLogin} style={styles.linkBtn}>
@@ -355,6 +384,8 @@ function Mainpage() {
       </p>
 
       <br />
+
+      <button onClick={handleToProjectPage}>Joined Project</button>
 
       <button onClick={handleToggleForm}>
         {showForm ? "Close Form" : "Create Project"}
@@ -497,10 +528,36 @@ function Mainpage() {
             ) : (
               <ol>
                 {MemberList.map((member, index) => (
-                  <li key={index}>
-                    <span>
+                  <li key={index} style={{ marginBottom: "15px" }}>
+                    <span style={{ marginRight: "10px" }}>
                       {member.username} - {member.role}
+                      <span style={{ fontSize: "12px", color: "gray" }}>
+                        // Role Section
+                      </span>
                     </span>
+
+                    {/* Custom Role Input */}
+                    <input
+                      type="text"
+                      defaultValue={member.role}
+                      placeholder="Enter New Role"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleMemberRole(
+                            selectProject,
+                            member.username,
+                            e.target.value,
+                          );
+                          e.target.blur();
+                        }
+                      }}
+                      style={{
+                        marginLeft: "10px",
+                        padding: "4px",
+                        borderRadius: "4px",
+                        border: "1px solid gray",
+                      }}
+                    />
                     <button
                       onClick={() =>
                         hendleDeleteMembers(selectProject, member.username)
@@ -510,6 +567,7 @@ function Mainpage() {
                         border: "none",
                         color: "red",
                         fontSize: "20px",
+                        marginLeft: "10px",
                         cursor: "pointer",
                       }}
                       title="Remove Member"

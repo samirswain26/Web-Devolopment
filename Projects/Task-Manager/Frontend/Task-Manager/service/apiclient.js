@@ -150,6 +150,19 @@ class ApiClient {
       body: JSON.stringify({ Name, username }),
     });
   }
+
+  async IAmInTheProject() {
+    return this.customFetch("/iam-in-project", {
+      method: "POST",
+    });
+  }
+
+  async MemeberRole(Name, username, role) {
+    return this.customFetch("/update-member-role", {
+      method: "POST",
+      body: JSON.stringify({ Name, username, role }),
+    });
+  }
 }
 
 const apiClient = new ApiClient();

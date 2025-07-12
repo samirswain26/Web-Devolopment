@@ -12,6 +12,7 @@ import Profile from "./components/Profile.jsx";
 import ForgotPassword from "./components/ForgotPassword.jsx";
 import ResetPassword from "./components/ResetPassword.jsx";
 import VerificationResult from "./components/VerifyEmail.jsx";
+import Project from "./components/JoinedProjects.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -33,6 +34,14 @@ createRoot(document.getElementById("root")).render(
           element={
             <PrivateRoute>
               <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/Project"
+          element={
+            <PrivateRoute>
+              <Project />
             </PrivateRoute>
           }
         />

@@ -527,6 +527,81 @@ const updateMemberRole = async (req, res) => {
   }
 };
 
+const iamInTheProject = async (req, res) => {
+  try {
+    // Check if user is authenticated
+    if (!req.user || !req.user._id) {
+      return res
+        .status(401)
+        .json(new ApiResponse(401, null, "User not authenticated"));
+    }
+
+    const currentUserId = req.user._id.toString();
+
+    // Find all projects where user is either admin or member
+    const projects = await Project.find({
+      $or: [
+        { CreatedBy: req.user._id }, // Projects where user is admin
+        { "members.userId": req.user._id }, // Projects where user is a member
+      ],
+    }).select("Name description status admin CreatedBy members");
+
+    if (!projects || projects.length === 0) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { projects: [], totalProjects: 0 },
+            "You are not part of any projects",
+          ),
+        );
+    }
+
+    // Map projects with user role information
+    const projectsWithRole = projects.map((project) => {
+      const isAdmin = project.CreatedBy.toString() === currentUserId;
+
+      return {
+        _id: project._id,
+        Name: project.Name,
+        description: project.description,
+        status: project.status,
+        admin: project.admin,
+        totalMembers: project.members ? project.members.length : 0,
+        // userRole: isAdmin ? "admin" : "member",
+        userRole: isAdmin
+          ? "Admin"
+          : project.members && project.members.length > 0
+            ? project.members[0].role
+            : "Member",
+      };
+    });
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          projects: projectsWithRole,
+          totalProjects: projectsWithRole.length,
+        },
+        "Projects retrieved successfully",
+      ),
+    );
+  } catch (error) {
+    console.error("Error in iamInTheProject:", error);
+    return res
+      .status(500)
+      .json(
+        new ApiResponse(
+          500,
+          null,
+          error.message || "Failed to retrieve user projects",
+        ),
+      );
+  }
+};
+
 export {
   addMemberToProject,
   createProject,
@@ -539,4 +614,5 @@ export {
   updateProject,
   requestToJoinProject,
   getRequestList,
+  iamInTheProject,
 };

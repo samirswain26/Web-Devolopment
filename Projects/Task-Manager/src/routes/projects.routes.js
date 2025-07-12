@@ -11,6 +11,7 @@ import {
   deleteMember,
   updateMemberRole,
   getRequestList,
+  iamInTheProject,
 } from "../controllers/project.controllers.js";
 import { isLoggedIn } from "../middleware/validator.middleware.js";
 
@@ -26,5 +27,6 @@ router.route("/get-project-member").post(isLoggedIn, getProjectMembers);
 router.route("/delete-project-member").post(isLoggedIn, deleteMember);
 router.route("/update-member-role").post(isLoggedIn, updateMemberRole);
 router.route("/get-request-list").post(getRequestList);
+router.route("/iam-in-project").post(isLoggedIn, iamInTheProject);
 
 export default router;
