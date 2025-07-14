@@ -322,6 +322,12 @@ function Mainpage() {
     try {
       const res = await apiClient.deleteMember(Name, username);
       console.log("Delete Member response : ", res);
+
+      // If backend still returns 200 statusCode even with an error
+      if (res?.statusCode !== 200) {
+        throw new Error(res.message);
+      }
+
       setMessage(`${username} removed from ${Name}`);
 
       //REfresh the member List after deleting that member
@@ -335,7 +341,46 @@ function Mainpage() {
         setError("");
       }, 2000);
     } catch (error) {
-      const msg = error.response?.data?.message || "Failed to delete member";
+      const msg =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to delete member";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const hendleDeleteMembe = async (Name, username) => {
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const res = await apiClient.deleteMember(Name, username);
+      console.log("Delete Member response : ", res);
+
+      // If backend still returns 200 statusCode even with an error
+      if (res?.statusCode !== 200) {
+        throw new Error(res.message);
+      }
+
+      setMessage(`${username} removed from ${Name}`);
+
+      // Refresh member list
+      const refreshedList = await apiClient.getProjectMembers(Name);
+      const members = refreshedList.data?.message || [];
+      setMemberList(members);
+
+      setTimeout(() => {
+        setMessage("");
+        setError("");
+      }, 2000);
+    } catch (error) {
+      const msg =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to delete member";
       setError(msg);
     } finally {
       setLoading(false);
@@ -378,15 +423,17 @@ function Mainpage() {
       const res = await apiClient.UpdateProjectStatus(Name, status);
       console.log("Update Role: ", res);
 
+      setMessage(`Your Project ${Name} status is updated to ${status}`);
       setTimeout(() => {
-        setMessage(`Your Project ${Name} status is updated to ${status}`);
-      }, 3000);
+        setMessage("");
+        setError("");
+      }, 2000);
     } catch (error) {
       const msg =
         error.response?.data?.message || "Failed to update the project status";
       setTimeout(() => {
         setError(msg);
-      }, 3000);
+      }, 2000);
     } finally {
       setLoading(false);
     }
@@ -527,9 +574,9 @@ function Mainpage() {
 
                     {/* Change Project Status */}
                     <select
-                      defaultValue={selectProject.status}
+                      defaultValue={selectProject?.status || "Pending"}
                       onChange={(e) =>
-                        handleProjectStatus(selectProject, e.target.value)
+                        handleProjectStatus(project.Name, e.target.value)
                       }
                       style={{
                         marginRight: "10px",

@@ -38,7 +38,6 @@ const createProject = async (req, res) => {
         },
       ], // Add admin as the first member
     });
-    await project.save();
 
     console.log(project);
 
@@ -450,6 +449,20 @@ const deleteMember = async (req, res) => {
         );
     }
 
+    // Check if admin is trying to delete themselves
+    if (username === req.user.username) {
+      return res
+        .status(400)
+        .json(
+          new ApiResponse(
+            400,
+            null,
+            "You are the admin of this project, you cannot delete yourself from the team",
+            false,
+          ),
+        );
+    }
+
     const memberIndex = project.members.findIndex(
       (member) => member.username === username,
     );
@@ -602,6 +615,68 @@ const iamInTheProject = async (req, res) => {
   }
 };
 
+const transferAdminship = async (req, res) => {
+  try {
+    const { Name, newAdminUsername } = req.body;
+
+    if (!Name || !newAdminUsername) {
+      throw new ApiError(
+        400,
+        "Project name and new admin username are required",
+      );
+    }
+
+    const project = await Project.findOne({ Name });
+    if (!project) {
+      throw new ApiError(404, "Project not found");
+    }
+
+    // Only current admin can transfer adminship
+    if (project.CreatedBy.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json(
+          new ApiResponse(
+            403,
+            null,
+            "Only current admin can transfer adminship",
+          ),
+        );
+    }
+
+    // Find the new admin in members
+    const newAdmin = project.members.find(
+      (member) => member.username === newAdminUsername,
+    );
+    if (!newAdmin) {
+      throw new ApiError(404, "New admin must be a project member");
+    }
+
+    // Update admin information
+    project.CreatedBy = newAdmin.userId;
+    project.admin = newAdmin.username;
+
+    await project.save();
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, project, "Adminship transferred successfully"),
+      );
+  } catch (error) {
+    console.error("Error transferring adminship:", error);
+    return res
+      .status(500)
+      .json(
+        new ApiResponse(
+          500,
+          null,
+          error.message || "Error transferring adminship",
+        ),
+      );
+  }
+};
+
 export {
   addMemberToProject,
   createProject,
@@ -615,4 +690,5 @@ export {
   requestToJoinProject,
   getRequestList,
   iamInTheProject,
+  transferAdminship,
 };

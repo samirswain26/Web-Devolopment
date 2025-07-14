@@ -170,6 +170,30 @@ class ApiClient {
       body: JSON.stringify({ Name, status }),
     });
   }
+
+  // Task EndPoints
+
+  async CreateTask(Name, title, description, username) {
+    return this.customFetch("/create-task", {
+      method: "POST",
+      body: JSON.stringify({ Name, title, description, username }),
+    });
+  }
+
+  async getTasklist(Name) {
+    console.log("Task list Fetched");
+    return this.customFetch("/task-list", {
+      method: "POST",
+      body: JSON.stringify({ Name }),
+    });
+  }
+
+  async DeleteTask(title) {
+    return this.customFetch("/delete-task", {
+      method: "POST",
+      body: JSON.stringify({ title }),
+    });
+  }
 }
 
 const apiClient = new ApiClient();
