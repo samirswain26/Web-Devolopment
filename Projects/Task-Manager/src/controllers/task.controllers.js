@@ -211,6 +211,8 @@ const attachFile = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   // Detele the task
+  console.log("Received request body:", req.body);
+
   try {
     const { title } = req.body;
 

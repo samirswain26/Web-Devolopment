@@ -80,6 +80,40 @@ function DashBoard() {
     }
   };
 
+  const handleDeletetask = async (title) => {
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const res = await apiClient.DeleteTask(title);
+      console.log("Delete Task Resopnse :", res);
+
+      setMessage(`${title} Task was removed from `);
+
+      // Refresh List
+      // const refreshedList = await apiClient.getTasklist(Name);
+      // const TaskList = refreshedList.data?.message || [];
+
+      // setShowTaskList(TaskList);
+
+      await Getalltasks(project.Name);
+
+      setTimeout(() => {
+        setMessage("");
+        setError("");
+      }, 2000);
+    } catch (error) {
+      const msg =
+        error.response?.data?.message ||
+        error?.message ||
+        "Failed to delete Task";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const location = useLocation();
   const project = location.state?.project; // Access passed project data
 
@@ -116,11 +150,15 @@ function DashBoard() {
         </p>
       </div>
 
-      <button onClick={handleToggleForm}>
-        {showForm ? "Close Form" : "Create Task"}
-      </button>
+      {/* Only Admin can create Task...*/}
 
-      {showForm && (
+      {project.userRole === "Admin" && (
+        <button onClick={handleToggleForm}>
+          {showForm ? "Close Form" : "Create Task"}
+        </button>
+      )}
+
+      {project.userRole === "Admin" && showForm && (
         <div style={styles.modalOverlay}>
           <div style={styles.modalContent}>
             <h2
@@ -196,6 +234,10 @@ function DashBoard() {
         </div>
       )}
 
+      {/* {showForm && (
+        
+      )} */}
+
       {showTaskList.length > 0 && (
         <div style={styles.taskListBox}>
           <h3 style={styles.taskHeading}>Task Lists</h3>
@@ -208,6 +250,13 @@ function DashBoard() {
                 >
                   {taskName}
                 </button>
+                <br />
+                <br />
+                {project.userRole === "Admin" && (
+                  <button onClick={() => handleDeletetask(taskName)}>
+                    Delete Task
+                  </button>
+                )}
               </li>
             ))}
           </ol>
@@ -242,17 +291,18 @@ export default DashBoard;
 
 const styles = {
   taskListBox: {
-    marginTop: "30px",
-    padding: "20px",
+    marginTop: "100px",
+    padding: "200px",
     backgroundColor: "#f4f4f4",
     color: "Black",
     borderRadius: "8px",
-    maxWidth: "600px",
+    maxWidth: "1000px",
     marginLeft: "auto",
     marginRight: "auto",
   },
   taskHeading: {
-    fontSize: "20px",
+    margin: "40px 40px",
+    fontSize: "50px",
     marginBottom: "10px",
     textAlign: "center",
   },

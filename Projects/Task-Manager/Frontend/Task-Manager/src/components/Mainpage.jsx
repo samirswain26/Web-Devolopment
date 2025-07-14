@@ -351,42 +351,6 @@ function Mainpage() {
     }
   };
 
-  const hendleDeleteMembe = async (Name, username) => {
-    setLoading(true);
-    setError("");
-    setMessage("");
-
-    try {
-      const res = await apiClient.deleteMember(Name, username);
-      console.log("Delete Member response : ", res);
-
-      // If backend still returns 200 statusCode even with an error
-      if (res?.statusCode !== 200) {
-        throw new Error(res.message);
-      }
-
-      setMessage(`${username} removed from ${Name}`);
-
-      // Refresh member list
-      const refreshedList = await apiClient.getProjectMembers(Name);
-      const members = refreshedList.data?.message || [];
-      setMemberList(members);
-
-      setTimeout(() => {
-        setMessage("");
-        setError("");
-      }, 2000);
-    } catch (error) {
-      const msg =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Failed to delete member";
-      setError(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleMemberRole = async (Name, username, role) => {
     setLoading(true);
     setError("");

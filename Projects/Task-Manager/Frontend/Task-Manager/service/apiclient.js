@@ -189,6 +189,7 @@ class ApiClient {
   }
 
   async DeleteTask(title) {
+    console.log("Delete Task api call in progress");
     return this.customFetch("/delete-task", {
       method: "POST",
       body: JSON.stringify({ title }),
