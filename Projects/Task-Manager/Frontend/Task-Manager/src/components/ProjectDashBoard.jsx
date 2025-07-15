@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import apiClient from "../../service/apiclient";
 
 function DashBoard() {
@@ -13,6 +13,12 @@ function DashBoard() {
   const [username, setUsername] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [showTaskList, setShowTaskList] = useState([]);
+
+  const navigate = useNavigate();
+
+  const handleToTaskPage = async () => {
+    navigate("/Task");
+  };
 
   const handleToggleForm = () => {
     setShowForm((prev) => {
@@ -199,7 +205,7 @@ function DashBoard() {
                 />
               </div>
               <div style={styles.inputGroup}>
-                <label htmlFor="username">Username: </label>
+                <label htmlFor="username">Asign To: </label>
                 <input
                   type="text"
                   name="username"
@@ -242,23 +248,36 @@ function DashBoard() {
         <div style={styles.taskListBox}>
           <h3 style={styles.taskHeading}>Task Lists</h3>
           <ol>
-            {showTaskList.map((taskName, index) => (
-              <li key={index}>
-                <button
-                  style={styles.linkBtn}
-                  onClick={() => console.log("Clicked task:", taskName)}
-                >
-                  {taskName}
-                </button>
-                <br />
-                <br />
-                {project.userRole === "Admin" && (
-                  <button onClick={() => handleDeletetask(taskName)}>
-                    Delete Task
+            <div style={styles.div}>
+              {showTaskList.map((task, index) => (
+                <li key={index}>
+                  <button
+                    style={styles.linkBtn}
+                    onClick={() =>
+                      navigate("/Task", {
+                        state: { task, project }, // ✅ Correct: pass the actual task from map
+                      })
+                    }
+                  >
+                    {task.title}
                   </button>
-                )}
-              </li>
-            ))}
+                  <br />
+                  <br />
+                  <strong>Assigned To:</strong>{" "}
+                  {task.assignedTo?.username ||
+                    task.assignedTo?.email ||
+                    task.assignedTo ||
+                    "Unknown"}
+                  <br />
+                  <br />
+                  {project.userRole === "Admin" && (
+                    <button onClick={() => handleDeletetask(task.title)}>
+                      Delete Task
+                    </button>
+                  )}
+                </li>
+              ))}
+            </div>
           </ol>
         </div>
       )}
@@ -290,8 +309,11 @@ function DashBoard() {
 export default DashBoard;
 
 const styles = {
+  div: {
+    backgroundColor: "pink",
+  },
   taskListBox: {
-    marginTop: "100px",
+    marginTop: "10px",
     padding: "200px",
     backgroundColor: "#f4f4f4",
     color: "Black",

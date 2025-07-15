@@ -1,5 +1,3 @@
-import { body } from "express-validator";
-
 class ApiClient {
   constructor() {
     // this.baseURL = "http://127.0.0.1:8000/api/v1";
@@ -185,6 +183,13 @@ class ApiClient {
     return this.customFetch("/task-list", {
       method: "POST",
       body: JSON.stringify({ Name }),
+    });
+  }
+
+  async getTaskByTitle(title) {
+    return this.customFetch("/get-task-details", {
+      method: "POST",
+      body: JSON.stringify({ title }),
     });
   }
 

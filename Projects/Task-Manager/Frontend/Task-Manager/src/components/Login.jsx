@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import apiClient from "../../service/apiclient.js";
-import { data, Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Mainpage from "./Mainpage";
+
+import Cookies from "js-cookie";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -12,31 +14,79 @@ function Login() {
   const [message, setMessage] = useState(false);
   const navigate = useNavigate();
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError("");
+
+  //   try {
+  //     console.log("Tyring to login");
+  //     const data = await apiClient.login(email, password);
+  //     console.log(`login data: `, data);
+
+  //     if (data.message === "user Logged In Successfully") {
+  //       setLoginSuccess(true);
+  //       setMessage("Login Successfully");
+
+  //       // Remove the message after 3 seconds
+  //       setTimeout(() => {
+  //         navigate("/Mainpage");
+  //         setMessage("");
+  //       }, 2000);
+  //     } else {
+  //       setError("Login failed");
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     if (error.response && error.response.data & error.response.data.message) {
+  //       setError(error.response.data.message);
+  //     } else {
+  //       setError("Invalid credentials");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      console.log("Tyring to login");
+      console.log("Trying to login");
       const data = await apiClient.login(email, password);
-      console.log(`login data: `, data);
+      console.log("login data:", data);
 
       if (data.message === "user Logged In Successfully") {
+        // ✅ Extract user and tokens
+        const user = data.data.user;
+        const accessToken = data.data.accessToken;
+        const refreshToken = data.data.refreshToken;
+
+        if (!user || !accessToken) {
+          throw new Error("Invalid login response. User or token missing.");
+        }
+
+        // ✅ Set cookies
+        Cookies.set("user", JSON.stringify(user), { expires: 1 });
+        Cookies.set("accessToken", accessToken, { expires: 1 });
+        Cookies.set("refreshToken", refreshToken, { expires: 1 });
+
         setLoginSuccess(true);
         setMessage("Login Successfully");
 
-        // Remove the message after 3 seconds
+        // Delay redirect so success message is visible
         setTimeout(() => {
-          navigate("/Mainpage");
           setMessage("");
+          navigate("/Mainpage");
         }, 2000);
       } else {
         setError("Login failed");
       }
     } catch (error) {
-      console.log(error);
-      if (error.response && error.response.data & error.response.data.message) {
+      console.log("Login error:", error);
+      if (error.response?.data?.message) {
         setError(error.response.data.message);
       } else {
         setError("Invalid credentials");

@@ -272,14 +272,17 @@ const getTaskList = async (req, res) => {
     }
 
     console.log(project);
-    const task = await Task.find({ project: project._id });
-    console.log(task);
+    const tasks = await Task.find({ project: project._id }).populate({
+      path: "assignedTo",
+      select: "_id username email fullname", // only fetch needed fields
+    });
+    console.log(tasks);
 
-    if (!task) {
+    if (!tasks) {
       throw new ApiError(404, "tasks not found");
     }
 
-    const Tasktitle = task.map((task) => task.title);
+    const Tasktitle = tasks.map((task) => task.title);
     console.log(Tasktitle);
 
     return res
@@ -287,7 +290,7 @@ const getTaskList = async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          Tasktitle,
+          tasks,
           "Successfully fetched the task list of the project",
         ),
       );
@@ -295,6 +298,33 @@ const getTaskList = async (req, res) => {
     throw new ApiError(
       500,
       error.message || "Something went wrong while retriving task list",
+    );
+  }
+};
+
+const getTaskByTitle = async (req, res) => {
+  const { title } = req.body;
+
+  try {
+    if (!title) {
+      throw new ApiError(400, "Task title is required");
+    }
+
+    const task = await Task.findOne({ title }).populate("project");
+
+    if (!task) {
+      throw new ApiError(404, "Task not found");
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, task, "successfully fetched the task details"),
+      );
+  } catch (error) {
+    throw new ApiError(
+      500,
+      error.message || "Something went wring while fetching task details",
     );
   }
 };
@@ -523,4 +553,5 @@ export {
   updateSubtask,
   getSubTasks,
   deleteSubTask,
+  getTaskByTitle,
 };
