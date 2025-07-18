@@ -1,3 +1,5 @@
+import { body } from "express-validator";
+
 class ApiClient {
   constructor() {
     // this.baseURL = "http://127.0.0.1:8000/api/v1";
@@ -198,6 +200,38 @@ class ApiClient {
     return this.customFetch("/delete-task", {
       method: "POST",
       body: JSON.stringify({ title }),
+    });
+  }
+
+  async UploadFile(formData) {
+    const url = `${this.baseURL}/attach-file`;
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        body: formData,
+        credentials: "include", // send cookies
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Upload error:", error);
+      throw error;
+    }
+  }
+
+  async getAttachedFiles(title) {
+    return this.customFetch("/get-attach-files", {
+      method: "POST",
+      body: JSON.stringify({ title }),
+    });
+  }
+
+  async updatetask(Name, title, status) {
+    return this.customFetch("/update-task", {
+      method: "POST",
+      body: JSON.stringify({ Name, title, status }),
     });
   }
 }

@@ -192,8 +192,15 @@ const attachFile = async (req, res) => {
     // const result = await cloudinary.uploader.upload(filePath);
     // console.log(result.secure_url); // ✅ use this!
 
+    // const fileMeta = {
+    //   url: cloudinaryResponse.secure_url,
+    //   mimetype: req.file.mimetype,
+    //   size: req.file.size,
+    // };
+
     const fileMeta = {
       url: cloudinaryResponse.secure_url,
+      public_id: cloudinaryResponse.public_id, // ✅ required for frontend delete button
       mimetype: req.file.mimetype,
       size: req.file.size,
     };
@@ -354,6 +361,40 @@ const getAttachedfile = async (req, res) => {
       error.message ||
         "Something went wrong while fetching the files from the server.",
     );
+  }
+};
+
+const deleteAttachedFile = async (req, res) => {
+  try {
+    const { title, public_id } = req.body;
+
+    if (!title || !public_id) {
+      throw new ApiError(400, "Title and public_id are required");
+    }
+
+    const task = await Task.findOne({ title });
+
+    if (!task) {
+      throw new ApiError(404, "Task not found");
+    }
+
+    // Delete from Cloudinary
+    const cloudResult = await cloudinary.uploader.destroy(public_id);
+    if (cloudResult.result !== "ok") {
+      throw new ApiError(500, "Failed to delete from Cloudinary");
+    }
+
+    // Remove from attachments array
+    task.attachments = task.attachments.filter(
+      (file) => file.public_id !== public_id,
+    );
+    await task.save();
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, null, "File deleted successfully"));
+  } catch (error) {
+    throw new ApiError(500, error.message || "Error deleting file");
   }
 };
 
@@ -554,4 +595,5 @@ export {
   getSubTasks,
   deleteSubTask,
   getTaskByTitle,
+  deleteAttachedFile,
 };

@@ -3,6 +3,7 @@ import {
   attachFile,
   createSubtask,
   createTask,
+  deleteAttachedFile,
   deleteSubTask,
   deleteTask,
   getAttachedfile,
@@ -27,6 +28,7 @@ router.route("/delete-task").post(isLoggedIn, deleteTask);
 router.route("/task-list").post(isLoggedIn, getTaskList);
 router.route("/get-attach-files").post(isLoggedIn, getAttachedfile);
 router.route("/get-task-details").post(isLoggedIn, getTaskByTitle);
+router.route("/delete-file").post(isLoggedIn, deleteAttachedFile);
 
 // Sub-Task Routes
 router.route("/create-subtask").post(isLoggedIn, createSubtask);

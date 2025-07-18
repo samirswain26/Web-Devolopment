@@ -16,10 +16,6 @@ function DashBoard() {
 
   const navigate = useNavigate();
 
-  const handleToTaskPage = async () => {
-    navigate("/Task");
-  };
-
   const handleToggleForm = () => {
     setShowForm((prev) => {
       const next = !prev;
