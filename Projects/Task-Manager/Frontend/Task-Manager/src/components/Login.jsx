@@ -14,40 +14,6 @@ function Login() {
   const [message, setMessage] = useState(false);
   const navigate = useNavigate();
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setError("");
-
-  //   try {
-  //     console.log("Tyring to login");
-  //     const data = await apiClient.login(email, password);
-  //     console.log(`login data: `, data);
-
-  //     if (data.message === "user Logged In Successfully") {
-  //       setLoginSuccess(true);
-  //       setMessage("Login Successfully");
-
-  //       // Remove the message after 3 seconds
-  //       setTimeout(() => {
-  //         navigate("/Mainpage");
-  //         setMessage("");
-  //       }, 2000);
-  //     } else {
-  //       setError("Login failed");
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     if (error.response && error.response.data & error.response.data.message) {
-  //       setError(error.response.data.message);
-  //     } else {
-  //       setError("Invalid credentials");
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -59,7 +25,7 @@ function Login() {
       console.log("login data:", data);
 
       if (data.message === "user Logged In Successfully") {
-        // ✅ Extract user and tokens
+        // Extract user and tokens
         const user = data.data.user;
         const accessToken = data.data.accessToken;
         const refreshToken = data.data.refreshToken;
@@ -68,7 +34,7 @@ function Login() {
           throw new Error("Invalid login response. User or token missing.");
         }
 
-        // ✅ Set cookies
+        // Set cookies
         Cookies.set("user", JSON.stringify(user), { expires: 1 });
         Cookies.set("accessToken", accessToken, { expires: 1 });
         Cookies.set("refreshToken", refreshToken, { expires: 1 });
@@ -152,7 +118,7 @@ function Login() {
             {error && <p style={{ color: "red" }}>{error}</p>}
           </form>
           <p>
-            Don't have an account!? <Link to={"/"}>Signup Up</Link>
+            Don't have an account!? <Link to={"/Signup"}>Signup Up</Link>
           </p>
           <p>
             <Link to={"/ForgotPassword"}> Forgot Password </Link>

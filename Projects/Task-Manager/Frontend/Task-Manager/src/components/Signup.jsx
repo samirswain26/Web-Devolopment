@@ -19,7 +19,6 @@ function Signup() {
     setError("");
 
     try {
-      console.log("Trying to signup");
       const data = await apiClient.signup(username, email, password, fullname);
       console.log(`Signup date : ${data}`);
       setMessage("verification token was send to your email.");
@@ -41,6 +40,7 @@ function Signup() {
 
   return (
     <div>
+      <h2>Taskyst</h2>
       <h1>Signup Page</h1>
       <form onSubmit={handlesubmit}>
         <div className="username">

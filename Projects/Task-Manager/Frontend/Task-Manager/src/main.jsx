@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.jsx";
 import Homepage from "./components/Homepage.jsx";
 import Login from "./components/Login.jsx";
 import Mainpage from "./components/Mainpage.jsx";
@@ -15,13 +14,16 @@ import VerificationResult from "./components/VerifyEmail.jsx";
 import Project from "./components/JoinedProjects.jsx";
 import DashBoard from "./components/ProjectDashBoard.jsx";
 import Tasks from "./components/Tasks.jsx";
+import PrivacyPolicy from "./components/privacy.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Signup />} />
+        <Route path="/" element={<Homepage />} />
+        <Route path="/Signup" element={<Signup />} />
         <Route path="/Login" element={<Login />} />
+        <Route path="/Privacy-Policy" element={<PrivacyPolicy />} />
         <Route path="/email-verified" element={<VerificationResult />} />
         <Route
           path="/Mainpage"
