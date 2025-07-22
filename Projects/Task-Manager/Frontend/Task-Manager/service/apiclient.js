@@ -228,10 +228,41 @@ class ApiClient {
     });
   }
 
-  async updatetask(Name, title, status) {
+  async updatetask(title, status) {
     return this.customFetch("/update-task", {
       method: "POST",
-      body: JSON.stringify({ Name, title, status }),
+      body: JSON.stringify({ title, status }),
+    });
+  }
+
+  // Notes End Points
+
+  async createNote(Name, content) {
+    return this.customFetch("/create-notes", {
+      method: "POST",
+      body: JSON.stringify({ Name, content }),
+    });
+  }
+
+  async getProjectNotes(Name) {
+    console.log("Reached at get Notes.");
+    return this.customFetch("/get-notes", {
+      method: "POST",
+      body: JSON.stringify({ Name }),
+    });
+  }
+
+  async createTaskNote(title, content) {
+    return this.customFetch("/cretae-task-notes", {
+      method: "POST",
+      body: JSON.stringify({ title, content }),
+    });
+  }
+
+  async getTaskNotes(title) {
+    return this.customFetch("/get-task-notes", {
+      method: "POST",
+      body: JSON.stringify({ title }),
     });
   }
 }

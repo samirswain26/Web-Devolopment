@@ -31,6 +31,10 @@ function Profile() {
     }
   };
 
+  const handleback = async () => {
+    navigate(-1);
+  };
+
   if (error) return <p>Error: {error}</p>;
   if (!profile) return <p>Loading profile...</p>;
 
@@ -43,7 +47,8 @@ function Profile() {
       </p>
       <p></p>
       <div style={{ marginTop: "20px" }}>
-        <Link to={"/Mainpage"}> Back </Link>
+        {/* <Link to={"/Mainpage"}> Back </Link> */}
+        <button onClick={handleback}>Back</button>
         {/* Add some spacing between links */}
         <span style={{ margin: "0 20px" }}>|</span>
         <button

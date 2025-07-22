@@ -1,4 +1,3 @@
-import { body } from "express-validator";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import apiClient from "../../service/apiclient";
@@ -14,6 +13,12 @@ function DashBoard() {
   const [showForm, setShowForm] = useState(false);
   const [showTaskList, setShowTaskList] = useState([]);
 
+  //  Notes related state
+  const [showNotesForm, setShowNotesForm] = useState(false);
+  const [noteContent, setNoteContent] = useState("");
+  const [notesList, setNotesList] = useState([]);
+  const [notesLoading, setNotesLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleToggleForm = () => {
@@ -25,6 +30,20 @@ function DashBoard() {
         setTitle("");
         setDescription("");
         setUsername("");
+        setMessage("");
+        setError("");
+      }
+      return next;
+    });
+  };
+
+  //  Handle toggle notes form
+  const handleToggleNotesForm = () => {
+    setShowNotesForm((prev) => {
+      const next = !prev;
+      if (next) {
+        // Reset when opening
+        setNoteContent("");
         setMessage("");
         setError("");
       }
@@ -52,7 +71,7 @@ function DashBoard() {
       setDescription("");
       setUsername("");
 
-      // ✅ Refresh task list without page reload
+      // Refresh task list without page reload
       await Getalltasks(project.Name);
 
       setTimeout(() => {
@@ -65,6 +84,35 @@ function DashBoard() {
       setError(msg);
     } finally {
       setLoading(false);
+    }
+  };
+
+  //  Handle create note
+  const handleCreateNote = async (e) => {
+    e.preventDefault();
+    setNotesLoading(true);
+    setError("");
+
+    try {
+      const res = await apiClient.createNote(project.Name, noteContent);
+      console.log("Creating Note response:", res);
+      setMessage(res.message || "Note created successfully!");
+
+      setNoteContent("");
+
+      //  Refresh notes list
+      await getProjectNotes(project.Name);
+
+      setTimeout(() => {
+        setMessage("");
+        setError("");
+      }, 3000);
+    } catch (error) {
+      console.log("Create Note Error:", error.response?.data);
+      const msg = error.response?.data?.message || "Failed to create note!";
+      setError(msg);
+    } finally {
+      setNotesLoading(false);
     }
   };
 
@@ -82,6 +130,19 @@ function DashBoard() {
     }
   };
 
+  // Get project notes
+  const getProjectNotes = async (Name) => {
+    try {
+      const res = await apiClient.getProjectNotes(Name);
+      console.log("Get Project Notes response:", res);
+      setNotesList(res?.data || []);
+    } catch (error) {
+      const msg =
+        error.response?.data?.message || "Failed to get project notes.";
+      setError(msg);
+    }
+  };
+
   const handleDeletetask = async (title) => {
     setLoading(true);
     setError("");
@@ -92,12 +153,6 @@ function DashBoard() {
       console.log("Delete Task Resopnse :", res);
 
       setMessage(`${title} Task was removed from `);
-
-      // Refresh List
-      // const refreshedList = await apiClient.getTasklist(Name);
-      // const TaskList = refreshedList.data?.message || [];
-
-      // setShowTaskList(TaskList);
 
       await Getalltasks(project.Name);
 
@@ -119,8 +174,6 @@ function DashBoard() {
   const location = useLocation();
   const project = location.state?.project; // Access passed project data
 
-  // console.log("Dashboard project data:", project);
-
   if (!project) {
     return <p>No project data provided.</p>;
   }
@@ -128,6 +181,7 @@ function DashBoard() {
   useEffect(() => {
     if (project?.Name) {
       Getalltasks(project.Name);
+      getProjectNotes(project.Name); // Fetch notes on component load
     }
   }, [project?.Name]);
 
@@ -153,7 +207,6 @@ function DashBoard() {
       </div>
 
       {/* Only Admin can create Task...*/}
-
       {project.userRole === "Admin" && (
         <button onClick={handleToggleForm}>
           {showForm ? "Close Form" : "Create Task"}
@@ -236,10 +289,6 @@ function DashBoard() {
         </div>
       )}
 
-      {/* {showForm && (
-        
-      )} */}
-
       {showTaskList.length > 0 && (
         <div style={styles.taskListBox}>
           <h3 style={styles.taskHeading}>Task Lists</h3>
@@ -251,7 +300,7 @@ function DashBoard() {
                     style={styles.linkBtn}
                     onClick={() =>
                       navigate("/Task", {
-                        state: { task, project }, // ✅ Correct: pass the actual task from map
+                        state: { task, project }, // Correct: pass the actual task from map
                       })
                     }
                   >
@@ -278,7 +327,92 @@ function DashBoard() {
         </div>
       )}
 
-      {/* ✅ Foreground Alert Feature Below */}
+      {/* Notes Section */}
+      <div style={styles.notesContainer}>
+        <button onClick={handleToggleNotesForm} style={styles.createNotesBtn}>
+          {showNotesForm ? "Close Notes Form" : "Create Notes"}
+        </button>
+
+        {/* Create Notes Form Modal */}
+        {showNotesForm && (
+          <div style={styles.modalOverlay}>
+            <div style={styles.modalContent}>
+              <h2
+                style={{
+                  margin: 0,
+                  flex: 1,
+                  textAlign: "center",
+                  marginBottom: "20px",
+                  marginTop: "5px",
+                }}
+              >
+                Create Note
+                <button onClick={handleToggleNotesForm} style={styles.closeBtn}>
+                  ×
+                </button>
+              </h2>
+              <form onSubmit={handleCreateNote}>
+                <div style={styles.inputGroup}>
+                  <label htmlFor="noteContent">Note Content: </label>
+                  <textarea
+                    name="noteContent"
+                    value={noteContent}
+                    onChange={(e) => setNoteContent(e.target.value)}
+                    required
+                    style={styles.textarea}
+                    rows={6}
+                    placeholder="Write your note here..."
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={notesLoading || !noteContent.trim()}
+                  style={
+                    notesLoading || !noteContent.trim()
+                      ? styles.btnDisabled
+                      : styles.btnSubmit
+                  }
+                >
+                  {notesLoading ? "Creating..." : "Create Note"}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Notes List */}
+        {notesList.length > 0 && (
+          <div style={styles.notesListBox}>
+            <h3 style={styles.notesHeading}>Project Notes</h3>
+            <div style={styles.notesWrapper}>
+              {notesList.map((note, index) => (
+                <div key={note._id || index} style={styles.noteCard}>
+                  <div style={styles.noteHeader}>
+                    <span style={styles.noteIndex}>Note #{index + 1}</span>
+                    <span style={styles.noteDate}>
+                      {new Date(note.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div style={styles.noteContent}>{note.content}</div>
+                  <div style={styles.noteFooter}>
+                    <small style={styles.noteTime}>
+                      Created: {new Date(note.createdAt).toLocaleString()}
+                    </small>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {notesList.length === 0 && (
+          <div style={styles.emptyNotes}>
+            <p>No notes created yet for this project.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Foreground Alert Feature Below */}
       {(error || message) && <div style={styles.overlayBlocker}></div>}
 
       {message && (
@@ -355,16 +489,20 @@ const styles = {
     background: "#1e1e1e",
     padding: "20px",
     borderRadius: "10px",
-    width: "300px",
+    width: "400px",
     color: "white",
   },
   closeBtn: {
-    float: "right",
-    background: "transparent",
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    background: "none",
     border: "none",
-    color: "white",
-    fontSize: "20px",
+    color: "#fff",
+    fontSize: "24px",
     cursor: "pointer",
+    outline: "none",
+    padding: "5px 15px",
   },
   overlayBlocker: {
     position: "fixed",
@@ -418,78 +556,11 @@ const styles = {
     cursor: "pointer",
   },
 
-  modalOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100vw",
-    height: "100vh",
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  },
-  modalContent: {
-    background: "#111",
-    color: "#fff",
-    padding: "30px",
-    borderRadius: "10px",
-    width: "400px",
-    boxShadow: "0 0 10px #000",
-    position: "relative",
-  },
-  closeBtn: {
-    position: "absolute",
-    top: "10px",
-    right: "10px",
-    background: "none",
-    border: "none",
-    color: "#fff",
-    fontSize: "24px",
-    cursor: "pointer",
-    outline: "none",
-    padding: "5px 15px",
-  },
-  acceptBtn: {
-    backgroundColor: "#28a745", // LinkedIn-style green
-    color: "white",
-    border: "none",
-    borderRadius: "50%", // circular shape
-    width: "32px",
-    height: "32px",
-    fontSize: "18px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: "10px",
-  },
-  deleteBtn: {
-    position: "absolute",
-    top: "10px",
-    right: "10px",
-    padding: "4px 4px",
-    background: "red",
-    color: "white",
-    cursor: "pointer",
-    fontSize: "15px",
-    borderRadius: "4px",
-    zIndex: 2,
-    border: "none",
-  },
   linkBtn: {
     color: "blue",
     background: "none",
     border: "none",
     cursor: "pointer",
-  },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginBottom: "20px",
   },
   inputGroup: {
     marginBottom: "15px",
@@ -498,6 +569,16 @@ const styles = {
     width: "100%",
     padding: "8px",
     marginTop: "5px",
+  },
+  textarea: {
+    width: "100%",
+    padding: "8px",
+    marginTop: "5px",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
+    fontSize: "14px",
+    fontFamily: "inherit",
+    resize: "vertical",
   },
   btnSubmit: {
     padding: "10px 20px",
@@ -515,68 +596,89 @@ const styles = {
     borderRadius: "4px",
     cursor: "not-allowed",
   },
-  successMsg: {
-    marginTop: "15px",
-    padding: "10px",
-    backgroundColor: "#d4edda",
-    color: "#155724",
-    border: "1px solid #c3e6cb",
-    borderRadius: "4px",
-  },
-  errorMsg: {
-    marginTop: "15px",
-    padding: "10px",
-    backgroundColor: "#f8d7da",
-    color: "#721c24",
-    border: "1px solid #f5c6cb",
-    borderRadius: "4px",
-  },
-  modalContentTall: {
-    background: "#111",
-    color: "#fff",
-    padding: "0",
-    borderRadius: "10px",
-    width: "600px",
-    maxHeight: "80vh",
-    display: "flex",
-    flexDirection: "column",
-    boxShadow: "0 0 10px #000",
-    position: "relative",
-  },
 
-  projectCard: {
-    backgroundColor: "#222",
-    padding: "15px",
-    marginBottom: "15px",
-    borderRadius: "8px",
-    boxShadow: "0 0 5px rgba(255, 255, 255, 0.1)",
-    position: "relative",
-    paddingTop: "40px",
+  // ✅ Notes specific styles
+  notesContainer: {
+    marginTop: "30px",
+    maxWidth: "1000px",
+    marginLeft: "auto",
+    marginRight: "auto",
+    padding: "0 20px",
   },
-
-  requestBtn: {
-    padding: "8px 16px",
+  createNotesBtn: {
+    padding: "12px 24px",
     backgroundColor: "#28a745",
     color: "white",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "8px",
     cursor: "pointer",
-    marginTop: "10px",
+    fontSize: "16px",
+    marginBottom: "20px",
+    display: "block",
+    margin: "0 auto 20px auto",
   },
-  modalHeader: {
-    position: "sticky",
-    top: 0,
-    background: "#111",
-    padding: "20px 20px 10px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    borderBottom: "1px solid #444",
-    zIndex: 1,
-  },
-
-  modalBody: {
+  notesListBox: {
+    backgroundColor: "#f8f9fa",
     padding: "20px",
-    overflowY: "auto",
+    borderRadius: "8px",
+    marginTop: "20px",
+  },
+  notesHeading: {
+    fontSize: "28px",
+    textAlign: "center",
+    marginBottom: "20px",
+    color: "#333",
+  },
+  notesWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
+  },
+  noteCard: {
+    backgroundColor: "white",
+    padding: "15px",
+    borderRadius: "8px",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    border: "1px solid #dee2e6",
+  },
+  noteHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "10px",
+    paddingBottom: "8px",
+    borderBottom: "1px solid #eee",
+  },
+  noteIndex: {
+    fontWeight: "bold",
+    color: "#007bff",
+    fontSize: "14px",
+  },
+  noteDate: {
+    fontSize: "12px",
+    color: "#6c757d",
+  },
+  noteContent: {
+    fontSize: "14px",
+    lineHeight: "1.5",
+    color: "#333",
+    marginBottom: "10px",
+    whiteSpace: "pre-wrap", // Preserves line breaks
+  },
+  noteFooter: {
+    borderTop: "1px solid #eee",
+    paddingTop: "8px",
+  },
+  noteTime: {
+    color: "#6c757d",
+    fontSize: "11px",
+  },
+  emptyNotes: {
+    textAlign: "center",
+    padding: "40px",
+    color: "#6c757d",
+    backgroundColor: "#f8f9fa",
+    borderRadius: "8px",
+    marginTop: "20px",
   },
 };

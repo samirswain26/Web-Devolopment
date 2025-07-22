@@ -128,6 +128,8 @@ const updateTask = async (req, res) => {
         );
     }
 
+    // console.log("Request body:", req.body);
+
     task.status = status;
 
     await task.save();
