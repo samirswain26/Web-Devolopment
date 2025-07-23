@@ -404,7 +404,7 @@ function Mainpage() {
   };
 
   return (
-    <div>
+    <div style={styles.MainBox}>
       <h1>MAIN PAGE</h1>
       <p>
         Back to login Page{" "}
@@ -742,6 +742,14 @@ function Mainpage() {
 }
 
 const styles = {
+  MainBox: {
+    background: "linear-gradient(to right, #6f42c1, #a18cd1)",
+    height: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontFamily: "sans-serif",
+  },
   modalOverlay: {
     position: "fixed",
     top: 0,
