@@ -18,6 +18,7 @@ function Mainpage() {
   const [showRequesModal, setShowRequestModal] = useState(false);
   const [showMembersModal, setShowMembersModal] = useState(false);
   const [MemberList, setMemberList] = useState([]);
+  const [profile, setProfile] = useState(null);
 
   const navigate = useNavigate();
 
@@ -86,6 +87,10 @@ function Mainpage() {
   const handleToProfile = () => {
     navigate("/Profile");
     window.location.reload();
+  };
+
+  const handleBackToHomePage = async () => {
+    navigate("/");
   };
 
   const handleToggleForm = () => {
@@ -296,15 +301,9 @@ function Mainpage() {
       const res = await apiClient.getProjectMembers(Name);
       console.log("Get project Members :", res);
 
-      // setMessage(res.message)
       const members = res.data?.members || [];
       setMemberList(members);
       setShowMembersModal(true);
-
-      // setTimeout(() => {
-      //   setError(false)
-      //   setMessage(false)
-      // }, 2000)
     } catch (error) {
       const msg =
         error.response?.data?.message || `Failed to get Project members`;
@@ -403,29 +402,132 @@ function Mainpage() {
     }
   };
 
+  useEffect(() => {
+    apiClient
+      .profile()
+      .then((res) => setProfile(res.user)) // if needed use data instead of user to retrive the data from the database
+
+      .catch((err) => setError(err.message || "unauthorized"));
+  }, []);
+
   return (
     <div style={styles.MainBox}>
-      <h1>MAIN PAGE</h1>
-      <p>
-        Back to login Page{" "}
-        <button onClick={handleBackToLogin} style={styles.linkBtn}>
-          Login
-        </button>
-      </p>
-      <p>
-        Profile Page{" "}
-        <button onClick={handleToProfile} style={styles.linkBtn}>
-          Profile
-        </button>
-      </p>
+      <div>
+        <nav style={styles.nav}>
+          <div style={styles.navContent}>
+            {/* LEFT: Back Button */}
+            <div style={styles.leftNavSection}>
+              <button
+                style={styles.navBtnSecondary}
+                onClick={handleBackToHomePage}
+              >
+                Back
+              </button>
+            </div>
+
+            {/* CENTER: Welcome text */}
+            <div style={styles.centerNavSection}>
+              <h1 style={styles.mainTitle}>Welcome to Taskyst</h1>
+              {profile ? (
+                <h2 style={styles.welcomeText}>Hi {profile.fullname}!</h2>
+              ) : (
+                <h2 style={styles.welcomeText}>Loading...</h2>
+              )}
+              <p style={styles.subtitle}>
+                Your all-in-one project management solution
+              </p>
+            </div>
+
+            {/* RIGHT: Profile + Logout */}
+            <div style={styles.rightNavSection}>
+              <button onClick={handleToProfile} style={styles.navBtn}>
+                👤 Profile
+              </button>
+              <button
+                onClick={handleBackToLogin}
+                style={styles.navBtnSecondary}
+              >
+                🚪 Logout
+              </button>
+            </div>
+          </div>
+        </nav>
+      </div>
 
       <br />
+      {/* Hero section... */}
 
-      <button onClick={handleToProjectPage}>Joined Project</button>
+      <main style={styles.mainContent}>
+        <div style={styles.heroSection}>
+          <h2 style={styles.sectionTitle}>What would you like to do today?</h2>
+          <p style={styles.sectionSubtitle}>
+            Choose from the options below to manage your projects effectively
+          </p>
+        </div>
 
-      <button onClick={handleToggleForm}>
-        {showForm ? "Close Form" : "Create Project"}
-      </button>
+        {/* Card Grid */}
+        <div style={styles.cardGrid}>
+          <div style={styles.card} onClick={handleToProjectPage}>
+            <div style={styles.cardIcon}>🏠</div>
+            <h3 style={styles.cardTitle}>Joined Projects</h3>
+            <p style={styles.cardDescription}>
+              View and collaborate on projects you're part of. Access your
+              team's work and stay updated.
+            </p>
+            <div style={styles.cardFooter}>
+              <span style={styles.cardAction}>Enter Dashboard →</span>
+            </div>
+          </div>
+
+          <div style={styles.card} onClick={handleAllProjects}>
+            <div style={styles.cardIcon}>🌐</div>
+            <h3 style={styles.cardTitle}>
+              {showallprojectList ? "Close Gallery" : "Browse Projects"}
+            </h3>
+            <p style={styles.cardDescription}>
+              Discover exciting projects from the community. Find opportunities
+              to contribute and collaborate.
+            </p>
+            <div style={styles.cardFooter}>
+              <span style={styles.cardAction}>
+                {showallprojectList ? "Close View" : "Explore Gallery"} →
+              </span>
+            </div>
+          </div>
+
+          <div style={styles.card} onClick={handleToggleProjects}>
+            <div style={styles.cardIcon}>📋</div>
+            <h3 style={styles.cardTitle}>
+              {showList ? "Close Manager" : "My Projects"}
+            </h3>
+            <p style={styles.cardDescription}>
+              Manage projects you've created. Track progress, handle requests,
+              and organize your team.
+            </p>
+            <div style={styles.cardFooter}>
+              <span style={styles.cardAction}>
+                {showList ? "Close Manager" : "Open Manager"} →
+              </span>
+            </div>
+          </div>
+
+          <div style={styles.card} onClick={handleToggleForm}>
+            <div style={styles.cardIcon}>✨</div>
+            <h3 style={styles.cardTitle}>
+              {showForm ? "Cancel Creation" : "Create New Project"}
+            </h3>
+            <p style={styles.cardDescription}>
+              Start something amazing! Create a new project and invite
+              collaborators to join your vision.
+            </p>
+            <div style={styles.cardFooter}>
+              <span style={styles.cardAction}>
+                {showForm ? "Cancel" : "Create Project"} →
+              </span>
+            </div>
+          </div>
+        </div>
+      </main>
 
       {showForm && (
         <div style={styles.modalOverlay}>
@@ -484,10 +586,6 @@ function Mainpage() {
           </div>
         </div>
       )}
-
-      <button onClick={handleToggleProjects}>
-        {showList ? "Close Projects" : "My Projects"}
-      </button>
 
       {showList && (
         <div style={styles.modalOverlay}>
@@ -675,10 +773,6 @@ function Mainpage() {
         </div>
       )}
 
-      <button onClick={handleAllProjects}>
-        {showallprojectList ? "Close " : "Show All Project"}
-      </button>
-
       {showallprojectList && (
         <div style={styles.modalOverlay}>
           <div style={styles.modalContentTall}>
@@ -743,13 +837,203 @@ function Mainpage() {
 
 const styles = {
   MainBox: {
-    background: "linear-gradient(to right, #6f42c1, #a18cd1)",
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    fontFamily: "sans-serif",
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    minHeight: "100vh",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    color: "#ffffff",
   },
+  nav: {
+    background: "rgba(255, 255, 255, 0.1)",
+    backdropFilter: "blur(10px)",
+    padding: "20px 0",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
+  },
+
+  leftNavSection: {
+    flex: "0 0 auto",
+    display: "flex",
+    alignItems: "center",
+  },
+
+  centerNavSection: {
+    flex: "1 1 auto",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+  },
+
+  rightNavSection: {
+    flex: "0 0 auto",
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+  },
+
+  navContent: {
+    maxWidth: "1200px",
+    margin: "0 auto",
+    padding: "0 20px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  welcomeSection: {
+    flex: 1,
+  },
+
+  mainTitle: {
+    fontSize: "2.5rem",
+    fontWeight: "700",
+    margin: "0 0 8px 0",
+    background: "linear-gradient(45deg, #fff, #f0f0f0)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+  },
+
+  welcomeText: {
+    fontSize: "1.2rem",
+    fontWeight: "400",
+    margin: "0 0 8px 0",
+    color: "#f0f0f0",
+  },
+
+  subtitle: {
+    fontSize: "1rem",
+    color: "rgba(255, 255, 255, 0.8)",
+    margin: "0",
+  },
+
+  navButtons: {
+    display: "flex",
+    gap: "12px",
+  },
+
+  navBtn: {
+    background: "rgba(255, 255, 255, 0.2)",
+    border: "1px solid rgba(255, 255, 255, 0.3)",
+    color: "white",
+    padding: "10px 20px",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+    transition: "all 0.3s ease",
+    backdropFilter: "blur(10px)",
+  },
+
+  navBtnSecondary: {
+    background: "rgba(255, 255, 255, 0.1)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    color: "rgba(255, 255, 255, 0.9)",
+    padding: "10px 20px",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+    transition: "all 0.3s ease",
+  },
+
+  // Buttons to cards
+  joinproject: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: "20px",
+    padding: "20px",
+  },
+
+  cardButton: {
+    background: "linear-gradient(135deg, #2f3542, #1e272e)",
+    color: "#ffffff",
+    border: "none",
+    borderRadius: "12px",
+    padding: "100px 24px",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
+    fontSize: "16px",
+    fontWeight: "600",
+    minWidth: "180px",
+    textAlign: "center",
+    cursor: "pointer",
+    transition: "transform 0.2s ease, box-shadow 0.3s ease",
+  },
+
+  mainContent: {
+    maxWidth: "1200px",
+    margin: "0 auto",
+    padding: "40px 20px",
+  },
+
+  heroSection: {
+    textAlign: "center",
+    marginBottom: "40px",
+  },
+
+  sectionTitle: {
+    fontSize: "2rem",
+    fontWeight: "600",
+    margin: "0 0 12px 0",
+    color: "#ffffff",
+  },
+
+  sectionSubtitle: {
+    fontSize: "1.1rem",
+    color: "rgba(255, 255, 255, 0.8)",
+    margin: "0",
+  },
+  cardGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+    gap: "24px",
+    marginBottom: "40px",
+  },
+
+  card: {
+    background: "rgba(255, 255, 255, 0.1)",
+    backdropFilter: "blur(10px)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    borderRadius: "16px",
+    padding: "24px",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    height: "200px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+
+  cardIcon: {
+    fontSize: "2.5rem",
+    marginBottom: "12px",
+  },
+
+  cardTitle: {
+    fontSize: "1.3rem",
+    fontWeight: "600",
+    margin: "0 0 8px 0",
+    color: "#ffffff",
+  },
+
+  cardDescription: {
+    fontSize: "0.9rem",
+    color: "rgba(255, 255, 255, 0.8)",
+    lineHeight: "1.5",
+    margin: "0",
+    flex: 1,
+  },
+
+  cardFooter: {
+    marginTop: "16px",
+  },
+
+  cardAction: {
+    fontSize: "0.9rem",
+    color: "#ffffff",
+    fontWeight: "500",
+  },
+
   modalOverlay: {
     position: "fixed",
     top: 0,
@@ -787,6 +1071,7 @@ const styles = {
     zIndex: 1500, // must be less than message box but more than rest of UI
   },
 
+  // Already added from the beginging...
   customBoxSuccess: {
     position: "fixed",
     top: "50%",
@@ -956,24 +1241,31 @@ const styles = {
   },
 
   projectCard: {
-    backgroundColor: "#222",
-    padding: "15px",
-    marginBottom: "15px",
-    borderRadius: "8px",
-    boxShadow: "0 0 5px rgba(255, 255, 255, 0.1)",
     position: "relative",
-    paddingTop: "40px",
+    background: "linear-gradient(135deg, #2a2a2a, #1e1e1e)",
+    border: "1px solid #444",
+    borderRadius: "12px",
+    padding: "20px",
+    marginBottom: "20px",
+    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)",
+    transition: "transform 0.2s ease, box-shadow 0.3s ease",
+    color: "#fff",
+    maxWidth: "500px",
+    margin: "0 auto 25px",
   },
 
   requestBtn: {
-    padding: "8px 16px",
-    backgroundColor: "#28a745",
+    padding: "10px 16px",
+    backgroundColor: "#00b894", // teal
     color: "white",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "6px",
     cursor: "pointer",
+    fontWeight: "600",
     marginTop: "10px",
+    transition: "background-color 0.3s ease",
   },
+
   modalHeader: {
     position: "sticky",
     top: 0,
@@ -989,6 +1281,69 @@ const styles = {
   modalBody: {
     padding: "20px",
     overflowY: "auto",
+  },
+  // added...
+  joinproject: {
+    maxWidth: "1200px",
+    margin: "0 auto",
+    padding: "40px 20px",
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+    gap: "20px",
+    alignItems: "center",
+  },
+
+  heroCard: {
+    background: "rgba(255, 255, 255, 0.1)",
+    backdropFilter: "blur(10px)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    borderRadius: "16px",
+    padding: "24px",
+    textAlign: "center",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    color: "white",
+    fontSize: "16px",
+    fontWeight: "500",
+    minHeight: "120px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+    position: "relative",
+    overflow: "hidden",
+  },
+
+  heroCardHover: {
+    transform: "translateY(-5px)",
+    background: "rgba(255, 255, 255, 0.15)",
+    boxShadow: "0 8px 30px rgba(0, 0, 0, 0.2)",
+    border: "1px solid rgba(255, 255, 255, 0.3)",
+  },
+
+  // Individual card colors for better distinction
+  heroCardPrimary: {
+    background:
+      "linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(56, 142, 60, 0.2))",
+    border: "1px solid rgba(76, 175, 80, 0.3)",
+  },
+
+  heroCardSecondary: {
+    background:
+      "linear-gradient(135deg, rgba(33, 150, 243, 0.2), rgba(25, 118, 210, 0.2))",
+    border: "1px solid rgba(33, 150, 243, 0.3)",
+  },
+
+  heroCardAccent: {
+    background:
+      "linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(245, 124, 0, 0.2))",
+    border: "1px solid rgba(255, 152, 0, 0.3)",
+  },
+
+  heroCardSpecial: {
+    background:
+      "linear-gradient(135deg, rgba(156, 39, 176, 0.2), rgba(123, 31, 162, 0.2))",
+    border: "1px solid rgba(156, 39, 176, 0.3)",
   },
 };
 
