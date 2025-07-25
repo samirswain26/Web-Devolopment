@@ -175,7 +175,17 @@ function DashBoard() {
   const project = location.state?.project; // Access passed project data
 
   if (!project) {
-    return <p>No project data provided.</p>;
+    return (
+      <div style={styles.errorContainer}>
+        <div style={styles.errorCard}>
+          <h2>⚠️ No Project Data</h2>
+          <p>
+            No project data was provided. Please navigate from the projects
+            page.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   useEffect(() => {
@@ -186,93 +196,122 @@ function DashBoard() {
   }, [project?.Name]);
 
   return (
-    <>
-      <div style={styles.body}>
-        <p style={styles.Heading}>{project.Name}</p>
-        <p>
-          <strong>Description:</strong> {project.description}
-        </p>
-        <p>
-          <strong>Status:</strong> {project.status}
-        </p>
-        <p>
-          <strong>Admin:</strong> {project.admin}
-        </p>
-        <p>
-          <strong>Total Members:</strong> {project.totalMembers}
-        </p>
-        <p>
-          <strong>Your Role:</strong> {project.userRole}
-        </p>
+    <div style={styles.container}>
+      {/* Header Section */}
+      <div style={styles.header}>
+        <div style={styles.headerContent}>
+          <h1 style={styles.projectTitle}>{project.Name}</h1>
+          <div style={styles.statusBadge}>
+            <span style={styles.statusText}>{project.status}</span>
+          </div>
+        </div>
       </div>
 
-      {/* Only Admin can create Task...*/}
-      {project.userRole === "Admin" && (
-        <button onClick={handleToggleForm}>
-          {showForm ? "Close Form" : "Create Task"}
-        </button>
-      )}
+      {/* Project Info Cards */}
+      <div style={styles.infoSection}>
+        <div style={styles.infoGrid}>
+          <div style={styles.infoCard}>
+            <div style={styles.cardIcon}>📝</div>
+            <div>
+              <h3 style={styles.cardTitle}>Description</h3>
+              <p style={styles.cardContent}>{project.description}</p>
+            </div>
+          </div>
 
+          <div style={styles.infoCard}>
+            <div style={styles.cardIcon}>👤</div>
+            <div>
+              <h3 style={styles.cardTitle}>Admin</h3>
+              <p style={styles.cardContent}>{project.admin}</p>
+            </div>
+          </div>
+
+          <div style={styles.infoCard}>
+            <div style={styles.cardIcon}>👥</div>
+            <div>
+              <h3 style={styles.cardTitle}>Total Members</h3>
+              <p style={styles.cardContent}>{project.totalMembers}</p>
+            </div>
+          </div>
+
+          <div style={styles.infoCard}>
+            <div style={styles.cardIcon}>🎭</div>
+            <div>
+              <h3 style={styles.cardTitle}>Your Role</h3>
+              <p style={styles.cardContent}>{project.userRole}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div style={styles.actionSection}>
+        {project.userRole === "Admin" && (
+          <button onClick={handleToggleForm} style={styles.primaryButton}>
+            <span style={styles.buttonIcon}>✚</span>
+            {showForm ? "Close Form" : "Create Task"}
+          </button>
+        )}
+
+        <button onClick={handleToggleNotesForm} style={styles.secondaryButton}>
+          <span style={styles.buttonIcon}>📝</span>
+          {showNotesForm ? "Close Notes Form" : "Create Notes"}
+        </button>
+      </div>
+
+      {/* Create Task Modal */}
       {project.userRole === "Admin" && showForm && (
         <div style={styles.modalOverlay}>
           <div style={styles.modalContent}>
-            <h2
-              style={{
-                margin: 0,
-                flex: 1,
-                textAlign: "center",
-                marginBottom: "20px",
-                marginTop: "5px",
-              }}
-            >
-              Create Task
+            <div style={styles.modalHeader}>
+              <h2 style={styles.modalTitle}>Create New Task</h2>
               <button onClick={handleToggleForm} style={styles.closeBtn}>
                 ×
               </button>
-            </h2>
-            <form onSubmit={handleCreateTask}>
+            </div>
+            <form onSubmit={handleCreateTask} style={styles.form}>
               <div style={styles.inputGroup}>
-                <label htmlFor="Name">Project Name: </label>
+                <label style={styles.label}>Project Name</label>
                 <input
                   type="text"
-                  name="Name"
                   value={Name}
                   onChange={(e) => setName(e.target.value)}
                   required
                   style={styles.input}
+                  placeholder="Enter project name"
                 />
               </div>
               <div style={styles.inputGroup}>
-                <label htmlFor="title">Task Title: </label>
+                <label style={styles.label}>Task Title</label>
                 <input
                   type="text"
-                  name="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
                   style={styles.input}
+                  placeholder="Enter task title"
                 />
               </div>
               <div style={styles.inputGroup}>
-                <label htmlFor="username">Asign To: </label>
+                <label style={styles.label}>Assign To</label>
                 <input
                   type="text"
-                  name="username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
                   style={styles.input}
+                  placeholder="Enter username"
                 />
               </div>
               <div style={styles.inputGroup}>
-                <label htmlFor="description">Description: </label>
-                <input
-                  type="text"
-                  name="description"
+                <label style={styles.label}>Description</label>
+                <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   required
-                  style={styles.input}
+                  style={styles.textarea}
+                  rows={4}
+                  placeholder="Enter task description"
                 />
               </div>
               <button
@@ -280,405 +319,687 @@ function DashBoard() {
                 disabled={
                   Loading || !Name || !title || !description || !username
                 }
-                style={Loading ? styles.btnDisabled : styles.btnSubmit}
+                style={Loading ? styles.btnDisabled : styles.submitButton}
               >
-                {Loading ? "Submitting..." : "Submit"}
+                {Loading ? "Creating..." : "Create Task"}
               </button>
             </form>
           </div>
         </div>
       )}
 
+      {/* Create Notes Modal */}
+      {showNotesForm && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
+            <div style={styles.modalHeader}>
+              <h2 style={styles.modalTitle}>Create New Note</h2>
+              <button onClick={handleToggleNotesForm} style={styles.closeBtn}>
+                ×
+              </button>
+            </div>
+            <form onSubmit={handleCreateNote} style={styles.form}>
+              <div style={styles.inputGroup}>
+                <label style={styles.label}>Note Content</label>
+                <textarea
+                  value={noteContent}
+                  onChange={(e) => setNoteContent(e.target.value)}
+                  required
+                  style={styles.textarea}
+                  rows={6}
+                  placeholder="Write your note here..."
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={notesLoading || !noteContent.trim()}
+                style={
+                  notesLoading || !noteContent.trim()
+                    ? styles.btnDisabled
+                    : styles.submitButton
+                }
+              >
+                {notesLoading ? "Creating..." : "Create Note"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Tasks Section */}
       {showTaskList.length > 0 && (
-        <div style={styles.taskListBox}>
-          <h3 style={styles.taskHeading}>Task Lists</h3>
-          <ol>
-            <div style={styles.div}>
-              {showTaskList.map((task, index) => (
-                <li key={index}>
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>
+            <span style={styles.sectionIcon}>📋</span>
+            Task List
+          </h2>
+          <div style={styles.taskGrid}>
+            {showTaskList.map((task, index) => (
+              <div key={index} style={styles.taskCard}>
+                <div style={styles.taskHeader}>
+                  <h3 style={styles.taskTitle}>{task.title}</h3>
+                  <span style={styles.taskNumber}>#{index + 1}</span>
+                </div>
+                <div style={styles.taskContent}>
+                  <div style={styles.assignedTo}>
+                    <span style={styles.assignedLabel}>Assigned to:</span>
+                    <span style={styles.assignedName}>
+                      {task.assignedTo?.username ||
+                        task.assignedTo?.email ||
+                        task.assignedTo ||
+                        "Unknown"}
+                    </span>
+                  </div>
+                </div>
+                <div style={styles.taskActions}>
                   <button
-                    style={styles.linkBtn}
+                    style={styles.viewButton}
                     onClick={() =>
                       navigate("/Task", {
-                        state: { task, project }, // Correct: pass the actual task from map
+                        state: { task, project },
                       })
                     }
                   >
-                    {task.title}
+                    View Details
                   </button>
-                  <br />
-                  <br />
-                  <strong>Assigned To:</strong>{" "}
-                  {task.assignedTo?.username ||
-                    task.assignedTo?.email ||
-                    task.assignedTo ||
-                    "Unknown"}
-                  <br />
-                  <br />
                   {project.userRole === "Admin" && (
-                    <button onClick={() => handleDeletetask(task.title)}>
-                      Delete Task
+                    <button
+                      onClick={() => handleDeletetask(task.title)}
+                      style={styles.deleteButton}
+                    >
+                      Delete
                     </button>
                   )}
-                </li>
-              ))}
-            </div>
-          </ol>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       {/* Notes Section */}
-      <div style={styles.notesContainer}>
-        <button onClick={handleToggleNotesForm} style={styles.createNotesBtn}>
-          {showNotesForm ? "Close Notes Form" : "Create Notes"}
-        </button>
+      <div style={styles.section}>
+        <h2 style={styles.sectionTitle}>
+          <span style={styles.sectionIcon}>📝</span>
+          Project Notes
+        </h2>
 
-        {/* Create Notes Form Modal */}
-        {showNotesForm && (
-          <div style={styles.modalOverlay}>
-            <div style={styles.modalContent}>
-              <h2
-                style={{
-                  margin: 0,
-                  flex: 1,
-                  textAlign: "center",
-                  marginBottom: "20px",
-                  marginTop: "5px",
-                }}
-              >
-                Create Note
-                <button onClick={handleToggleNotesForm} style={styles.closeBtn}>
-                  ×
-                </button>
-              </h2>
-              <form onSubmit={handleCreateNote}>
-                <div style={styles.inputGroup}>
-                  <label htmlFor="noteContent">Note Content: </label>
-                  <textarea
-                    name="noteContent"
-                    value={noteContent}
-                    onChange={(e) => setNoteContent(e.target.value)}
-                    required
-                    style={styles.textarea}
-                    rows={6}
-                    placeholder="Write your note here..."
-                  />
+        {notesList.length > 0 ? (
+          <div style={styles.notesGrid}>
+            {notesList.map((note, index) => (
+              <div key={note._id || index} style={styles.noteCard}>
+                <div style={styles.noteHeader}>
+                  <span style={styles.noteNumber}>Note #{index + 1}</span>
+                  <span style={styles.noteDate}>
+                    {new Date(note.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
-                <button
-                  type="submit"
-                  disabled={notesLoading || !noteContent.trim()}
-                  style={
-                    notesLoading || !noteContent.trim()
-                      ? styles.btnDisabled
-                      : styles.btnSubmit
-                  }
-                >
-                  {notesLoading ? "Creating..." : "Create Note"}
-                </button>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* Notes List */}
-        {notesList.length > 0 && (
-          <div style={styles.notesListBox}>
-            <h3 style={styles.notesHeading}>Project Notes</h3>
-            <div style={styles.notesWrapper}>
-              {notesList.map((note, index) => (
-                <div key={note._id || index} style={styles.noteCard}>
-                  <div style={styles.noteHeader}>
-                    <span style={styles.noteIndex}>Note #{index + 1}</span>
-                    <span style={styles.noteDate}>
-                      {new Date(note.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div style={styles.noteContent}>{note.content}</div>
-                  <div style={styles.noteFooter}>
-                    <small style={styles.noteTime}>
-                      Created: {new Date(note.createdAt).toLocaleString()}
-                    </small>
-                  </div>
+                <div style={styles.noteContent}>{note.content}</div>
+                <div style={styles.noteFooter}>
+                  <small style={styles.noteTime}>
+                    {new Date(note.createdAt).toLocaleString()}
+                  </small>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        )}
-
-        {notesList.length === 0 && (
-          <div style={styles.emptyNotes}>
-            <p>No notes created yet for this project.</p>
+        ) : (
+          <div style={styles.emptyState}>
+            <div style={styles.emptyIcon}>📝</div>
+            <h3 style={styles.emptyTitle}>No Notes Yet</h3>
+            <p style={styles.emptyText}>
+              Create your first note to get started!
+            </p>
           </div>
         )}
       </div>
 
-      {/* Foreground Alert Feature Below */}
+      {/* Notifications */}
       {(error || message) && <div style={styles.overlayBlocker}></div>}
 
       {message && (
-        <div style={styles.customBoxSuccess}>
-          <p>{message}</p>
-          <button onClick={() => setMessage("")} style={styles.closeBtnSmall}>
+        <div style={styles.successNotification}>
+          <div style={styles.notificationIcon}>✅</div>
+          <p style={styles.notificationText}>{message}</p>
+          <button
+            onClick={() => setMessage("")}
+            style={styles.notificationClose}
+          >
             ×
           </button>
         </div>
       )}
 
       {error && (
-        <div style={styles.customBoxError}>
-          <p>{error}</p>
-          <button onClick={() => setError("")} style={styles.closeBtnSmall}>
+        <div style={styles.errorNotification}>
+          <div style={styles.notificationIcon}>❌</div>
+          <p style={styles.notificationText}>{error}</p>
+          <button onClick={() => setError("")} style={styles.notificationClose}>
             ×
           </button>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
 export default DashBoard;
 
 const styles = {
-  div: {
-    backgroundColor: "pink",
+  container: {
+    minHeight: "100vh",
+    backgroundColor: "#f8fafc",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   },
-  taskListBox: {
-    marginTop: "10px",
-    padding: "200px",
-    backgroundColor: "#f4f4f4",
-    color: "Black",
+
+  errorContainer: {
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f8fafc",
+  },
+
+  errorCard: {
+    backgroundColor: "white",
+    padding: "40px",
+    borderRadius: "12px",
+    boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+    textAlign: "center",
+    maxWidth: "400px",
+  },
+
+  // Header Styles
+  header: {
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    color: "white",
+    padding: "40px 0",
+    marginBottom: "30px",
+  },
+
+  headerContent: {
+    maxWidth: "1200px",
+    margin: "0 auto",
+    padding: "0 20px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  projectTitle: {
+    fontSize: "2.5rem",
+    fontWeight: "700",
+    margin: 0,
+    textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+  },
+
+  statusBadge: {
+    backgroundColor: "rgba(255,255,255,0.2)",
+    padding: "8px 16px",
+    borderRadius: "20px",
+    border: "1px solid rgba(255,255,255,0.3)",
+  },
+
+  statusText: {
+    fontSize: "0.9rem",
+    fontWeight: "500",
+  },
+
+  // Info Section
+  infoSection: {
+    maxWidth: "1200px",
+    margin: "0 auto 40px auto",
+    padding: "0 20px",
+  },
+
+  infoGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gap: "20px",
+  },
+
+  infoCard: {
+    backgroundColor: "white",
+    padding: "24px",
+    borderRadius: "12px",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
+    border: "1px solid #e2e8f0",
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "16px",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+  },
+
+  cardIcon: {
+    fontSize: "2rem",
+    backgroundColor: "#f1f5f9",
+    padding: "12px",
     borderRadius: "8px",
-    maxWidth: "1000px",
-    marginLeft: "auto",
-    marginRight: "auto",
-  },
-  taskHeading: {
-    margin: "40px 40px",
-    fontSize: "50px",
-    marginBottom: "10px",
+    minWidth: "48px",
     textAlign: "center",
   },
 
-  body: {
-    backgroundColor: "White",
-    color: "Black",
-    marginTop: "0px",
-    marginButtom: "0px",
-  },
-  Heading: {
-    margin: "20px 20px",
-    backgroundColor: "Red",
-    color: "White",
-    textAlign: "center",
-    fontSize: "20px",
+  cardTitle: {
+    margin: "0 0 8px 0",
+    fontSize: "1.1rem",
+    fontWeight: "600",
+    color: "#334155",
   },
 
+  cardContent: {
+    margin: 0,
+    color: "#64748b",
+    fontSize: "0.95rem",
+    lineHeight: "1.5",
+  },
+
+  // Action Section
+  actionSection: {
+    maxWidth: "1200px",
+    margin: "0 auto 40px auto",
+    padding: "0 20px",
+    display: "flex",
+    gap: "16px",
+    justifyContent: "center",
+  },
+
+  primaryButton: {
+    backgroundColor: "#3b82f6",
+    color: "white",
+    border: "none",
+    padding: "12px 24px",
+    borderRadius: "8px",
+    fontSize: "1rem",
+    fontWeight: "500",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    transition: "all 0.2s ease",
+    boxShadow: "0 2px 8px rgba(59, 130, 246, 0.3)",
+  },
+
+  secondaryButton: {
+    backgroundColor: "#10b981",
+    color: "white",
+    border: "none",
+    padding: "12px 24px",
+    borderRadius: "8px",
+    fontSize: "1rem",
+    fontWeight: "500",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    transition: "all 0.2s ease",
+    boxShadow: "0 2px 8px rgba(16, 185, 129, 0.3)",
+  },
+
+  buttonIcon: {
+    fontSize: "1.1rem",
+  },
+
+  // Modal Styles
   modalOverlay: {
     position: "fixed",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1000,
+    backdropFilter: "blur(4px)",
   },
+
   modalContent: {
-    background: "#1e1e1e",
-    padding: "20px",
-    borderRadius: "10px",
-    width: "400px",
-    color: "white",
+    background: "white",
+    borderRadius: "16px",
+    width: "90%",
+    maxWidth: "500px",
+    maxHeight: "90vh",
+    overflow: "auto",
+    boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
   },
+
+  modalHeader: {
+    padding: "24px 24px 0 24px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottom: "1px solid #e2e8f0",
+    paddingBottom: "16px",
+    marginBottom: "24px",
+  },
+
+  modalTitle: {
+    margin: 0,
+    fontSize: "1.5rem",
+    fontWeight: "600",
+    color: "#1e293b",
+  },
+
   closeBtn: {
-    position: "absolute",
-    top: "10px",
-    right: "10px",
     background: "none",
     border: "none",
-    color: "#fff",
     fontSize: "24px",
     cursor: "pointer",
-    outline: "none",
-    padding: "5px 15px",
+    color: "#64748b",
+    padding: "4px",
+    borderRadius: "4px",
+    transition: "color 0.2s ease",
   },
+
+  // Form Styles
+  form: {
+    padding: "0 24px 24px 24px",
+  },
+
+  inputGroup: {
+    marginBottom: "20px",
+  },
+
+  label: {
+    display: "block",
+    marginBottom: "6px",
+    fontSize: "0.9rem",
+    fontWeight: "500",
+    color: "#374151",
+  },
+
+  input: {
+    width: "100%",
+    padding: "12px",
+    border: "2px solid #e5e7eb",
+    borderRadius: "8px",
+    fontSize: "1rem",
+    transition: "border-color 0.2s ease",
+    boxSizing: "border-box",
+  },
+
+  textarea: {
+    width: "100%",
+    padding: "12px",
+    border: "2px solid #e5e7eb",
+    borderRadius: "8px",
+    fontSize: "1rem",
+    fontFamily: "inherit",
+    resize: "vertical",
+    minHeight: "100px",
+    transition: "border-color 0.2s ease",
+    boxSizing: "border-box",
+  },
+
+  submitButton: {
+    width: "100%",
+    padding: "12px",
+    backgroundColor: "#3b82f6",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "1rem",
+    fontWeight: "500",
+    cursor: "pointer",
+    transition: "background-color 0.2s ease",
+  },
+
+  btnDisabled: {
+    width: "100%",
+    padding: "12px",
+    backgroundColor: "#9ca3af",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "1rem",
+    fontWeight: "500",
+    cursor: "not-allowed",
+  },
+
+  // Section Styles
+  section: {
+    maxWidth: "1200px",
+    margin: "0 auto 40px auto",
+    padding: "0 20px",
+  },
+
+  sectionTitle: {
+    fontSize: "1.8rem",
+    fontWeight: "600",
+    color: "#1e293b",
+    marginBottom: "24px",
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+  },
+
+  sectionIcon: {
+    fontSize: "1.5rem",
+  },
+
+  // Task Styles
+  taskGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
+    gap: "20px",
+  },
+
+  taskCard: {
+    backgroundColor: "white",
+    borderRadius: "12px",
+    padding: "20px",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
+    border: "1px solid #e2e8f0",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+  },
+
+  taskHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: "12px",
+  },
+
+  taskTitle: {
+    margin: 0,
+    fontSize: "1.2rem",
+    fontWeight: "600",
+    color: "#1e293b",
+    flex: 1,
+  },
+
+  taskNumber: {
+    backgroundColor: "#f1f5f9",
+    color: "#64748b",
+    padding: "4px 8px",
+    borderRadius: "12px",
+    fontSize: "0.8rem",
+    fontWeight: "500",
+  },
+
+  taskContent: {
+    marginBottom: "16px",
+  },
+
+  assignedTo: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px",
+  },
+
+  assignedLabel: {
+    fontSize: "0.85rem",
+    color: "#64748b",
+    fontWeight: "500",
+  },
+
+  assignedName: {
+    fontSize: "0.95rem",
+    color: "#374151",
+    fontWeight: "500",
+  },
+
+  taskActions: {
+    display: "flex",
+    gap: "8px",
+  },
+
+  viewButton: {
+    backgroundColor: "#3b82f6",
+    color: "white",
+    border: "none",
+    padding: "8px 16px",
+    borderRadius: "6px",
+    fontSize: "0.9rem",
+    cursor: "pointer",
+    transition: "background-color 0.2s ease",
+  },
+
+  deleteButton: {
+    backgroundColor: "#ef4444",
+    color: "white",
+    border: "none",
+    padding: "8px 16px",
+    borderRadius: "6px",
+    fontSize: "0.9rem",
+    cursor: "pointer",
+    transition: "background-color 0.2s ease",
+  },
+
+  // Notes Styles
+  notesGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+    gap: "20px",
+  },
+
+  noteCard: {
+    backgroundColor: "white",
+    borderRadius: "12px",
+    padding: "20px",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
+    border: "1px solid #e2e8f0",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+  },
+
+  noteHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "12px",
+    paddingBottom: "8px",
+    borderBottom: "1px solid #f1f5f9",
+  },
+
+  noteNumber: {
+    fontSize: "0.9rem",
+    fontWeight: "600",
+    color: "#3b82f6",
+  },
+
+  noteDate: {
+    fontSize: "0.8rem",
+    color: "#64748b",
+  },
+
+  noteContent: {
+    fontSize: "0.95rem",
+    lineHeight: "1.6",
+    color: "#374151",
+    marginBottom: "12px",
+    whiteSpace: "pre-wrap",
+  },
+
+  noteFooter: {
+    paddingTop: "8px",
+    borderTop: "1px solid #f1f5f9",
+  },
+
+  noteTime: {
+    fontSize: "0.75rem",
+    color: "#9ca3af",
+  },
+
+  // Empty State
+  emptyState: {
+    textAlign: "center",
+    padding: "60px 20px",
+    backgroundColor: "white",
+    borderRadius: "12px",
+    border: "2px dashed #e2e8f0",
+  },
+
+  emptyIcon: {
+    fontSize: "4rem",
+    marginBottom: "16px",
+  },
+
+  emptyTitle: {
+    fontSize: "1.5rem",
+    fontWeight: "600",
+    color: "#374151",
+    marginBottom: "8px",
+  },
+
+  emptyText: {
+    color: "#64748b",
+    fontSize: "1rem",
+  },
+
+  // Notification Styles
   overlayBlocker: {
     position: "fixed",
     top: 0,
     left: 0,
     width: "100vw",
     height: "100vh",
-    backgroundColor: "rgba(0, 0, 0, 0.3)", // semi-transparent overlay
-    zIndex: 1500, // must be less than message box but more than rest of UI
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    zIndex: 1500,
   },
 
-  customBoxSuccess: {
+  successNotification: {
     position: "fixed",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    backgroundColor: "#d4edda",
-    color: "#155724",
-    padding: "15px 20px",
-    borderRadius: "8px",
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
-    zIndex: 2000,
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-  },
-
-  customBoxError: {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    backgroundColor: "#f8d7da",
-    color: "#721c24",
-    padding: "15px 20px",
-    borderRadius: "8px",
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
-    zIndex: 2000,
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-  },
-
-  closeBtnSmall: {
-    background: "none",
-    border: "none",
-    color: "#000",
-    fontSize: "18px",
-    fontWeight: "bold",
-    marginLeft: "10px",
-    cursor: "pointer",
-  },
-
-  linkBtn: {
-    color: "blue",
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-  },
-  inputGroup: {
-    marginBottom: "15px",
-  },
-  input: {
-    width: "100%",
-    padding: "8px",
-    marginTop: "5px",
-  },
-  textarea: {
-    width: "100%",
-    padding: "8px",
-    marginTop: "5px",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
-    fontSize: "14px",
-    fontFamily: "inherit",
-    resize: "vertical",
-  },
-  btnSubmit: {
-    padding: "10px 20px",
-    backgroundColor: "#007bff",
-    color: "white",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-  btnDisabled: {
-    padding: "10px 20px",
-    backgroundColor: "#ccc",
-    color: "white",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "not-allowed",
-  },
-
-  // ✅ Notes specific styles
-  notesContainer: {
-    marginTop: "30px",
-    maxWidth: "1000px",
-    marginLeft: "auto",
-    marginRight: "auto",
-    padding: "0 20px",
-  },
-  createNotesBtn: {
-    padding: "12px 24px",
-    backgroundColor: "#28a745",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontSize: "16px",
-    marginBottom: "20px",
-    display: "block",
-    margin: "0 auto 20px auto",
-  },
-  notesListBox: {
-    backgroundColor: "#f8f9fa",
-    padding: "20px",
-    borderRadius: "8px",
-    marginTop: "20px",
-  },
-  notesHeading: {
-    fontSize: "28px",
-    textAlign: "center",
-    marginBottom: "20px",
-    color: "#333",
-  },
-  notesWrapper: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-  },
-  noteCard: {
     backgroundColor: "white",
-    padding: "15px",
-    borderRadius: "8px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-    border: "1px solid #dee2e6",
-  },
-  noteHeader: {
+    color: "#059669",
+    padding: "20px 24px",
+    borderRadius: "12px",
+    boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
+    zIndex: 2000,
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "10px",
-    paddingBottom: "8px",
-    borderBottom: "1px solid #eee",
+    gap: "12px",
+    border: "2px solid #10b981",
+    minWidth: "300px",
   },
-  noteIndex: {
-    fontWeight: "bold",
-    color: "#007bff",
-    fontSize: "14px",
+
+  errorNotification: {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    backgroundColor: "white",
+    color: "#dc2626",
+    padding: "20px 24px",
+    borderRadius: "12px",
+    boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
+    zIndex: 2000,
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    border: "2px solid #ef4444",
+    minWidth: "300px",
   },
-  noteDate: {
-    fontSize: "12px",
-    color: "#6c757d",
+
+  notificationIcon: {
+    fontSize: "1.5rem",
   },
-  noteContent: {
-    fontSize: "14px",
-    lineHeight: "1.5",
-    color: "#333",
-    marginBottom: "10px",
-    whiteSpace: "pre-wrap", // Preserves line breaks
-  },
-  noteFooter: {
-    borderTop: "1px solid #eee",
-    paddingTop: "8px",
-  },
-  noteTime: {
-    color: "#6c757d",
-    fontSize: "11px",
-  },
-  emptyNotes: {
-    textAlign: "center",
-    padding: "40px",
-    color: "#6c757d",
-    backgroundColor: "#f8f9fa",
-    borderRadius: "8px",
-    marginTop: "20px",
+
+  notificationText: {
+    margin: 0,
+    // flex:
   },
 };

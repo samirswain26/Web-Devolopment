@@ -75,6 +75,12 @@ html {
   box-sizing: border-box;
   background-color: transparent;
 }
-body {
+/* body {
   background-color: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+} */
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
 }

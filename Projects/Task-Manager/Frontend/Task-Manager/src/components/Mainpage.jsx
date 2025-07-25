@@ -415,18 +415,7 @@ function Mainpage() {
       <div>
         <nav style={styles.nav}>
           <div style={styles.navContent}>
-            {/* LEFT: Back Button */}
-            <div style={styles.leftNavSection}>
-              <button
-                style={styles.navBtnSecondary}
-                onClick={handleBackToHomePage}
-              >
-                Back
-              </button>
-            </div>
-
-            {/* CENTER: Welcome text */}
-            <div style={styles.centerNavSection}>
+            <div style={styles.welcomeSection}>
               <h1 style={styles.mainTitle}>Welcome to Taskyst</h1>
               {profile ? (
                 <h2 style={styles.welcomeText}>Hi {profile.fullname}!</h2>
@@ -437,17 +426,15 @@ function Mainpage() {
                 Your all-in-one project management solution
               </p>
             </div>
-
-            {/* RIGHT: Profile + Logout */}
-            <div style={styles.rightNavSection}>
+            <div style={styles.navButtons}>
               <button onClick={handleToProfile} style={styles.navBtn}>
                 👤 Profile
               </button>
               <button
-                onClick={handleBackToLogin}
+                onClick={handleBackToHomePage}
                 style={styles.navBtnSecondary}
               >
-                🚪 Logout
+                🚪 Back
               </button>
             </div>
           </div>
@@ -847,28 +834,6 @@ const styles = {
     backdropFilter: "blur(10px)",
     padding: "20px 0",
     borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
-  },
-
-  leftNavSection: {
-    flex: "0 0 auto",
-    display: "flex",
-    alignItems: "center",
-  },
-
-  centerNavSection: {
-    flex: "1 1 auto",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center",
-  },
-
-  rightNavSection: {
-    flex: "0 0 auto",
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
   },
 
   navContent: {
