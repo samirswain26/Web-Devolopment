@@ -236,36 +236,6 @@ function Signup() {
 
   return (
     <>
-      {/* <style>
-        {`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-
-          .signup-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-          }
-
-          @media (max-width: 480px) {
-            .signup-container {
-              padding: 16px !important;
-            }
-            .signup-card {
-              padding: 32px 24px !important;
-            }
-            .signup-title {
-              font-size: 24px !important;
-            }
-          }
-        `}
-      </style> */}
       <div style={styles.signupContainer}>
         <div style={styles.signupCard}>
           <div style={styles.cardBorder}></div>

@@ -36,7 +36,7 @@ function Login() {
         setTimeout(() => {
           setMessage("");
           navigate("/Mainpage");
-        }, 2000);
+        }, 100);
       } else {
         setError("Login failed");
       }

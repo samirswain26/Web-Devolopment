@@ -45,6 +45,70 @@ function Mainpage() {
 
   useEffect(() => {
     const handleEscape = (event) => {
+      if (event.key === "Escape" && showRequesModal) {
+        setShowRequestModal(false);
+      }
+    };
+
+    if (showRequesModal) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [showRequesModal]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && showMembersModal) {
+        setShowMembersModal(false);
+      }
+    };
+
+    if (showMembersModal) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [showMembersModal]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && error) {
+        setError(false);
+      }
+    };
+
+    if (error) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [error]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && message) {
+        setMessage(false);
+      }
+    };
+
+    if (message) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [message]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
       if (event.key === "Escape" && showList) {
         setShowList(false);
       }
@@ -219,7 +283,7 @@ function Mainpage() {
       setTimeout(() => {
         setMessage(false);
         setError(false);
-      }, 3000);
+      }, 1000);
     } catch (error) {
       const msg = error.response?.data?.message || "Failed to send request";
       // alert(msg);
@@ -243,7 +307,7 @@ function Mainpage() {
       setTimeout(() => {
         setError(false);
         setMessage(false);
-      }, 3000);
+      }, 1000);
     } catch (error) {
       const msg = error.response?.data?.message || "Failed to delete project";
       setError(msg);
@@ -284,7 +348,7 @@ function Mainpage() {
       setTimeout(() => {
         setError(false);
         setMessage(false);
-      }, 3000);
+      }, 1000);
     } catch (error) {
       const msg = error.response?.data?.message || `Failed to add ${username}`;
       setError(msg);
@@ -344,6 +408,7 @@ function Mainpage() {
         error?.response?.data?.message ||
         error?.message ||
         "Failed to delete member";
+
       setError(msg);
     } finally {
       setLoading(false);

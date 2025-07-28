@@ -134,7 +134,7 @@ const getTasktNotes = async (req, res) => {
       throw new ApiError(404, "Task not found");
     }
 
-    const notes = await TaskNotes.find({ project: Task._id })
+    const notes = await TaskNotes.find({ Task: task._id })
       .populate("CreatedBy", "username")
       .sort({ createdAt: -1 });
 

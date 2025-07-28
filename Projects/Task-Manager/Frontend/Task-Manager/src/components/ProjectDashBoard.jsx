@@ -21,6 +21,74 @@ function DashBoard() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && showNotesForm) {
+        setShowNotesForm(false);
+      }
+    };
+
+    if (showNotesForm) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [showNotesForm]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && showForm) {
+        setShowForm(false);
+      }
+    };
+
+    if (showForm) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [showForm]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && message) {
+        setMessage(false);
+      }
+    };
+
+    if (message) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [message]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && error) {
+        setError(false);
+      }
+    };
+
+    if (error) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [error]);
+
+  const handleBackBtn = async () => {
+    navigate(-1);
+  };
+
   const handleToggleForm = () => {
     setShowForm((prev) => {
       const next = !prev;
@@ -200,6 +268,9 @@ function DashBoard() {
       {/* Header Section */}
       <div style={styles.header}>
         <div style={styles.headerContent}>
+          <button onClick={handleBackBtn} style={styles.BackBtn}>
+            ←
+          </button>
           <h1 style={styles.projectTitle}>{project.Name}</h1>
           <div style={styles.statusBadge}>
             <span style={styles.statusText}>{project.status}</span>
@@ -516,11 +587,22 @@ const styles = {
     padding: "40px 0",
     marginBottom: "30px",
   },
-
+  BackBtn: {
+    background: "none",
+    border: "none",
+    color: "rgba(16, 5, 5, 0.9)",
+    padding: "0px 10px",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "35px",
+    fontWeight: "5000",
+    transition: "all 0.3s ease",
+    margin: "0px 0px",
+  },
   headerContent: {
     maxWidth: "1200px",
     margin: "0 auto",
-    padding: "0 20px",
+    padding: "0 20px 0 0px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -1000,6 +1082,20 @@ const styles = {
 
   notificationText: {
     margin: 0,
-    // flex:
+    flex: 1,
+    fontSize: "1rem",
+    fontWeight: "500",
+  },
+
+  notificationClose: {
+    background: "none",
+    border: "none",
+    fontSize: "1.5rem",
+    cursor: "pointer",
+    color: "inherit",
+    padding: "4px",
+    borderRadius: "4px",
+    transition: "opacity 0.2s ease",
+    opacity: 0.7,
   },
 };
